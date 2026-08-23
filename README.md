@@ -19,7 +19,7 @@ Each section in the file stands on its own and can be deleted without touching t
 
 | Section | What it does |
 | --- | --- |
-| Typography | IBM Plex Sans for the interface, JetBrains Mono for code. Includes an override for Material's components, which compile their own font family and never read the variable. |
+| Typography | IBM Plex Sans for the interface, JetBrains Mono for code. Includes an override for Material's components, which compile their own font family and never read the variable, and keeps the plugin security warning at normal body weight. |
 | Side nav | The buttons in the Projects and Tags headers, and the headings themselves, stay out of sight until the row is hovered or holds keyboard focus. The Help entry is removed. Hover lights the whole row rather than the label alone. |
 | Action bar | In both the horizontal and experimental vertical layout, every button except Play and Add task stays visible at 25% opacity until the bar is hovered or holds keyboard focus. Both layouts wait 2 seconds before dimming again after hover. |
 | Flat surfaces | Task rows separate with a hairline instead of a drop shadow. |

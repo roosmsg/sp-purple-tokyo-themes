@@ -373,6 +373,14 @@ html:has(body.isDarkTheme) {
   font-family: var(--font-primary-stack);
 }
 
+/* The plugin manager makes every security-risk bullet bold in its component
+   stylesheet. At the reduced Settings scale that turns explanatory copy into
+   a dense block, so keep the warning's paragraph and list text at body weight. */
+config-page plugin-management .warning-content p,
+config-page plugin-management .warning-content li {
+  font-weight: 400 !important;
+}
+
 /* ============================================================
  * SIDE NAV — quiet chrome
  * ============================================================ */
