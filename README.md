@@ -21,7 +21,7 @@ Each section in the file stands on its own and can be deleted without touching t
 | --- | --- |
 | Typography | IBM Plex Sans for the interface, JetBrains Mono for code. Includes an override for Material's components, which compile their own font family and never read the variable. |
 | Side nav | The buttons in the Projects and Tags headers, and the headings themselves, stay out of sight until the row is hovered or holds keyboard focus. The Help entry is removed. Hover lights the whole row rather than the label alone. |
-| Action bar | In both the horizontal and experimental vertical layout, every button except Play and Add task stays visible at 25% opacity until the bar is hovered or holds keyboard focus. The horizontal bar waits 750 ms before dimming again after hover. |
+| Action bar | In both the horizontal and experimental vertical layout, every button except Play and Add task stays visible at 25% opacity until the bar is hovered or holds keyboard focus. The horizontal bar waits 1 second before dimming again after hover. |
 | Flat surfaces | Task rows separate with a hairline instead of a drop shadow. |
 | Material surfaces | Menus, dialogs, dropdowns, the date picker, cards and the snackbar take the theme's own surfaces instead of Material's grey. Tooltips stay deliberately contrasting. |
 | Today icon | Replaces the sun with a bolt on the today affordances. |
@@ -35,7 +35,7 @@ Each section in the file stands on its own and can be deleted without touching t
 
 - `--today-icon` — the Material Symbols ligature drawn in place of the sun. `bolt` by default; `electric_bolt`, `offline_bolt`, `flash_on` and `thunderstorm` are the other candidates in the app's icon picker.
 - `--work-view-scale` — the task work view relative to Settings (`1.1`). This follows the effect of one extra Ctrl + scroll step without changing Settings itself.
-- `--side-nav-scale`, `--nav-footer-scale`, `--action-bar-scale` — the navigation scale in three places: the left rail (`1.05`), the search/timeline/settings group at the foot of that rail relative to the rail itself (`1`, matching the other rail buttons), and the right action strip (`0.85`). `--action-bar-idle-opacity` (`0.25`) dims every action-bar button except Play and Add task by 75% while the bar is idle, in both desktop layouts. `--action-bar-hover-out-delay` (`750ms`) delays only the horizontal bar's return to its idle opacity. `--play-button-size` (`46px`) sets the time-tracking button apart from the vertical strip scale; the strip widens to fit it.
+- `--side-nav-scale`, `--nav-footer-scale`, `--action-bar-scale` — the navigation scale in three places: the left rail (`1.05`), the search/timeline/settings group at the foot of that rail relative to the rail itself (`1`, matching the other rail buttons), and the right action strip (`0.85`). `--action-bar-idle-opacity` (`0.25`) dims every action-bar button except Play and Add task by 75% while the bar is idle, in both desktop layouts. `--action-bar-hover-out-delay` (`1s`) delays only the horizontal bar's return to its idle opacity. `--play-button-size` (`46px`) sets the time-tracking button apart from the vertical strip scale; the strip widens to fit it.
 - `--window-controls-width` (`138px`) and `--window-controls-bg` control the backing strip behind Electron's native Windows controls.
 
 ## Notes

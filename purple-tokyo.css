@@ -662,7 +662,7 @@ body {
   /* Non-primary actions stay visible but recede until the rail is used. */
   --action-bar-idle-opacity: 0.25;
   /* Only the horizontal header waits before returning to its idle opacity. */
-  --action-bar-hover-out-delay: 750ms;
+  --action-bar-hover-out-delay: 1s;
   /* The time-tracking button is the one control in that strip you reach for
      while working, so it carries a size of its own rather than a scale. The
      app draws it at 40px. */
