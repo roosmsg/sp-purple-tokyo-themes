@@ -604,13 +604,18 @@ plan-tasks-tomorrow mat-icon::after,
 /* ============================================================
  * CHROME SCALE — navigation smaller than the content
  * ============================================================
- * The window zoom (Ctrl + scroll) scales everything at once. This makes the
- * two navigation rails sit a step below the content instead: the icons on the
- * left rail and the action strip on the right shrink, the middle keeps its
- * size. One number drives both — raise it towards 1 for a smaller difference,
- * lower it for a bigger one. */
+ * The window zoom (Ctrl + scroll) scales everything at once. This puts the
+ * navigation below the content instead, in three steps: the rail on the left,
+ * the group at its foot, and the action strip on the right. Raise a value
+ * towards 1 for a smaller difference, lower it for a bigger one. */
 body {
-  --chrome-scale: 0.85;
+  /* Left rail: the places you navigate to. */
+  --side-nav-scale: 0.95;
+  /* Search, timeline and settings at the foot of that rail. Relative to the
+     rail, so it lands a step under the entries above it. */
+  --nav-footer-scale: 0.9;
+  /* Right action strip. */
+  --action-bar-scale: 0.85;
 }
 
 /* The left rail carries its widths, paddings and icon sizes in a dozen places,
@@ -620,26 +625,35 @@ body {
    unscaled pointer coordinates, so the edge follows the pointer at a slightly
    different rate while dragging. */
 magic-side-nav {
-  zoom: var(--chrome-scale);
+  zoom: var(--side-nav-scale);
 }
 
-/* The right strip is parameterised, so it takes the scale through its own
-   measurements. Its width is the same variable the content is padded with, so
-   the column and the padding stay in step. */
+/* The foot of the rail is everything after the separator that pushes itself
+   down with `margin-top: auto` — the app sets that inline, and it does so on
+   no other separator, which makes it the marker for where the group starts.
+   Zoom multiplies through, so this reads as a fraction of the rail around it
+   rather than of the window. */
+magic-side-nav .nav-list > hr.nav-separator[style*='auto'] ~ li {
+  zoom: var(--nav-footer-scale);
+}
+
+/* The right strip is parameterised, so it takes its scale through its own
+   measurements rather than a zoom. Its width is the same variable the content
+   is padded with, so the column and the padding stay in step. */
 body {
-  --vertical-action-bar-width: calc(48px * var(--chrome-scale));
+  --vertical-action-bar-width: calc(48px * var(--action-bar-scale));
 }
 
 body > nav.action-nav-right {
-  --header-button-size: calc(40px * var(--chrome-scale));
-  --mat-mini-fab-size: calc(48px * var(--chrome-scale));
-  --mdc-icon-button-state-layer-size: calc(40px * var(--chrome-scale));
-  --mdc-icon-button-icon-size: calc(24px * var(--chrome-scale));
+  --header-button-size: calc(40px * var(--action-bar-scale));
+  --mat-mini-fab-size: calc(48px * var(--action-bar-scale));
+  --mdc-icon-button-state-layer-size: calc(40px * var(--action-bar-scale));
+  --mdc-icon-button-icon-size: calc(24px * var(--action-bar-scale));
 }
 
 body > nav.action-nav-right mat-icon {
-  font-size: calc(24px * var(--chrome-scale));
-  width: calc(24px * var(--chrome-scale));
-  height: calc(24px * var(--chrome-scale));
-  line-height: calc(24px * var(--chrome-scale));
+  font-size: calc(24px * var(--action-bar-scale));
+  width: calc(24px * var(--action-bar-scale));
+  height: calc(24px * var(--action-bar-scale));
+  line-height: calc(24px * var(--action-bar-scale));
 }

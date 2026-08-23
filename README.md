@@ -30,7 +30,7 @@ Each section in the file stands on its own and can be deleted without touching t
 ## Tuning
 
 - `--today-icon` — the Material Symbols ligature drawn in place of the sun. `bolt` by default; `electric_bolt`, `offline_bolt`, `flash_on` and `thunderstorm` are the other candidates in the app's icon picker.
-- `--chrome-scale` — how much smaller the navigation rails are than the content. `0.85` by default; raise towards `1` for a smaller difference.
+- `--side-nav-scale`, `--nav-footer-scale`, `--action-bar-scale` — how much smaller the navigation is than the content, in three steps: the left rail (`0.95`), the search/timeline/settings group at the foot of that rail relative to the rail itself (`0.9`), and the right action strip (`0.85`). Raise a value towards `1` for a smaller difference.
 
 ## Notes
 
