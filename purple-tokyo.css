@@ -286,6 +286,9 @@ body {
   --window-controls-width: 138px;
   --window-controls-height: env(titlebar-area-height, var(--wco-height, 24px));
   --window-controls-bg: var(--surface-0);
+  --vertical-action-bar-play-padding-top: calc(
+    var(--s, 8px) + var(--s-half, 4px)
+  );
 }
 
 body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen)::after {
@@ -302,30 +305,14 @@ body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen)::after {
   pointer-events: none;
 }
 
-/* Keep the app's original top gap so the Play button does not crowd the native
-   controls. A short, non-interactive continuation fills only that gap, making
-   the two purple surfaces meet without moving the action bar itself. */
+/* Start the purple rail directly below the native controls. Move the former
+   external gap inside as top padding, so Play keeps its original position. */
 @media screen and (min-width: 600px) {
   body.isElectron.isNoMac.isObsidianStyleHeader.isVerticalActionBar
     > nav.action-nav-right.action-nav-right--teleported {
-    --action-bar-window-gap: calc(
-      var(--wco-height, 24px) + var(--s, 8px) - var(--window-controls-height)
-    );
+    top: var(--window-controls-height);
+    padding-top: var(--vertical-action-bar-play-padding-top);
     background: var(--window-controls-bg);
-  }
-
-  body.isElectron.isNoMac.isObsidianStyleHeader.isVerticalActionBar
-    > nav.action-nav-right.action-nav-right--teleported::before {
-    content: '';
-    position: absolute;
-    /* Absolute positioning starts inside the rail's own border. Extend one
-       pixel outward so both 1px border segments share the same x-coordinate. */
-    inset: calc(var(--action-bar-window-gap) * -1) 0 auto -1px;
-    height: var(--action-bar-window-gap);
-    background: var(--window-controls-bg);
-    border-left: 1px solid var(--separator-color);
-    box-sizing: border-box;
-    pointer-events: none;
   }
 }
 
@@ -604,8 +591,8 @@ body.isDarkTheme {
 body,
 body.isDarkTheme {
   --today-icon: 'bolt';
-  --planner-nav-icon: 'view_week';
-  --schedule-nav-icon: 'calendar_today';
+  --planner-nav-icon: 'next_week';
+  --schedule-nav-icon: 'calendar_clock';
   --schedule-panel-icon: 'pending_actions';
 }
 
@@ -645,7 +632,7 @@ plan-tasks-tomorrow mat-icon::after,
   line-height: 1;
 }
 
-/* Planner uses view_week in the left navigation. Schema uses calendar_today
+/* Planner uses next_week in the left navigation. Schema uses calendar_clock
    in the left navigation and pending_actions on the right-panel button. */
 magic-side-nav nav-item a.nav-link[href$='/planner'] > mat-icon.nav-icon,
 magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon,
@@ -808,7 +795,7 @@ body > nav.action-nav-right .play-btn-wrapper .pulse-circle {
 
 /* Super Productivity does not expose a custom plugin id as a DOM attribute on
    menu items. Dashboard is the visible plugin entry in this menu, so custom
-   plugin artwork in the left navigation uses the built-in data_usage ligature.
+   plugin artwork in the left navigation uses the built-in avg_pace ligature.
    Keep the replacement inside plugin-icon so the row and click target remain
    untouched; no SVG asset is needed. */
 magic-side-nav nav-item plugin-icon.nav-icon > * {
@@ -816,10 +803,10 @@ magic-side-nav nav-item plugin-icon.nav-icon > * {
 }
 
 magic-side-nav nav-item plugin-icon.nav-icon::after {
-  content: 'data_usage';
+  content: 'avg_pace';
   color: var(--text-color-muted);
   font-family: 'Material Symbols Outlined', sans-serif;
-  font-size: 24px;
+  font-size: 22px;
   font-style: normal;
   font-weight: 400;
   line-height: 1;
