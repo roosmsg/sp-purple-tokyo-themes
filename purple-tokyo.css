@@ -616,6 +616,10 @@ body {
   --nav-footer-scale: 0.9;
   /* Right action strip. */
   --action-bar-scale: 0.85;
+  /* The time-tracking button is the one control in that strip you reach for
+     while working, so it carries a size of its own rather than a scale. The
+     app draws it at 40px. */
+  --play-button-size: 46px;
 }
 
 /* The left rail carries its widths, paddings and icon sizes in a dozen places,
@@ -639,9 +643,15 @@ magic-side-nav .nav-list > hr.nav-separator[style*='auto'] ~ li {
 
 /* The right strip is parameterised, so it takes its scale through its own
    measurements rather than a zoom. Its width is the same variable the content
-   is padded with, so the column and the padding stay in step. */
+   is padded with, so the column and the padding stay in step — and the strip
+   sits flush against the window edge, so anything wider than this value is cut
+   off by the edge rather than spilling over the content. Hence the max(): the
+   column is as wide as the largest thing standing in it. */
 body {
-  --vertical-action-bar-width: calc(48px * var(--action-bar-scale));
+  --vertical-action-bar-width: max(
+    calc(48px * var(--action-bar-scale)),
+    calc(var(--play-button-size) + 4px)
+  );
 }
 
 body > nav.action-nav-right {
@@ -656,4 +666,28 @@ body > nav.action-nav-right mat-icon {
   width: calc(24px * var(--action-bar-scale));
   height: calc(24px * var(--action-bar-scale));
   line-height: calc(24px * var(--action-bar-scale));
+}
+
+/* The play button steps out of the strip's scale. Width and height are set on
+   the element rather than through the Material size variable, because which of
+   those variables governs the circle differs per Material release. */
+body > nav.action-nav-right button.play-btn {
+  width: var(--play-button-size);
+  height: var(--play-button-size);
+  min-width: var(--play-button-size);
+}
+
+body > nav.action-nav-right .play-btn mat-icon {
+  font-size: calc(var(--play-button-size) / 2);
+  width: calc(var(--play-button-size) / 2);
+  height: calc(var(--play-button-size) / 2);
+  line-height: calc(var(--play-button-size) / 2);
+}
+
+/* The ring that pulses behind the button while time runs is drawn at a fixed
+   42px, sized for the button the app ships. Keep it just inside the circle. */
+body > nav.action-nav-right .play-btn-wrapper .pulse-circle {
+  width: calc(var(--play-button-size) - 4px);
+  height: calc(var(--play-button-size) - 4px);
+  left: 0;
 }
