@@ -29,7 +29,7 @@ Each section in the file stands on its own and can be deleted without touching t
 | Empty state | Hides the horizon drawing under "no tasks planned" and keeps the heading clear of the add-more button. |
 | Task work view | Makes task lists, empty states and the finish-day action larger than Settings. |
 | Dashboard icon | Gives the Dashboard plugin entry in the left menu the built-in Material Symbols `data_usage` glyph in the same muted colour as Schema; no SVG asset is added. |
-| Window controls | Places a compact theme surface behind Electron's native minimise, maximise and close buttons, matching the Windows reference while preserving native behaviour. |
+| Window controls | Places a compact theme surface behind Electron's native minimise, maximise and close buttons, matching the Windows reference while preserving native behaviour. When the experimental vertical action bar is enabled, its dark-purple surface connects directly below this strip without a gap. |
 | Chrome scale | Puts the two navigation rails a step below the content in size. |
 
 ## Tuning

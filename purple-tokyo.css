@@ -298,6 +298,16 @@ body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen)::after {
   pointer-events: none;
 }
 
+/* With the experimental vertical action bar enabled, remove the app's extra
+   top gap and continue the same surface directly below the native controls. */
+@media screen and (min-width: 600px) {
+  body.isElectron.isNoMac.isObsidianStyleHeader.isVerticalActionBar
+    > nav.action-nav-right.action-nav-right--teleported {
+    top: var(--wco-height, 24px);
+    background: var(--window-controls-bg);
+  }
+}
+
 body.isDarkTheme {
   --sidenav-bg: #131327;
   --sidenav-bg-mobile: #131327;
