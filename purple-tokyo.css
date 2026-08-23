@@ -556,25 +556,40 @@ body.isDarkTheme {
   --today-icon: 'bolt';
 }
 
-/* Covered: the "add everything overdue" button on Today, the add-to-today
-   control that appears when hovering a task row, and the today button on the
-   Timeline. The second selector keys off the Dutch button title, so it follows
+/* Covered: the "Voeg toe aan Mijn Day" button on Today, the add-to-today
+   control that appears when hovering a task row, the today button on the
+   Timeline, the "plan what is left of today" button on the day summary, and
+   the today shortcut in the date picker. Each of these sits in a container
+   where the sun is the only icon, so the swap cannot reach a neighbour by
+   accident. The second selector keys off the Dutch button title, so it follows
    the interface language — with the app in another language that line needs
    the string from that language. */
 .overdue-btn-wrapper button mat-icon,
 [title^='Voeg toe aan Mijn Day'] mat-icon,
-.today-btn mat-icon {
-  visibility: hidden;
+.today-btn mat-icon,
+plan-tasks-tomorrow mat-icon,
+.quick-access > button:first-of-type mat-icon {
+  visibility: hidden !important;
   position: relative;
 }
 
+/* The replacement is centred in the icon box rather than set as a line of
+   text: inside a button that box is 18px while the line height stays 24px,
+   which would drop the glyph past the bottom edge — and the icon clips what
+   overflows, so it would simply be gone. */
 .overdue-btn-wrapper button mat-icon::after,
 [title^='Voeg toe aan Mijn Day'] mat-icon::after,
-.today-btn mat-icon::after {
+.today-btn mat-icon::after,
+plan-tasks-tomorrow mat-icon::after,
+.quick-access > button:first-of-type mat-icon::after {
   content: var(--today-icon);
   visibility: visible;
   position: absolute;
   inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 /* ============================================================
