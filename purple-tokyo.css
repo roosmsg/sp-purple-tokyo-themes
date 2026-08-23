@@ -606,7 +606,7 @@ body.isDarkTheme {
   --today-icon: 'bolt';
   --planner-nav-icon: 'view_week';
   --schedule-nav-icon: 'calendar_today';
-  --schedule-panel-icon: 'event_note';
+  --schedule-panel-icon: 'pending_actions';
 }
 
 /* Covered: the "Voeg toe aan Mijn Day" button on Today, the add-to-today
@@ -646,7 +646,7 @@ plan-tasks-tomorrow mat-icon::after,
 }
 
 /* Planner uses view_week in the left navigation. Schema uses calendar_today
-   in the left navigation and event_note on the right-panel button. */
+   in the left navigation and pending_actions on the right-panel button. */
 magic-side-nav nav-item a.nav-link[href$='/planner'] > mat-icon.nav-icon,
 magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon,
 .e2e-toggle-schedule-day-panel mat-icon {
