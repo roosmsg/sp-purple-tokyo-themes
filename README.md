@@ -1,0 +1,39 @@
+# Purple Tokyo
+
+A light/dark theme pair for [Super Productivity](https://github.com/super-productivity/super-productivity), plus a set of interface changes that go with it.
+
+- **Dark — Shades of Purple (Super Dark):** deep indigo surfaces, white text, a muted violet for supporting text, Claude salmon as the accent.
+- **Light — Tokyo Light:** cool blue-grey surfaces, ink-blue text, Tokyo Night Light's blue as the accent.
+
+Both palettes are taken from Personal Work Manager and remapped onto Super Productivity's [theming contract](https://github.com/super-productivity/super-productivity/blob/master/docs/theming-contract.md): the surface ladder and the ink primitives drive the semantic tokens, so most of the app follows from the two colour blocks at the top of the file. The rest covers the tokens the base pins to a neutral grey ramp that the ladder does not reach.
+
+## Install
+
+Settings → General → Theme → **Install theme…**, then pick `purple-tokyo.css`. The file is stored locally in IndexedDB; nothing leaves the machine. Re-uploading a file with the same name overwrites the previous version.
+
+The picker labels a theme after its filename, so rename the file if you want a different name in the list.
+
+## What it changes beyond colour
+
+Each section in the file stands on its own and can be deleted without touching the rest.
+
+| Section | What it does |
+| --- | --- |
+| Typography | IBM Plex Sans for the interface, JetBrains Mono for code. Includes an override for Material's components, which compile their own font family and never read the variable. |
+| Side nav | The buttons in the Projects and Tags headers, and the headings themselves, stay out of sight until the row is hovered or holds keyboard focus. The Help entry is removed. Hover lights the whole row rather than the label alone. |
+| Flat surfaces | Task rows separate with a hairline instead of a drop shadow. |
+| Material surfaces | Menus, dialogs, dropdowns, the date picker, cards and the snackbar take the theme's own surfaces instead of Material's grey. Tooltips stay deliberately contrasting. |
+| Today icon | Replaces the sun with a bolt on the today affordances. |
+| Empty state | Hides the horizon drawing under "no tasks planned". |
+| Chrome scale | Puts the two navigation rails a step below the content in size. |
+
+## Tuning
+
+- `--today-icon` — the Material Symbols ligature drawn in place of the sun. `bolt` by default; `electric_bolt`, `offline_bolt`, `flash_on` and `thunderstorm` are the other candidates in the app's icon picker.
+- `--chrome-scale` — how much smaller the navigation rails are than the content. `0.85` by default; raise towards `1` for a smaller difference.
+
+## Notes
+
+- Themes installed through Settings cannot load external assets — no remote URLs, no `@import`, no bundled font files. The font stack therefore only names fonts that are installed on the machine.
+- One selector keys off the Dutch button title `Voeg toe aan Mijn Day`, because that button carries no distinguishing class. With the interface in another language that line needs the string from that language.
+- Setting the primary palette means per-project and per-tag colours no longer tint the interface. Delete the primary ladders and the accent block to hand that role back.

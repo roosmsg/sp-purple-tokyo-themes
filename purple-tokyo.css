@@ -1,0 +1,630 @@
+/**
+ * Purple Tokyo — a light/dark pair for Super Productivity
+ *
+ *   Dark  — Shades of Purple (Super Dark): deep indigo surfaces, white text,
+ *           a muted violet for supporting text, Claude salmon as the accent.
+ *   Light — Tokyo Light: cool blue-grey surfaces, ink-blue text, Tokyo Night
+ *           Light's blue as the accent.
+ *
+ * Both halves are the palettes used in Personal Work Manager, remapped onto
+ * Super Productivity's token contract (docs/theming-contract.md): the surface
+ * ladder and the ink primitives drive the semantic tokens (--bg, --card-bg,
+ * --text-color, …), so most of the app follows from the two blocks below. The
+ * remaining declarations cover the "category B" tokens, which the base pins to
+ * a neutral grey ramp that the ladder does not reach.
+ *
+ * Selectors: light primitives sit on `body:not(.isDarkTheme)` rather than plain
+ * `body`, so nothing declared for light can leak into dark mode. Both selectors
+ * outrank the base's `body` declarations.
+ *
+ * Card surfaces: as in PWM, cards and task rows sit a step *below* the page
+ * rather than above it. Hover, current and selected states step up, so
+ * interaction still reads as a lift.
+ *
+ * After the two colour blocks the file continues with the parts that are not
+ * colour: the font stack, the side nav (section buttons on hover, no Help
+ * entry) and the flat card treatment. Each section stands on its own and can
+ * be deleted without touching the rest.
+ */
+
+/* ============================================================
+ * LIGHT — Tokyo Light
+ * ============================================================ */
+body:not(.isDarkTheme) {
+  /* Surface ladder: chrome → page → cards → elevated → highest */
+  --surface-0: #d6d8df; /* deepest: toolbars, side nav (--bg-darker) */
+  --surface-1: #e6e7ed; /* app background (PWM --color-bg-primary) */
+  --surface-2: #e1e2e8; /* cards, tasks, dialogs (PWM --color-bg-secondary) */
+  --surface-3: #dcdee3; /* elevated: current task, drag-drop targets */
+  --surface-4: #cdced1; /* highest: banner, mobile bottom panel */
+
+  /* Ink */
+  --ink-strong: #262b3a;
+  --ink: #363c4d; /* PWM --color-text-primary */
+  /* PWM's tertiary text (#707280) lands at 3.9:1 on this page colour; nudged
+     darker so muted labels clear WCAG AA for normal text. */
+  --ink-muted: #5c6478;
+  --ink-on-channel: 54, 60, 77; /* #363c4d — overlays read blue-grey, not black */
+
+  /* Separators, scrim, overlays */
+  --separator: #c9cbd2; /* PWM --color-border-tertiary */
+  --divider: #d0d2d9; /* PWM --color-border-secondary */
+  --scrim: rgba(38, 43, 58, 0.45);
+  --bg-overlay: rgba(230, 231, 237, 0.85);
+  --system-surface: #d6d8df; /* Android system bars; must stay opaque */
+
+  /* Primary — Tokyo Night Light blue (PWM --color-accent-*) */
+  --palette-primary-50: #eef3fa;
+  --palette-primary-100: #d7e0f2;
+  --palette-primary-200: #aec2e4;
+  --palette-primary-300: #7b9bd4;
+  --palette-primary-400: #4a77c4;
+  --palette-primary-500: #2959aa;
+  --palette-primary-600: #234c92;
+  --palette-primary-700: #1d3f79;
+  --palette-primary-800: #173261;
+  --palette-primary-900: #12274c;
+  /* Ink on the pale stops, white from 400 on. */
+  --palette-primary-contrast-50: #262b3a;
+  --palette-primary-contrast-100: #262b3a;
+  --palette-primary-contrast-200: #262b3a;
+  --palette-primary-contrast-300: #262b3a;
+  --palette-primary-contrast-400: #ffffff;
+  --palette-primary-contrast-500: #ffffff;
+  --palette-primary-contrast-600: #ffffff;
+  --palette-primary-contrast-700: #ffffff;
+  --palette-primary-contrast-800: #ffffff;
+  --palette-primary-contrast-900: #ffffff;
+
+  /* Warn — Tokyo Night Light red */
+  --palette-warn-300: #c07281;
+  --palette-warn-400: #a65a6a;
+  --palette-warn-500: #8c4351;
+  --palette-warn-600: #7a3a47;
+  --palette-warn-700: #66303b;
+  --palette-warn-contrast-300: #262b3a;
+  --palette-warn-contrast-400: #ffffff;
+  --palette-warn-contrast-500: #ffffff;
+  --palette-warn-contrast-600: #ffffff;
+  --palette-warn-contrast-700: #ffffff;
+
+  /* Status — Tokyo Night Light */
+  --color-success: #385f0d;
+  --color-warning: #8f5e15;
+  --color-danger: #8c4351;
+  --c-success: #385f0d;
+  --c-warning: #8f5e15;
+  --c-error: #8c4351;
+  --c-info: #0f4b6e;
+  --sun-yellow: #8f5e15;
+
+  /* Links carry the accent at full strength instead of the base's ink mix. */
+  --link-color: #234c92;
+
+  /* --- Category B: tokens the base hardcodes to white or neutral grey --- */
+  --bg-drag-col: #dcdee3;
+  --bg-super-light: #eef0f4;
+  --right-panel-bg-mobile: #e1e2e8;
+  --bottom-panel-bg: #e1e2e8;
+  --selected-task-bg-color: #dcdee3;
+  --task-c-selected-bg: #dcdee3;
+  --extra-border-color: #d0d2d9;
+  --standard-note-bg: #eceef2; /* notes lift off the page like paper */
+  --standard-note-bg-hovered: #e6e7ed;
+  --standard-note-fg: var(--ink);
+  --task-detail-bg: #e1e2e8;
+  --task-detail-bg-hover: #dcdee3;
+  --schedule-event-bg: #eceef2;
+  --sidenav-hover-bg: rgba(54, 60, 77, 0.07);
+  --scrollbar-thumb: rgba(54, 60, 77, 0.25);
+  --scrollbar-thumb-hover: rgba(54, 60, 77, 0.45);
+  --scrollbar-track: transparent;
+  --grid-color: #cfd1d8;
+  --chip-outline-color: rgba(54, 60, 77, 0.24);
+  --progress-bg: rgba(54, 60, 77, 0.12);
+  --improvement-text: var(--ink);
+  --improvement-button-text: var(--ink);
+  --improvement-border: rgba(54, 60, 77, 0.25);
+
+  /* Text selection */
+  --theme-selection-bg: rgba(41, 89, 170, 0.18);
+}
+
+/* ============================================================
+ * DARK — Shades of Purple (Super Dark)
+ * ============================================================ */
+body.isDarkTheme {
+  /* Surface ladder */
+  --surface-0: #131327; /* deepest: toolbars, side nav (PWM --color-bg-background) */
+  --surface-1: #191830; /* app background (PWM --color-bg-primary) */
+  --surface-2: #15152b; /* cards, tasks, dialogs (PWM --color-bg-secondary) */
+  --surface-3: #232144; /* elevated: current task, drag-drop targets */
+  --surface-4: #2f2c5c; /* highest: banner, mobile bottom panel */
+
+  /* Ink — white body text, violet for supporting text, as in the editor theme */
+  --ink-strong: #ffffff;
+  --ink: #ffffff;
+  --ink-muted: #a599e9; /* PWM --color-text-secondary */
+  --ink-on-channel: 255, 255, 255;
+
+  /* Separators, scrim, overlays */
+  --separator: #2c2a52; /* PWM --color-border-tertiary */
+  --divider: #232144; /* PWM --color-border-secondary */
+  --scrim: rgba(9, 9, 20, 0.7);
+  --bg-overlay: rgba(19, 19, 39, 0.85);
+  --system-surface: #131327;
+
+  /* Primary — Claude salmon (PWM --color-accent-*) */
+  --palette-primary-50: #fdf2ee;
+  --palette-primary-100: #f7e4dc;
+  --palette-primary-200: #f2cdbf;
+  --palette-primary-300: #e9a991;
+  --palette-primary-400: #e08e70;
+  --palette-primary-500: #d97757;
+  --palette-primary-600: #c96442;
+  --palette-primary-700: #a85336;
+  --palette-primary-800: #85422b;
+  --palette-primary-900: #6b3623;
+  /* Salmon stays light enough to carry dark text through 600. */
+  --palette-primary-contrast-50: #1b1a33;
+  --palette-primary-contrast-100: #1b1a33;
+  --palette-primary-contrast-200: #1b1a33;
+  --palette-primary-contrast-300: #1b1a33;
+  --palette-primary-contrast-400: #1b1a33;
+  --palette-primary-contrast-500: #1b1a33;
+  --palette-primary-contrast-600: #1b1a33;
+  --palette-primary-contrast-700: #ffffff;
+  --palette-primary-contrast-800: #ffffff;
+  --palette-primary-contrast-900: #ffffff;
+
+  /* Warn — Shades of Purple pink */
+  --palette-warn-300: #ffa3ba;
+  --palette-warn-400: #ff83a3;
+  --palette-warn-500: #ff628c;
+  --palette-warn-600: #e04d76;
+  --palette-warn-700: #b93b5e;
+  --palette-warn-contrast-300: #1b1a33;
+  --palette-warn-contrast-400: #1b1a33;
+  --palette-warn-contrast-500: #1b1a33;
+  --palette-warn-contrast-600: #ffffff;
+  --palette-warn-contrast-700: #ffffff;
+
+  /* Status — Shades of Purple */
+  --color-success: #3ad900;
+  --color-warning: #fad000;
+  --color-danger: #ff628c;
+  --c-success: #3ad900;
+  --c-warning: #fad000;
+  --c-error: #ff628c;
+  --c-info: #9effff;
+  --sun-yellow: #fad000;
+
+  --link-color: #e08e70;
+
+  /* --- Category B: the base maps these to a neutral grey ramp --- */
+  --bg-slightly-lighter: #1e1d3a;
+  --bg-super-light: #3a3768;
+  --text-color-less-intense: rgba(255, 255, 255, 0.82);
+  --text-color-more-intense: #ffffff;
+  --selected-task-bg-color: #232144;
+  --task-c-selected-bg: #232144;
+  --sub-task-c-bg: #1a1934; /* nested rows lift off the card */
+  --sub-task-c-bg-in-selected: #232144;
+  --sub-task-c-bg-done: #131327;
+  --task-c-bg-done: #131327;
+  --extra-border-color: #2c2a52;
+  --standard-note-bg: #1b1a35;
+  --standard-note-bg-hovered: #232144;
+  --standard-note-fg: #ffffff;
+  --task-detail-bg: #1b1a35;
+  --task-detail-bg-hover: #232144;
+  --bottom-panel-bg: #131327;
+  --schedule-event-bg: #1e1d3a;
+  --schedule-event-bg-in-side-panel: #232144;
+  --sidenav-hover-bg: rgba(165, 153, 233, 0.09);
+  --sidenav-item-active-bg: rgba(217, 119, 87, 0.2);
+  --mat-sidenav-scrim-color: rgba(9, 9, 20, 0.75);
+  --scrollbar-thumb: rgba(165, 153, 233, 0.22);
+  --scrollbar-thumb-hover: rgba(165, 153, 233, 0.45);
+  --scrollbar-track: transparent;
+  --grid-color: rgba(165, 153, 233, 0.1);
+  --chip-outline-color: rgba(165, 153, 233, 0.3);
+  --progress-bg: rgba(165, 153, 233, 0.16);
+  --improvement-text: #ffffff;
+  --improvement-button-text: #ffffff;
+  --improvement-border: rgba(165, 153, 233, 0.3);
+
+  --theme-selection-bg: rgba(217, 119, 87, 0.28);
+}
+
+/* ============================================================
+ * ONE ACCENT PER MODE
+ * ============================================================
+ * PWM works with a single accent colour, so Super Productivity's accent role
+ * mirrors the primary ladder above rather than introducing a second hue.
+ * Delete this block to hand the accent role back to the app default. */
+body,
+body.isDarkTheme {
+  --palette-accent-50: var(--palette-primary-50);
+  --palette-accent-100: var(--palette-primary-100);
+  --palette-accent-200: var(--palette-primary-200);
+  --palette-accent-300: var(--palette-primary-300);
+  --palette-accent-400: var(--palette-primary-400);
+  --palette-accent-500: var(--palette-primary-500);
+  --palette-accent-600: var(--palette-primary-600);
+  --palette-accent-700: var(--palette-primary-700);
+  --palette-accent-800: var(--palette-primary-800);
+  --palette-accent-900: var(--palette-primary-900);
+  --palette-accent-contrast-50: var(--palette-primary-contrast-50);
+  --palette-accent-contrast-100: var(--palette-primary-contrast-100);
+  --palette-accent-contrast-200: var(--palette-primary-contrast-200);
+  --palette-accent-contrast-300: var(--palette-primary-contrast-300);
+  --palette-accent-contrast-400: var(--palette-primary-contrast-400);
+  --palette-accent-contrast-500: var(--palette-primary-contrast-500);
+  --palette-accent-contrast-600: var(--palette-primary-contrast-600);
+  --palette-accent-contrast-700: var(--palette-primary-contrast-700);
+  --palette-accent-contrast-800: var(--palette-primary-contrast-800);
+  --palette-accent-contrast-900: var(--palette-primary-contrast-900);
+  --c-accent: var(--palette-accent-500);
+}
+
+/* ============================================================
+ * CHROME
+ * ============================================================
+ * PWM keeps the side bar a step darker than the page. The base leaves the side
+ * nav transparent so a wallpaper can show through; delete these two rules to
+ * get that behaviour back. */
+body:not(.isDarkTheme) {
+  --sidenav-bg: #d6d8df;
+  --sidenav-bg-mobile: #d6d8df;
+}
+
+body.isDarkTheme {
+  --sidenav-bg: #131327;
+  --sidenav-bg-mobile: #131327;
+}
+
+/* The gutter behind the app (overscroll, iOS safe areas) is pinned to a neutral
+   grey by the base; match it to the page instead. */
+html:has(body:not(.isDarkTheme)) {
+  background: #e6e7ed;
+}
+
+html:has(body.isDarkTheme) {
+  background: #191830;
+}
+
+::selection {
+  background: var(--theme-selection-bg);
+}
+
+/* ============================================================
+ * TYPOGRAPHY
+ * ============================================================
+ * Themes cannot ship or fetch font files (the installer rejects external
+ * assets), so the stack can only name fonts that are installed locally.
+ * PWM sets its interface in Inter; the Inter registered on this machine is a
+ * Cyrillic subset from fontsource and has no Latin lowercase, so it would
+ * render half the alphabet in a fallback face. IBM Plex Sans is the closest
+ * complete family available: a neutral grotesque in the same register.
+ *
+ * To use Inter instead, install a complete build (PWM carries InterVariable in
+ * its repository) and move 'Inter' to the front of the list.
+ *
+ * Alternatives that are also installed and complete: 'Rubik' (geometric,
+ * rounder), 'Karla' (grotesque with more character), 'Outfit' (geometric,
+ * display-leaning). */
+:root {
+  --font-primary-stack:
+    'IBM Plex Sans', 'Inter', 'Segoe UI Variable Text', 'Segoe UI', system-ui,
+    -apple-system, 'Helvetica Neue', Arial, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Noto Color Emoji', sans-serif;
+  --font-mono-stack:
+    'JetBrains Mono', 'Cascadia Code', ui-monospace, 'SF Mono', Consolas,
+    'Liberation Mono', 'Courier New', monospace;
+}
+
+/* Angular Material compiles its own font-family into the typography classes
+   from a literal string, so those components never read the variable above.
+   Icon faces are excluded — they are fonts whose glyphs are the icons. */
+[class*='mat-']:not(.material-icons):not(.mat-ligature-font):not(
+    [class*='material-symbols']
+  ),
+[class*='mdc-']:not(.material-icons):not(.mat-ligature-font):not(
+    [class*='material-symbols']
+  ) {
+  font-family: var(--font-primary-stack);
+}
+
+/* ============================================================
+ * SIDE NAV — quiet chrome
+ * ============================================================ */
+
+/* The buttons in the Projects and Tags headers (add, add folder, visibility)
+   only appear while the row is hovered or holds keyboard focus. The app already
+   does this for mouse-primary devices, but reverts to permanently visible when
+   it detects a touch-primary device — these rules keep the behaviour on both. */
+magic-side-nav .g-multi-btn-wrapper .additional-btns {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity var(--transition-duration-s) var(--ani-standard-timing);
+}
+
+magic-side-nav .g-multi-btn-wrapper:hover .additional-btns,
+magic-side-nav .g-multi-btn-wrapper:focus-within .additional-btns {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* The Projects and Tags headings follow the same rule as the buttons sitting
+   in them: out of sight until the row is hovered or holds keyboard focus. The
+   row keeps its height, so the list below never jumps. Opacity rather than
+   visibility on purpose — a row hidden with visibility drops out of the tab
+   order, which would put the collapse toggle out of reach for the keyboard. */
+magic-side-nav nav-list-tree .g-multi-btn-wrapper > nav-item {
+  opacity: 0;
+  transition: opacity var(--transition-duration-s) var(--ani-standard-timing);
+}
+
+magic-side-nav nav-list-tree .g-multi-btn-wrapper:hover > nav-item,
+magic-side-nav nav-list-tree .g-multi-btn-wrapper:focus-within > nav-item {
+  opacity: 1;
+}
+
+/* Hover covers the whole row. The tint sits on the link only, which stops
+   short of the task count and the three-dot button, so hovering those left the
+   row half-lit. Moving it to the row element — the link, the counter and the
+   button are its children — lights the row as one, from either end. */
+magic-side-nav nav-item:hover,
+magic-side-nav nav-item:focus-within {
+  background-color: var(--sidenav-hover-bg);
+  border-radius: var(--radius-sm);
+}
+
+/* Without this the link would add its own tint on top of the row's and the
+   left half would come out darker. The active item keeps its own fill. */
+magic-side-nav nav-item .nav-link:hover:not(.active),
+magic-side-nav nav-item .nav-link:focus:not(.active) {
+  background: transparent;
+}
+
+/* Help removed. It is the only entry in the navigation built as a fold-out
+   menu, so hiding that component removes Help and nothing else. Its contents
+   (docs, bug report, feedback, the tours) stay reachable from Settings and the
+   project pages.
+
+   The component sets `display: contents` on its own host element, and Angular
+   compiles that to an attribute selector — which outranks a plain element
+   selector. Hence `!important`, and the list item is hidden as well so the row
+   disappears even if the host rule changes. */
+nav-mat-menu,
+nav-mat-menu > li {
+  display: none !important;
+}
+
+/* ============================================================
+ * FLAT SURFACES
+ * ============================================================
+ * PWM separates its cards with a hairline border and no drop shadow. Task rows
+ * already carry `1px solid var(--task-border-color)`, so dropping the shadows
+ * leaves exactly that idiom. Panels keep a whisper of shadow because nothing
+ * outlines them. */
+body,
+body.isDarkTheme {
+  --task-shadow: none;
+  --task-shadow-sub-task: none;
+  --task-selected-shadow: none;
+  --task-current-shadow: none;
+  --banner-shadow: none;
+  --task-border-color: var(--separator);
+}
+
+body:not(.isDarkTheme) {
+  --card-shadow: 0 1px 2px rgba(38, 43, 58, 0.07);
+  /* Controls that appear on hover do so without an outline, as in dark mode. */
+  --hover-controls-border: none;
+  --hover-controls-border-opacity: 0;
+}
+
+body.isDarkTheme {
+  --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+/* ============================================================
+ * MATERIAL SURFACES — the grey panels
+ * ============================================================
+ * The app maps its own tokens onto everything it draws itself, but the
+ * Material components keep the palette of the Material theme underneath: a
+ * neutral grey (#424242 in dark, near-white in light) for menus, dialogs,
+ * dropdowns, cards and the date picker. Against these surfaces that grey reads
+ * as a foreign patch, so every container is pointed at the theme's own
+ * elevated surface — the same one PWM uses for popovers and modals — with a
+ * hairline and a soft shadow so a floating panel still separates from the page.
+ *
+ * Two layers on purpose: the variables are the clean route, since the
+ * components read them themselves, and the element rules below cover the
+ * components whose variable names shift between Material releases. */
+body,
+body.isDarkTheme {
+  --mat-menu-container-color: var(--surface-2);
+  --mat-menu-item-label-text-color: var(--text-color);
+  --mat-menu-item-icon-color: var(--text-color-muted);
+  --mat-select-panel-background-color: var(--surface-2);
+  --mat-autocomplete-background-color: var(--surface-2);
+  --mat-dialog-container-color: var(--surface-2);
+  --mdc-dialog-container-color: var(--surface-2);
+  --mat-datepicker-calendar-container-background-color: var(--surface-2);
+  --mat-datepicker-calendar-container-text-color: var(--text-color);
+  --mat-bottom-sheet-container-background-color: var(--surface-2);
+  --mat-card-elevated-container-color: var(--card-bg);
+  --mat-card-outlined-container-color: var(--card-bg);
+  --mdc-elevated-card-container-color: var(--card-bg);
+  --mdc-outlined-card-container-color: var(--card-bg);
+  --mat-expansion-container-background-color: var(--card-bg);
+  --mat-expansion-container-text-color: var(--text-color);
+  --mat-snack-bar-container-color: var(--surface-4);
+  --mat-snack-bar-supporting-text-color: var(--text-color);
+  --mdc-snackbar-container-color: var(--surface-4);
+  --mdc-snackbar-supporting-text-color: var(--text-color);
+  --mat-table-background-color: transparent;
+  --mat-toolbar-container-background-color: transparent;
+  --mat-paginator-container-background-color: transparent;
+  --mat-tree-container-background-color: transparent;
+  --mat-stepper-container-color: transparent;
+  --mat-sidenav-container-background-color: transparent;
+  --mat-timepicker-container-background-color: var(--surface-2);
+}
+
+/* A tooltip is the one panel that should not match the page: it reads as a
+   label on top of the interface. Dark ink in light mode, a lifted purple in
+   dark mode — themed either way, never grey. */
+body:not(.isDarkTheme) {
+  --panel-shadow: 0 4px 16px rgba(38, 43, 58, 0.14);
+  --mat-tooltip-container-color: #262b3a;
+  --mat-tooltip-supporting-text-color: #ffffff;
+  --mdc-plain-tooltip-container-color: #262b3a;
+  --mdc-plain-tooltip-supporting-text-color: #ffffff;
+}
+
+body.isDarkTheme {
+  --panel-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --mat-tooltip-container-color: #2f2c5c;
+  --mat-tooltip-supporting-text-color: #ffffff;
+  --mdc-plain-tooltip-container-color: #2f2c5c;
+  --mdc-plain-tooltip-supporting-text-color: #ffffff;
+}
+
+/* Floating panels: theme surface, hairline, one soft shadow. */
+.mat-mdc-menu-panel,
+.mat-mdc-select-panel,
+.mat-mdc-autocomplete-panel,
+.mat-datepicker-content,
+.mat-bottom-sheet-container {
+  background: var(--surface-2);
+  color: var(--text-color);
+  border: 1px solid var(--separator);
+  box-shadow: var(--panel-shadow);
+}
+
+/* Mirrors Material's own two-class selector so it wins on source order. */
+.mat-mdc-dialog-container .mat-mdc-dialog-surface {
+  background: var(--surface-2);
+  color: var(--text-color);
+  border: 1px solid var(--separator);
+  box-shadow: var(--panel-shadow);
+}
+
+.mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  background-color: var(--surface-4);
+  color: var(--text-color);
+}
+
+/* Cards and expansion panels sit inside the page, so they take the card
+   surface and no shadow of their own — the border does the work. */
+.mat-mdc-card,
+.mat-expansion-panel {
+  background: var(--card-bg);
+  color: var(--text-color);
+}
+
+/* Tables inherit whatever they are placed on instead of painting their own
+   grey behind the rows. */
+.mat-mdc-table,
+.mat-mdc-header-row,
+.mat-mdc-row,
+.mat-mdc-paginator,
+.mat-toolbar {
+  background: transparent;
+}
+
+/* ============================================================
+ * TODAY ICON — bolt instead of the sun
+ * ============================================================
+ * The icon font draws its glyphs from the text inside the element, and CSS
+ * cannot rewrite text. What it can do is hide the glyph and draw a replacement
+ * in a pseudo-element: it inherits the icon font, the size, the colour and the
+ * weight axis from the element it sits in, so the substitute lines up exactly
+ * where the original stood.
+ *
+ * The name below is the Material Symbols ligature. Change this one value if
+ * your Today tag carries a different bolt: 'electric_bolt', 'offline_bolt',
+ * 'flash_on' and 'thunderstorm' are the other candidates in the icon picker. */
+body,
+body.isDarkTheme {
+  --today-icon: 'bolt';
+}
+
+/* Covered: the "add everything overdue" button on Today, the add-to-today
+   control that appears when hovering a task row, and the today button on the
+   Timeline. The second selector keys off the Dutch button title, so it follows
+   the interface language — with the app in another language that line needs
+   the string from that language. */
+.overdue-btn-wrapper button mat-icon,
+[title^='Voeg toe aan Mijn Day'] mat-icon,
+.today-btn mat-icon {
+  visibility: hidden;
+  position: relative;
+}
+
+.overdue-btn-wrapper button mat-icon::after,
+[title^='Voeg toe aan Mijn Day'] mat-icon::after,
+.today-btn mat-icon::after {
+  content: var(--today-icon);
+  visibility: visible;
+  position: absolute;
+  inset: 0;
+}
+
+/* ============================================================
+ * EMPTY STATE
+ * ============================================================
+ * "Geen geplande taken" ships with a horizon drawing (a moon in dark mode).
+ * The heading carries the message on its own. */
+.no-tasks-illu-wrapper .inline-block-container {
+  display: none;
+}
+
+/* ============================================================
+ * CHROME SCALE — navigation smaller than the content
+ * ============================================================
+ * The window zoom (Ctrl + scroll) scales everything at once. This makes the
+ * two navigation rails sit a step below the content instead: the icons on the
+ * left rail and the action strip on the right shrink, the middle keeps its
+ * size. One number drives both — raise it towards 1 for a smaller difference,
+ * lower it for a bigger one. */
+body {
+  --chrome-scale: 0.85;
+}
+
+/* The left rail carries its widths, paddings and icon sizes in a dozen places,
+   so it is scaled as a whole. `zoom` is a layout property: the rail really
+   becomes narrower and hands the space to the content, unlike `transform`.
+   One caveat — the drag-to-resize handle on the expanded rail computes from
+   unscaled pointer coordinates, so the edge follows the pointer at a slightly
+   different rate while dragging. */
+magic-side-nav {
+  zoom: var(--chrome-scale);
+}
+
+/* The right strip is parameterised, so it takes the scale through its own
+   measurements. Its width is the same variable the content is padded with, so
+   the column and the padding stay in step. */
+body {
+  --vertical-action-bar-width: calc(48px * var(--chrome-scale));
+}
+
+body > nav.action-nav-right {
+  --header-button-size: calc(40px * var(--chrome-scale));
+  --mat-mini-fab-size: calc(48px * var(--chrome-scale));
+  --mdc-icon-button-state-layer-size: calc(40px * var(--chrome-scale));
+  --mdc-icon-button-icon-size: calc(24px * var(--chrome-scale));
+}
+
+body > nav.action-nav-right mat-icon {
+  font-size: calc(24px * var(--chrome-scale));
+  width: calc(24px * var(--chrome-scale));
+  height: calc(24px * var(--chrome-scale));
+  line-height: calc(24px * var(--chrome-scale));
+}
