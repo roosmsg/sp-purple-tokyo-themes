@@ -284,6 +284,7 @@ body:not(.isDarkTheme) {
    overlay without replacing its glyphs or click targets. */
 body {
   --window-controls-width: 138px;
+  --window-controls-height: env(titlebar-area-height, var(--wco-height, 24px));
   --window-controls-bg: var(--surface-0);
 }
 
@@ -292,8 +293,11 @@ body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen)::after {
   position: fixed;
   z-index: var(--z-main-header, 10);
   inset: 0 0 auto auto;
-  width: var(--window-controls-width);
-  height: var(--wco-height, 24px);
+  width: calc(
+    100vw - env(titlebar-area-x, 0px) -
+      env(titlebar-area-width, calc(100vw - var(--window-controls-width)))
+  );
+  height: var(--window-controls-height);
   background: var(--window-controls-bg);
   pointer-events: none;
 }
@@ -304,7 +308,9 @@ body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen)::after {
 @media screen and (min-width: 600px) {
   body.isElectron.isNoMac.isObsidianStyleHeader.isVerticalActionBar
     > nav.action-nav-right.action-nav-right--teleported {
-    --action-bar-window-gap: var(--s, 8px);
+    --action-bar-window-gap: calc(
+      var(--wco-height, 24px) + var(--s, 8px) - var(--window-controls-height)
+    );
     background: var(--window-controls-bg);
   }
 
@@ -312,7 +318,9 @@ body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen)::after {
     > nav.action-nav-right.action-nav-right--teleported::before {
     content: '';
     position: absolute;
-    inset: calc(var(--action-bar-window-gap) * -1) 0 auto;
+    /* Absolute positioning starts inside the rail's own border. Extend one
+       pixel outward so both 1px border segments share the same x-coordinate. */
+    inset: calc(var(--action-bar-window-gap) * -1) 0 auto -1px;
     height: var(--action-bar-window-gap);
     background: var(--window-controls-bg);
     border-left: 1px solid var(--separator-color);
@@ -596,7 +604,8 @@ body.isDarkTheme {
 body,
 body.isDarkTheme {
   --today-icon: 'bolt';
-  --schedule-icon: 'calendar_month';
+  --schedule-nav-icon: 'calendar_month';
+  --schedule-panel-icon: 'calendar_view_day';
 }
 
 /* Covered: the "Voeg toe aan Mijn Day" button on Today, the add-to-today
@@ -635,15 +644,16 @@ plan-tasks-tomorrow mat-icon::after,
   line-height: 1;
 }
 
-/* Schema uses the calendar-month symbol in every place where the app renders
-   its schedule-panel button, including the desktop action bar and mobile menu. */
+/* Schema has two distinct homes: calendar_month in the left navigation route,
+   and calendar_view_day on the right-panel button (desktop and mobile). */
+magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon,
 .e2e-toggle-schedule-day-panel mat-icon {
   visibility: hidden !important;
   position: relative;
 }
 
+magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon::after,
 .e2e-toggle-schedule-day-panel mat-icon::after {
-  content: var(--schedule-icon);
   visibility: visible;
   position: absolute;
   inset: 0;
@@ -651,6 +661,14 @@ plan-tasks-tomorrow mat-icon::after,
   align-items: center;
   justify-content: center;
   line-height: 1;
+}
+
+magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon::after {
+  content: var(--schedule-nav-icon);
+}
+
+.e2e-toggle-schedule-day-panel mat-icon::after {
+  content: var(--schedule-panel-icon);
 }
 
 /* ============================================================
