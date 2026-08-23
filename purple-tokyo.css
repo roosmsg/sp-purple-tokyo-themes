@@ -604,7 +604,7 @@ body.isDarkTheme {
 body,
 body.isDarkTheme {
   --today-icon: 'bolt';
-  --schedule-nav-icon: 'calendar_month';
+  --schedule-nav-icon: 'event_note';
   --schedule-panel-icon: 'calendar_view_day';
 }
 
@@ -644,7 +644,7 @@ plan-tasks-tomorrow mat-icon::after,
   line-height: 1;
 }
 
-/* Schema has two distinct homes: calendar_month in the left navigation route,
+/* Schema has two distinct homes: event_note in the left navigation route,
    and calendar_view_day on the right-panel button (desktop and mobile). */
 magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon,
 .e2e-toggle-schedule-day-panel mat-icon {
