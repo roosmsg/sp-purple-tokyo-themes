@@ -298,13 +298,26 @@ body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen)::after {
   pointer-events: none;
 }
 
-/* With the experimental vertical action bar enabled, remove the app's extra
-   top gap and continue the same surface directly below the native controls. */
+/* Keep the app's original top gap so the Play button does not crowd the native
+   controls. A short, non-interactive continuation fills only that gap, making
+   the two purple surfaces meet without moving the action bar itself. */
 @media screen and (min-width: 600px) {
   body.isElectron.isNoMac.isObsidianStyleHeader.isVerticalActionBar
     > nav.action-nav-right.action-nav-right--teleported {
-    top: var(--wco-height, 24px);
+    --action-bar-window-gap: var(--s, 8px);
     background: var(--window-controls-bg);
+  }
+
+  body.isElectron.isNoMac.isObsidianStyleHeader.isVerticalActionBar
+    > nav.action-nav-right.action-nav-right--teleported::before {
+    content: '';
+    position: absolute;
+    inset: calc(var(--action-bar-window-gap) * -1) 0 auto;
+    height: var(--action-bar-window-gap);
+    background: var(--window-controls-bg);
+    border-left: 1px solid var(--separator-color);
+    box-sizing: border-box;
+    pointer-events: none;
   }
 }
 
