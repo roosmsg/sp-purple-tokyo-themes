@@ -25,7 +25,8 @@ Each section in the file stands on its own and can be deleted without touching t
 | Flat surfaces | Task rows separate with a hairline instead of a drop shadow. |
 | Material surfaces | Menus, dialogs, dropdowns, the date picker, cards and the snackbar take the theme's own surfaces instead of Material's grey. Tooltips stay deliberately contrasting. |
 | Today icon | Replaces the sun with a bolt on the today affordances. |
-| Schedule icons | Uses the built-in Material Symbols `event_note` glyph for Schema in the left navigation and `calendar_view_day` for its right-panel button in desktop and mobile layouts. |
+| Planner icon | Uses the built-in Material Symbols `view_week` glyph for Planner in the left navigation. |
+| Schedule icons | Uses the built-in Material Symbols `calendar_today` glyph for Schema in the left navigation and `event_note` on its right-panel button in desktop and mobile layouts. |
 | Empty state | Hides the horizon drawing under "no tasks planned" and keeps the heading clear of the add-more button. |
 | Task work view | Makes task lists, empty states and the finish-day action larger than Settings. |
 | Dashboard icon | Gives the Dashboard plugin entry in the left menu the built-in Material Symbols `data_usage` glyph in the same muted colour as Schema; no SVG asset is added. |
@@ -35,7 +36,8 @@ Each section in the file stands on its own and can be deleted without touching t
 ## Tuning
 
 - `--today-icon` — the Material Symbols ligature drawn in place of the sun. `bolt` by default; `electric_bolt`, `offline_bolt`, `flash_on` and `thunderstorm` are the other candidates in the app's icon picker.
-- `--schedule-nav-icon` and `--schedule-panel-icon` — the Material Symbols ligatures used for Schema in the left navigation (`event_note`) and on the right-panel control (`calendar_view_day`).
+- `--planner-nav-icon` — the Material Symbols ligature used for Planner in the left navigation (`view_week`).
+- `--schedule-nav-icon` and `--schedule-panel-icon` — the Material Symbols ligatures used for Schema in the left navigation (`calendar_today`) and on the right-panel control (`event_note`).
 - `--work-view-scale` — the task work view relative to Settings (`1.1`). This follows the effect of one extra Ctrl + scroll step without changing Settings itself.
 - `--side-nav-scale`, `--nav-footer-scale`, `--action-bar-scale` — the navigation scale in three places: the left rail (`1.05`), the search/timeline/settings group at the foot of that rail relative to the rail itself (`1`, matching the other rail buttons), and the right action strip (`0.85`). `--action-bar-idle-opacity` (`0.25`) dims every action-bar button except Play and Add task by 75% while the bar is idle, in both desktop layouts. `--action-bar-hover-out-delay` (`2s`) delays both layouts' return to idle opacity. `--play-button-size` (`46px`) sets the time-tracking button apart from the vertical strip scale; the strip widens to fit it.
 - `--window-controls-width` (`138px`) is the fallback width when Electron does not expose its native title-bar safe area; `--window-controls-bg` controls the backing strip's colour.

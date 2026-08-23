@@ -604,8 +604,9 @@ body.isDarkTheme {
 body,
 body.isDarkTheme {
   --today-icon: 'bolt';
-  --schedule-nav-icon: 'event_note';
-  --schedule-panel-icon: 'calendar_view_day';
+  --planner-nav-icon: 'view_week';
+  --schedule-nav-icon: 'calendar_today';
+  --schedule-panel-icon: 'event_note';
 }
 
 /* Covered: the "Voeg toe aan Mijn Day" button on Today, the add-to-today
@@ -644,14 +645,16 @@ plan-tasks-tomorrow mat-icon::after,
   line-height: 1;
 }
 
-/* Schema has two distinct homes: event_note in the left navigation route,
-   and calendar_view_day on the right-panel button (desktop and mobile). */
+/* Planner uses view_week in the left navigation. Schema uses calendar_today
+   in the left navigation and event_note on the right-panel button. */
+magic-side-nav nav-item a.nav-link[href$='/planner'] > mat-icon.nav-icon,
 magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon,
 .e2e-toggle-schedule-day-panel mat-icon {
   visibility: hidden !important;
   position: relative;
 }
 
+magic-side-nav nav-item a.nav-link[href$='/planner'] > mat-icon.nav-icon::after,
 magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon::after,
 .e2e-toggle-schedule-day-panel mat-icon::after {
   visibility: visible;
@@ -661,6 +664,10 @@ magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon::after
   align-items: center;
   justify-content: center;
   line-height: 1;
+}
+
+magic-side-nav nav-item a.nav-link[href$='/planner'] > mat-icon.nav-icon::after {
+  content: var(--planner-nav-icon);
 }
 
 magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon::after {
