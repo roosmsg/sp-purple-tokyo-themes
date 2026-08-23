@@ -27,8 +27,8 @@ Each section in the file stands on its own and can be deleted without touching t
 | Today icon | Replaces the sun with a bolt on the today affordances. |
 | Planner icon | Uses the built-in Material Symbols `next_week` glyph for Planner in the left navigation. |
 | Schedule icons | Uses the built-in Material Symbols `calendar_clock` glyph for Schema in the left navigation and `pending_actions` on its right-panel button in desktop and mobile layouts. |
-| Empty state | Hides the horizon drawing under "no tasks planned" and keeps the heading clear of the add-more button. |
-| Task work view | Makes task lists, empty states and the finish-day action larger than Settings. |
+| Empty state | Hides the horizon drawing under "no tasks planned", adds `48px`-equivalent breathing room above the heading and keeps an explicit `32px`-equivalent gap before the add-more button. |
+| Content scale | Keeps task lists, empty states and the finish-day action at their existing `1.1` scale while zooming the desktop Settings page out to `0.9`. |
 | Dashboard icon | Gives the Dashboard plugin entry in the left menu the built-in Material Symbols `avg_pace` glyph in the same muted colour as Schema; no SVG asset is added. |
 | Window controls | Places a compact theme surface behind Electron's native minimise, maximise and close buttons, matching the Windows reference while preserving native behaviour. Its dimensions follow Electron's native title-bar safe area, so Ctrl + scroll does not enlarge it. When the experimental vertical action bar is enabled, the rail starts directly below this surface and preserves the original Play position through internal top padding. |
 | Chrome scale | Puts the two navigation rails a step below the content in size. |
@@ -38,7 +38,7 @@ Each section in the file stands on its own and can be deleted without touching t
 - `--today-icon` — the Material Symbols ligature drawn in place of the sun. `bolt` by default; `electric_bolt`, `offline_bolt`, `flash_on` and `thunderstorm` are the other candidates in the app's icon picker.
 - `--planner-nav-icon` — the Material Symbols ligature used for Planner in the left navigation (`next_week`).
 - `--schedule-nav-icon` and `--schedule-panel-icon` — the Material Symbols ligatures used for Schema in the left navigation (`calendar_clock`) and on the right-panel control (`pending_actions`).
-- `--work-view-scale` — the task work view relative to Settings (`1.1`). This follows the effect of one extra Ctrl + scroll step without changing Settings itself.
+- `--work-view-scale` and `--settings-view-scale` — independent scales for the task work view (`1.1`) and desktop Settings page (`0.9`). Adjusting Settings does not change project pages.
 - `--side-nav-scale`, `--nav-footer-scale`, `--action-bar-scale` — the navigation scale in three places: the left rail (`1.05`), the search/timeline/settings group at the foot of that rail relative to the rail itself (`1`, matching the other rail buttons), and the right action strip (`0.85`). `--action-bar-idle-opacity` (`0.25`) dims every action-bar button except Play and Add task by 75% while the bar is idle, in both desktop layouts. `--action-bar-hover-out-delay` (`2s`) delays both layouts' return to idle opacity. `--play-button-size` (`46px`) sets the time-tracking button apart from the vertical strip scale; the strip widens to fit it.
 - `--window-controls-width` (`138px`) is the fallback width when Electron does not expose its native title-bar safe area; `--window-controls-bg` controls the backing strip's colour.
 - `--vertical-action-bar-play-padding-top` (`12px` with the app's default spacing tokens) keeps Play separated from the native controls while the rail background starts at the top.

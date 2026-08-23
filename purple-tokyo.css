@@ -674,27 +674,44 @@ magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon::after
   display: none;
 }
 
-.no-tasks-illu-wrapper .no-tasks-label {
-  position: static;
-  inset: auto;
-  transform: none;
-  margin: 0;
+work-view .no-tasks-illu-wrapper {
+  padding-top: calc(var(--s4, 32px) + var(--s2, 16px));
+  margin-bottom: var(--s4, 32px) !important;
+}
+
+/* Component-scoped app styles have higher specificity and absolutely centre
+   this heading. Important overrides are required to return it to normal flow,
+   so the wrapper height and the action gap can take effect. */
+work-view .no-tasks-illu-wrapper .no-tasks-label {
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+  margin: 0 !important;
 }
 
 /* ============================================================
- * TASK WORK VIEW SCALE
+ * CONTENT VIEW SCALE
  * ============================================================
  * Ctrl + scroll changes the whole window, which made the task work view and
- * Settings inseparable. Scale only the wrapper that carries task lists, empty
- * states and the finish-day action. Width compensation keeps it inside the
- * work-view viewport while Settings retains the window zoom. */
+ * Settings inseparable. Keep project tasks at their existing larger scale and
+ * independently zoom Settings out. Size compensation keeps both routed views
+ * filling their viewport. */
 body {
   --work-view-scale: 1.1;
+  --settings-view-scale: 0.9;
 }
 
 work-view .task-list-wrapper {
   width: calc(100% / var(--work-view-scale));
   zoom: var(--work-view-scale);
+}
+
+@media screen and (min-width: 600px) {
+  .route-wrapper > router-outlet + config-page {
+    width: calc(100% / var(--settings-view-scale)) !important;
+    height: calc(100% / var(--settings-view-scale)) !important;
+    zoom: var(--settings-view-scale);
+  }
 }
 
 /* ============================================================
