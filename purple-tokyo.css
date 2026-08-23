@@ -573,6 +573,7 @@ body.isDarkTheme {
 body,
 body.isDarkTheme {
   --today-icon: 'bolt';
+  --schedule-icon: 'calendar_month';
 }
 
 /* Covered: the "Voeg toe aan Mijn Day" button on Today, the add-to-today
@@ -602,6 +603,24 @@ plan-tasks-tomorrow mat-icon,
 plan-tasks-tomorrow mat-icon::after,
 .quick-access > button:first-of-type mat-icon::after {
   content: var(--today-icon);
+  visibility: visible;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* Schema uses the calendar-month symbol in every place where the app renders
+   its schedule-panel button, including the desktop action bar and mobile menu. */
+.e2e-toggle-schedule-day-panel mat-icon {
+  visibility: hidden !important;
+  position: relative;
+}
+
+.e2e-toggle-schedule-day-panel mat-icon::after {
+  content: var(--schedule-icon);
   visibility: visible;
   position: absolute;
   inset: 0;
@@ -661,8 +680,8 @@ body {
   --action-bar-scale: 0.85;
   /* Non-primary actions stay visible but recede until the rail is used. */
   --action-bar-idle-opacity: 0.25;
-  /* Only the horizontal header waits before returning to its idle opacity. */
-  --action-bar-hover-out-delay: 1s;
+  /* Wait long enough after hover-out for the delay to be unmistakable. */
+  --action-bar-hover-out-delay: 2s;
   /* The time-tracking button is the one control in that strip you reach for
      while working, so it carries a size of its own rather than a scale. The
      app draws it at 40px. */
@@ -781,11 +800,6 @@ magic-side-nav nav-item plugin-icon.nav-icon::after {
   nav.action-nav-right:not(:hover):not(:focus-within)
     button:not(:where(.play-btn, .tour-addBtn)) {
     opacity: var(--action-bar-idle-opacity);
-  }
-
-  main-header
-    nav.action-nav-right:not(:hover):not(:focus-within)
-    button:not(:where(.play-btn, .tour-addBtn)) {
     transition-delay: var(--action-bar-hover-out-delay);
   }
 }
