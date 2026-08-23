@@ -609,11 +609,13 @@ plan-tasks-tomorrow mat-icon::after,
  * the group at its foot, and the action strip on the right. Raise a value
  * towards 1 for a smaller difference, lower it for a bigger one. */
 body {
-  /* Left rail: the places you navigate to. */
-  --side-nav-scale: 0.95;
+  /* Left rail: the places you navigate to. Above 1 it draws larger than the
+     app does, which is the point — these are the buttons in reach all day. */
+  --side-nav-scale: 1.05;
   /* Search, timeline and settings at the foot of that rail. Relative to the
-     rail, so it lands a step under the entries above it. */
-  --nav-footer-scale: 0.9;
+     rail, so it lands a step under the entries above it. Lowered in step with
+     the value above, which keeps the group at the size it already had. */
+  --nav-footer-scale: 0.81;
   /* Right action strip. */
   --action-bar-scale: 0.85;
   /* The time-tracking button is the one control in that strip you reach for

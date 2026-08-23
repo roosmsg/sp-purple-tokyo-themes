@@ -30,7 +30,7 @@ Each section in the file stands on its own and can be deleted without touching t
 ## Tuning
 
 - `--today-icon` — the Material Symbols ligature drawn in place of the sun. `bolt` by default; `electric_bolt`, `offline_bolt`, `flash_on` and `thunderstorm` are the other candidates in the app's icon picker.
-- `--side-nav-scale`, `--nav-footer-scale`, `--action-bar-scale` — how much smaller the navigation is than the content, in three steps: the left rail (`0.95`), the search/timeline/settings group at the foot of that rail relative to the rail itself (`0.9`), and the right action strip (`0.85`). Raise a value towards `1` for a smaller difference. `--play-button-size` (`46px`) sets the time-tracking button apart from that scale; the strip widens to fit it.
+- `--side-nav-scale`, `--nav-footer-scale`, `--action-bar-scale` — how much smaller the navigation is than the content, in three steps: the left rail (`1.05`), the search/timeline/settings group at the foot of that rail relative to the rail itself (`0.81`), and the right action strip (`0.85`). Raise a value towards `1` for a smaller difference. `--play-button-size` (`46px`) sets the time-tracking button apart from that scale; the strip widens to fit it.
 
 ## Notes
 
