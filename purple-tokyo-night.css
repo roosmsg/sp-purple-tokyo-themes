@@ -1,10 +1,12 @@
 /**
- * Purple Tokyo — a light/dark pair for Super Productivity
+ * Purple Tokyo Night — a light/dark pair for Super Productivity
  *
- *   Dark  — Shades of Purple (Super Dark): deep indigo surfaces, white text,
- *           a muted violet for supporting text, Claude salmon as the accent.
- *   Light — Tokyo Light: cool blue-grey surfaces, ink-blue text, Tokyo Night
- *           Light's blue as the accent.
+ *   Light — Shades of Purple: the editor theme's own indigo surfaces, white
+ *           text, a muted violet for supporting text, Claude salmon as the
+ *           accent. A dark palette in the light slot, deliberately: it is the
+ *           lighter of the two purples, not a light theme.
+ *   Dark  — Tokyo Night: the near-black blue surfaces of that editor theme,
+ *           its pale blue foreground and its blue as the accent.
  *
  * Both halves are the palettes used in Personal Work Manager, remapped onto
  * Super Productivity's token contract (docs/theming-contract.md): the surface
@@ -13,9 +15,9 @@
  * remaining declarations cover the "category B" tokens, which the base pins to
  * a neutral grey ramp that the ladder does not reach.
  *
- * Selectors: light primitives sit on `body:not(.isDarkTheme)` rather than plain
- * `body`, so nothing declared for light can leak into dark mode. Both selectors
- * outrank the base's `body` declarations.
+ * Selectors: the first block sits on `body:not(.isDarkTheme)` rather than plain
+ * `body`, so nothing declared for the light slot can leak into the dark one.
+ * Both selectors outrank the base's `body` declarations.
  *
  * Card surfaces: as in PWM, cards and task rows sit a step *below* the page
  * rather than above it. Hover, current and selected states step up, so
@@ -28,118 +30,15 @@
  */
 
 /* ============================================================
- * LIGHT — Tokyo Light
+ * LIGHT SLOT — Shades of Purple
  * ============================================================ */
 body:not(.isDarkTheme) {
   /* Surface ladder: chrome → page → cards → elevated → highest */
-  --surface-0: #d6d8df; /* deepest: toolbars, side nav (--bg-darker) */
-  --surface-1: #e6e7ed; /* app background (PWM --color-bg-primary) */
-  --surface-2: #e1e2e8; /* cards, tasks, dialogs (PWM --color-bg-secondary) */
-  --surface-3: #dcdee3; /* elevated: current task, drag-drop targets */
-  --surface-4: #cdced1; /* highest: banner, mobile bottom panel */
-
-  /* Ink */
-  --ink-strong: #262b3a;
-  --ink: #363c4d; /* PWM --color-text-primary */
-  /* PWM's tertiary text (#707280) lands at 3.9:1 on this page colour; nudged
-     darker so muted labels clear WCAG AA for normal text. */
-  --ink-muted: #5c6478;
-  --ink-on-channel: 54, 60, 77; /* #363c4d — overlays read blue-grey, not black */
-
-  /* Separators, scrim, overlays */
-  --separator: #c9cbd2; /* PWM --color-border-tertiary */
-  --divider: #d0d2d9; /* PWM --color-border-secondary */
-  --scrim: rgba(38, 43, 58, 0.45);
-  --bg-overlay: rgba(230, 231, 237, 0.85);
-  --system-surface: #d6d8df; /* Android system bars; must stay opaque */
-
-  /* Primary — Tokyo Night Light blue (PWM --color-accent-*) */
-  --palette-primary-50: #eef3fa;
-  --palette-primary-100: #d7e0f2;
-  --palette-primary-200: #aec2e4;
-  --palette-primary-300: #7b9bd4;
-  --palette-primary-400: #4a77c4;
-  --palette-primary-500: #2959aa;
-  --palette-primary-600: #234c92;
-  --palette-primary-700: #1d3f79;
-  --palette-primary-800: #173261;
-  --palette-primary-900: #12274c;
-  /* Ink on the pale stops, white from 400 on. */
-  --palette-primary-contrast-50: #262b3a;
-  --palette-primary-contrast-100: #262b3a;
-  --palette-primary-contrast-200: #262b3a;
-  --palette-primary-contrast-300: #262b3a;
-  --palette-primary-contrast-400: #ffffff;
-  --palette-primary-contrast-500: #ffffff;
-  --palette-primary-contrast-600: #ffffff;
-  --palette-primary-contrast-700: #ffffff;
-  --palette-primary-contrast-800: #ffffff;
-  --palette-primary-contrast-900: #ffffff;
-
-  /* Warn — Tokyo Night Light red */
-  --palette-warn-300: #c07281;
-  --palette-warn-400: #a65a6a;
-  --palette-warn-500: #8c4351;
-  --palette-warn-600: #7a3a47;
-  --palette-warn-700: #66303b;
-  --palette-warn-contrast-300: #262b3a;
-  --palette-warn-contrast-400: #ffffff;
-  --palette-warn-contrast-500: #ffffff;
-  --palette-warn-contrast-600: #ffffff;
-  --palette-warn-contrast-700: #ffffff;
-
-  /* Status — Tokyo Night Light */
-  --color-success: #385f0d;
-  --color-warning: #8f5e15;
-  --color-danger: #8c4351;
-  --c-success: #385f0d;
-  --c-warning: #8f5e15;
-  --c-error: #8c4351;
-  --c-info: #0f4b6e;
-  --sun-yellow: #8f5e15;
-
-  /* Links carry the accent at full strength instead of the base's ink mix. */
-  --link-color: #234c92;
-
-  /* --- Category B: tokens the base hardcodes to white or neutral grey --- */
-  --bg-drag-col: #dcdee3;
-  --bg-super-light: #eef0f4;
-  --right-panel-bg-mobile: #e1e2e8;
-  --bottom-panel-bg: #e1e2e8;
-  --selected-task-bg-color: #dcdee3;
-  --task-c-selected-bg: #dcdee3;
-  --extra-border-color: #d0d2d9;
-  --standard-note-bg: #eceef2; /* notes lift off the page like paper */
-  --standard-note-bg-hovered: #e6e7ed;
-  --standard-note-fg: var(--ink);
-  --task-detail-bg: #e1e2e8;
-  --task-detail-bg-hover: #dcdee3;
-  --schedule-event-bg: #eceef2;
-  --sidenav-hover-bg: rgba(54, 60, 77, 0.07);
-  --scrollbar-thumb: rgba(54, 60, 77, 0.25);
-  --scrollbar-thumb-hover: rgba(54, 60, 77, 0.45);
-  --scrollbar-track: transparent;
-  --grid-color: #cfd1d8;
-  --chip-outline-color: rgba(54, 60, 77, 0.24);
-  --progress-bg: rgba(54, 60, 77, 0.12);
-  --improvement-text: var(--ink);
-  --improvement-button-text: var(--ink);
-  --improvement-border: rgba(54, 60, 77, 0.25);
-
-  /* Text selection */
-  --theme-selection-bg: rgba(41, 89, 170, 0.18);
-}
-
-/* ============================================================
- * DARK — Shades of Purple (Super Dark)
- * ============================================================ */
-body.isDarkTheme {
-  /* Surface ladder */
-  --surface-0: #131327; /* deepest: toolbars, side nav (PWM --color-bg-background) */
-  --surface-1: #191830; /* app background (PWM --color-bg-primary) */
-  --surface-2: #15152b; /* cards, tasks, dialogs (PWM --color-bg-secondary) */
-  --surface-3: #232144; /* elevated: current task, drag-drop targets */
-  --surface-4: #2f2c5c; /* highest: banner, mobile bottom panel */
+  --surface-0: #1e1e3f; /* deepest: toolbars, side nav (PWM --color-bg-background) */
+  --surface-1: #2d2b55; /* app background (PWM --color-bg-primary) */
+  --surface-2: #222244; /* cards, tasks, dialogs (PWM --color-bg-secondary) */
+  --surface-3: #3a3768; /* elevated: current task, drag-drop targets */
+  --surface-4: #4a4585; /* highest: banner, mobile bottom panel */
 
   /* Ink — white body text, violet for supporting text, as in the editor theme */
   --ink-strong: #ffffff;
@@ -148,11 +47,11 @@ body.isDarkTheme {
   --ink-on-channel: 255, 255, 255;
 
   /* Separators, scrim, overlays */
-  --separator: #2c2a52; /* PWM --color-border-tertiary */
-  --divider: #232144; /* PWM --color-border-secondary */
-  --scrim: rgba(9, 9, 20, 0.7);
-  --bg-overlay: rgba(19, 19, 39, 0.85);
-  --system-surface: #131327;
+  --separator: #3e3a72; /* PWM --color-border-tertiary */
+  --divider: #34305f; /* PWM --color-border-secondary */
+  --scrim: rgba(15, 15, 31, 0.7);
+  --bg-overlay: rgba(45, 43, 85, 0.85);
+  --system-surface: #1e1e3f; /* Android system bars; must stay opaque */
 
   /* Primary — Claude salmon (PWM --color-accent-*) */
   --palette-primary-50: #fdf2ee;
@@ -166,13 +65,13 @@ body.isDarkTheme {
   --palette-primary-800: #85422b;
   --palette-primary-900: #6b3623;
   /* Salmon stays light enough to carry dark text through 600. */
-  --palette-primary-contrast-50: #1b1a33;
-  --palette-primary-contrast-100: #1b1a33;
-  --palette-primary-contrast-200: #1b1a33;
-  --palette-primary-contrast-300: #1b1a33;
-  --palette-primary-contrast-400: #1b1a33;
-  --palette-primary-contrast-500: #1b1a33;
-  --palette-primary-contrast-600: #1b1a33;
+  --palette-primary-contrast-50: #1e1e3f;
+  --palette-primary-contrast-100: #1e1e3f;
+  --palette-primary-contrast-200: #1e1e3f;
+  --palette-primary-contrast-300: #1e1e3f;
+  --palette-primary-contrast-400: #1e1e3f;
+  --palette-primary-contrast-500: #1e1e3f;
+  --palette-primary-contrast-600: #1e1e3f;
   --palette-primary-contrast-700: #ffffff;
   --palette-primary-contrast-800: #ffffff;
   --palette-primary-contrast-900: #ffffff;
@@ -183,9 +82,9 @@ body.isDarkTheme {
   --palette-warn-500: #ff628c;
   --palette-warn-600: #e04d76;
   --palette-warn-700: #b93b5e;
-  --palette-warn-contrast-300: #1b1a33;
-  --palette-warn-contrast-400: #1b1a33;
-  --palette-warn-contrast-500: #1b1a33;
+  --palette-warn-contrast-300: #1e1e3f;
+  --palette-warn-contrast-400: #1e1e3f;
+  --palette-warn-contrast-500: #1e1e3f;
   --palette-warn-contrast-600: #ffffff;
   --palette-warn-contrast-700: #ffffff;
 
@@ -199,31 +98,34 @@ body.isDarkTheme {
   --c-info: #9effff;
   --sun-yellow: #fad000;
 
+  /* Links carry the accent at full strength instead of the base's ink mix. */
   --link-color: #e08e70;
 
-  /* --- Category B: the base maps these to a neutral grey ramp --- */
-  --bg-slightly-lighter: #1e1d3a;
-  --bg-super-light: #3a3768;
+  /* --- Category B: tokens the base pins to white or a neutral grey ramp --- */
+  --bg-slightly-lighter: #34305f;
+  --bg-super-light: #4a4585;
+  --bg-drag-col: #3a3768;
+  --right-panel-bg-mobile: #222244;
+  --bottom-panel-bg: #1e1e3f;
   --text-color-less-intense: rgba(255, 255, 255, 0.82);
   --text-color-more-intense: #ffffff;
-  --selected-task-bg-color: #232144;
-  --task-c-selected-bg: #232144;
-  --sub-task-c-bg: #1a1934; /* nested rows lift off the card */
-  --sub-task-c-bg-in-selected: #232144;
-  --sub-task-c-bg-done: #131327;
-  --task-c-bg-done: #131327;
-  --extra-border-color: #2c2a52;
-  --standard-note-bg: #1b1a35;
-  --standard-note-bg-hovered: #232144;
+  --selected-task-bg-color: #3a3768;
+  --task-c-selected-bg: #3a3768;
+  --sub-task-c-bg: #272550; /* nested rows lift off the card */
+  --sub-task-c-bg-in-selected: #3a3768;
+  --sub-task-c-bg-done: #1e1e3f;
+  --task-c-bg-done: #1e1e3f;
+  --extra-border-color: #3e3a72;
+  --standard-note-bg: #272550;
+  --standard-note-bg-hovered: #3a3768;
   --standard-note-fg: #ffffff;
-  --task-detail-bg: #1b1a35;
-  --task-detail-bg-hover: #232144;
-  --bottom-panel-bg: #131327;
-  --schedule-event-bg: #1e1d3a;
-  --schedule-event-bg-in-side-panel: #232144;
+  --task-detail-bg: #272550;
+  --task-detail-bg-hover: #3a3768;
+  --schedule-event-bg: #34305f;
+  --schedule-event-bg-in-side-panel: #3a3768;
   --sidenav-hover-bg: rgba(165, 153, 233, 0.09);
   --sidenav-item-active-bg: rgba(217, 119, 87, 0.2);
-  --mat-sidenav-scrim-color: rgba(9, 9, 20, 0.75);
+  --mat-sidenav-scrim-color: rgba(15, 15, 31, 0.75);
   --scrollbar-thumb: rgba(165, 153, 233, 0.22);
   --scrollbar-thumb-hover: rgba(165, 153, 233, 0.45);
   --scrollbar-track: transparent;
@@ -234,7 +136,115 @@ body.isDarkTheme {
   --improvement-button-text: #ffffff;
   --improvement-border: rgba(165, 153, 233, 0.3);
 
+  /* Text selection */
   --theme-selection-bg: rgba(217, 119, 87, 0.28);
+}
+
+/* ============================================================
+ * DARK — Tokyo Night
+ * ============================================================ */
+body.isDarkTheme {
+  /* Surface ladder */
+  --surface-0: #16161e; /* deepest: toolbars, side nav (PWM --color-bg-background) */
+  --surface-1: #1a1b26; /* app background (PWM --color-bg-primary) */
+  --surface-2: #16161e; /* cards, tasks, dialogs (PWM --color-bg-secondary) */
+  --surface-3: #1e202e; /* elevated: current task, drag-drop targets */
+  --surface-4: #292e42; /* highest: banner, mobile bottom panel */
+
+  /* Ink — the theme's pale blue foreground, its UI grey for supporting text */
+  --ink-strong: #d5dcf7;
+  --ink: #c0caf5; /* PWM --color-text-primary */
+  --ink-muted: #9aa2c4; /* PWM's #787c99, lifted to clear AA on the page */
+  --ink-on-channel: 192, 202, 245;
+
+  /* Separators, scrim, overlays */
+  --separator: #363b54; /* PWM --color-border-tertiary */
+  --divider: #232433; /* PWM --color-border-secondary */
+  --scrim: rgba(9, 10, 17, 0.7);
+  --bg-overlay: rgba(26, 27, 38, 0.85);
+  --system-surface: #16161e;
+
+  /* Primary — the theme's blue (PWM --color-accent-*) */
+  --palette-primary-50: #eff4fe;
+  --palette-primary-100: #dee8fd;
+  --palette-primary-200: #c5d6fc;
+  --palette-primary-300: #abc5fa;
+  --palette-primary-400: #92b3f9;
+  --palette-primary-500: #7aa2f7;
+  --palette-primary-600: #6183bb;
+  --palette-primary-700: #3d59a1;
+  --palette-primary-800: #29355a;
+  --palette-primary-900: #1e2742;
+  /* The blue stays light enough to carry dark text through 600. */
+  --palette-primary-contrast-50: #1a1b26;
+  --palette-primary-contrast-100: #1a1b26;
+  --palette-primary-contrast-200: #1a1b26;
+  --palette-primary-contrast-300: #1a1b26;
+  --palette-primary-contrast-400: #1a1b26;
+  --palette-primary-contrast-500: #1a1b26;
+  --palette-primary-contrast-600: #1a1b26;
+  --palette-primary-contrast-700: #ffffff;
+  --palette-primary-contrast-800: #ffffff;
+  --palette-primary-contrast-900: #ffffff;
+
+  /* Warn — Tokyo Night red */
+  --palette-warn-300: #fbb4c0;
+  --palette-warn-400: #f9939f;
+  --palette-warn-500: #f7768e;
+  --palette-warn-600: #db5f78;
+  --palette-warn-700: #b54b60;
+  --palette-warn-contrast-300: #1a1b26;
+  --palette-warn-contrast-400: #1a1b26;
+  --palette-warn-contrast-500: #1a1b26;
+  --palette-warn-contrast-600: #1a1b26;
+  --palette-warn-contrast-700: #ffffff;
+
+  /* Status — Tokyo Night */
+  --color-success: #9ece6a;
+  --color-warning: #e0af68;
+  --color-danger: #f7768e;
+  --c-success: #9ece6a;
+  --c-warning: #e0af68;
+  --c-error: #f7768e;
+  --c-info: #7dcfff;
+  --sun-yellow: #e0af68;
+
+  --link-color: #7aa2f7;
+
+  /* --- Category B: the base maps these to a neutral grey ramp --- */
+  --bg-slightly-lighter: #1e202e;
+  --bg-super-light: #292e42;
+  --text-color-less-intense: rgba(192, 202, 245, 0.82);
+  --text-color-more-intense: #d5dcf7;
+  --selected-task-bg-color: #1e202e;
+  --task-c-selected-bg: #1e202e;
+  --sub-task-c-bg: #1b1c28; /* nested rows lift off the card */
+  --sub-task-c-bg-in-selected: #1e202e;
+  --sub-task-c-bg-done: #16161e;
+  --task-c-bg-done: #16161e;
+  --extra-border-color: #363b54;
+  --standard-note-bg: #1b1c28;
+  --standard-note-bg-hovered: #1e202e;
+  --standard-note-fg: #c0caf5;
+  --task-detail-bg: #1b1c28;
+  --task-detail-bg-hover: #1e202e;
+  --bottom-panel-bg: #16161e;
+  --schedule-event-bg: #1e202e;
+  --schedule-event-bg-in-side-panel: #292e42;
+  --sidenav-hover-bg: rgba(192, 202, 245, 0.08);
+  --sidenav-item-active-bg: rgba(122, 162, 247, 0.2);
+  --mat-sidenav-scrim-color: rgba(9, 10, 17, 0.75);
+  --scrollbar-thumb: rgba(192, 202, 245, 0.2);
+  --scrollbar-thumb-hover: rgba(192, 202, 245, 0.4);
+  --scrollbar-track: transparent;
+  --grid-color: rgba(192, 202, 245, 0.09);
+  --chip-outline-color: rgba(192, 202, 245, 0.28);
+  --progress-bg: rgba(192, 202, 245, 0.14);
+  --improvement-text: #c0caf5;
+  --improvement-button-text: #c0caf5;
+  --improvement-border: rgba(192, 202, 245, 0.28);
+
+  --theme-selection-bg: rgba(122, 162, 247, 0.28);
 }
 
 /* ============================================================
@@ -275,8 +285,8 @@ body.isDarkTheme {
  * nav transparent so a wallpaper can show through; delete these two rules to
  * get that behaviour back. */
 body:not(.isDarkTheme) {
-  --sidenav-bg: #d6d8df;
-  --sidenav-bg-mobile: #d6d8df;
+  --sidenav-bg: #1e1e3f;
+  --sidenav-bg-mobile: #1e1e3f;
 }
 
 /* Electron draws the functional minimise, maximise and close controls itself.
@@ -305,7 +315,7 @@ body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen)::after {
   pointer-events: none;
 }
 
-/* Start the purple rail directly below the native controls. Move the former
+/* Start the rail directly below the native controls. Move the former
    external gap inside as top padding, so Play keeps its original position. */
 @media screen and (min-width: 600px) {
   body.isElectron.isNoMac.isObsidianStyleHeader.isVerticalActionBar
@@ -317,18 +327,18 @@ body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen)::after {
 }
 
 body.isDarkTheme {
-  --sidenav-bg: #131327;
-  --sidenav-bg-mobile: #131327;
+  --sidenav-bg: #16161e;
+  --sidenav-bg-mobile: #16161e;
 }
 
 /* The gutter behind the app (overscroll, iOS safe areas) is pinned to a neutral
    grey by the base; match it to the page instead. */
 html:has(body:not(.isDarkTheme)) {
-  background: #e6e7ed;
+  background: #2d2b55;
 }
 
 html:has(body.isDarkTheme) {
-  background: #191830;
+  background: #1a1b26;
 }
 
 ::selection {
@@ -558,21 +568,21 @@ body.isDarkTheme {
 }
 
 /* A tooltip is the one panel that should not match the page: it reads as a
-   label on top of the interface. Dark ink in light mode, a lifted purple in
-   dark mode — themed either way, never grey. */
+   label on top of the interface. A lifted indigo in the light slot, a lifted
+   blue-grey in dark — themed either way, never the Material default. */
 body:not(.isDarkTheme) {
-  --panel-shadow: 0 4px 16px rgba(38, 43, 58, 0.14);
-  --mat-tooltip-container-color: #262b3a;
+  --panel-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --mat-tooltip-container-color: #4a4585;
   --mat-tooltip-supporting-text-color: #ffffff;
-  --mdc-plain-tooltip-container-color: #262b3a;
+  --mdc-plain-tooltip-container-color: #4a4585;
   --mdc-plain-tooltip-supporting-text-color: #ffffff;
 }
 
 body.isDarkTheme {
   --panel-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-  --mat-tooltip-container-color: #2f2c5c;
+  --mat-tooltip-container-color: #292e42;
   --mat-tooltip-supporting-text-color: #ffffff;
-  --mdc-plain-tooltip-container-color: #2f2c5c;
+  --mdc-plain-tooltip-container-color: #292e42;
   --mdc-plain-tooltip-supporting-text-color: #ffffff;
 }
 

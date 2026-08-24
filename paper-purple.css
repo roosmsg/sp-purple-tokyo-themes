@@ -1,10 +1,10 @@
 /**
- * Purple Tokyo — a light/dark pair for Super Productivity
+ * Paper Purple — a light/dark pair for Super Productivity
  *
+ *   Light — Licht: Personal Work Manager's neutral light, white and near-white
+ *           surfaces on a zinc ink ramp, with sky blue as the accent.
  *   Dark  — Shades of Purple (Super Dark): deep indigo surfaces, white text,
  *           a muted violet for supporting text, Claude salmon as the accent.
- *   Light — Tokyo Light: cool blue-grey surfaces, ink-blue text, Tokyo Night
- *           Light's blue as the accent.
  *
  * Both halves are the palettes used in Personal Work Manager, remapped onto
  * Super Productivity's token contract (docs/theming-contract.md): the surface
@@ -28,106 +28,105 @@
  */
 
 /* ============================================================
- * LIGHT — Tokyo Light
+ * LIGHT — Licht
  * ============================================================ */
 body:not(.isDarkTheme) {
   /* Surface ladder: chrome → page → cards → elevated → highest */
-  --surface-0: #d6d8df; /* deepest: toolbars, side nav (--bg-darker) */
-  --surface-1: #e6e7ed; /* app background (PWM --color-bg-primary) */
-  --surface-2: #e1e2e8; /* cards, tasks, dialogs (PWM --color-bg-secondary) */
-  --surface-3: #dcdee3; /* elevated: current task, drag-drop targets */
-  --surface-4: #cdced1; /* highest: banner, mobile bottom panel */
+  --surface-0: #f5f5f5; /* deepest: toolbars, side nav (PWM --color-bg-background) */
+  --surface-1: #ffffff; /* app background (PWM --color-bg-primary) */
+  --surface-2: #fcfcfc; /* cards, tasks, dialogs (PWM --color-bg-secondary) */
+  --surface-3: #eeeeef; /* elevated: current task, drag-drop targets */
+  --surface-4: #e1e1e3; /* highest: banner, mobile bottom panel */
 
   /* Ink */
-  --ink-strong: #262b3a;
-  --ink: #363c4d; /* PWM --color-text-primary */
-  /* PWM's tertiary text (#707280) lands at 3.9:1 on this page colour; nudged
-     darker so muted labels clear WCAG AA for normal text. */
-  --ink-muted: #5c6478;
-  --ink-on-channel: 54, 60, 77; /* #363c4d — overlays read blue-grey, not black */
+  --ink-strong: #09090b;
+  --ink: #18181b; /* PWM --color-text-primary */
+  /* PWM's tertiary text (#57575c) clears AA on white; kept as is. */
+  --ink-muted: #57575c;
+  --ink-on-channel: 24, 24, 27; /* #18181b — overlays read zinc, not pure black */
 
   /* Separators, scrim, overlays */
-  --separator: #c9cbd2; /* PWM --color-border-tertiary */
-  --divider: #d0d2d9; /* PWM --color-border-secondary */
-  --scrim: rgba(38, 43, 58, 0.45);
-  --bg-overlay: rgba(230, 231, 237, 0.85);
-  --system-surface: #d6d8df; /* Android system bars; must stay opaque */
+  --separator: #dfdfdf; /* PWM --color-border-tertiary */
+  --divider: #e5e5e5; /* PWM --color-border-secondary */
+  --scrim: rgba(9, 9, 11, 0.45);
+  --bg-overlay: rgba(255, 255, 255, 0.85);
+  --system-surface: #f5f5f5; /* Android system bars; must stay opaque */
 
-  /* Primary — Tokyo Night Light blue (PWM --color-accent-*) */
-  --palette-primary-50: #eef3fa;
-  --palette-primary-100: #d7e0f2;
-  --palette-primary-200: #aec2e4;
-  --palette-primary-300: #7b9bd4;
-  --palette-primary-400: #4a77c4;
-  --palette-primary-500: #2959aa;
-  --palette-primary-600: #234c92;
-  --palette-primary-700: #1d3f79;
-  --palette-primary-800: #173261;
-  --palette-primary-900: #12274c;
-  /* Ink on the pale stops, white from 400 on. */
-  --palette-primary-contrast-50: #262b3a;
-  --palette-primary-contrast-100: #262b3a;
-  --palette-primary-contrast-200: #262b3a;
-  --palette-primary-contrast-300: #262b3a;
-  --palette-primary-contrast-400: #ffffff;
-  --palette-primary-contrast-500: #ffffff;
+  /* Primary — the sky blue PWM's neutral themes carry (--color-accent-*) */
+  --palette-primary-50: #f0f9ff;
+  --palette-primary-100: #e0f2fe;
+  --palette-primary-200: #bae6fd;
+  --palette-primary-300: #7dd3fc;
+  --palette-primary-400: #38bdf8;
+  --palette-primary-500: #0ea5e9;
+  --palette-primary-600: #0284c7;
+  --palette-primary-700: #0369a1;
+  --palette-primary-800: #075985;
+  --palette-primary-900: #0c4a6e;
+  /* Sky carries dark text through 500; white from 600 on. */
+  --palette-primary-contrast-50: #18181b;
+  --palette-primary-contrast-100: #18181b;
+  --palette-primary-contrast-200: #18181b;
+  --palette-primary-contrast-300: #18181b;
+  --palette-primary-contrast-400: #18181b;
+  --palette-primary-contrast-500: #18181b;
   --palette-primary-contrast-600: #ffffff;
   --palette-primary-contrast-700: #ffffff;
   --palette-primary-contrast-800: #ffffff;
   --palette-primary-contrast-900: #ffffff;
 
-  /* Warn — Tokyo Night Light red */
-  --palette-warn-300: #c07281;
-  --palette-warn-400: #a65a6a;
-  --palette-warn-500: #8c4351;
-  --palette-warn-600: #7a3a47;
-  --palette-warn-700: #66303b;
-  --palette-warn-contrast-300: #262b3a;
-  --palette-warn-contrast-400: #ffffff;
+  /* Warn — red, at the strength a white page needs */
+  --palette-warn-300: #fca5a5;
+  --palette-warn-400: #f87171;
+  --palette-warn-500: #dc2626;
+  --palette-warn-600: #b91c1c;
+  --palette-warn-700: #991b1b;
+  --palette-warn-contrast-300: #18181b;
+  --palette-warn-contrast-400: #18181b;
   --palette-warn-contrast-500: #ffffff;
   --palette-warn-contrast-600: #ffffff;
   --palette-warn-contrast-700: #ffffff;
 
-  /* Status — Tokyo Night Light */
-  --color-success: #385f0d;
-  --color-warning: #8f5e15;
-  --color-danger: #8c4351;
-  --c-success: #385f0d;
-  --c-warning: #8f5e15;
-  --c-error: #8c4351;
-  --c-info: #0f4b6e;
-  --sun-yellow: #8f5e15;
+  /* Status — readable on white */
+  --color-success: #15803d;
+  --color-warning: #b45309;
+  --color-danger: #b91c1c;
+  --c-success: #15803d;
+  --c-warning: #b45309;
+  --c-error: #b91c1c;
+  --c-info: #0369a1;
+  --sun-yellow: #b45309;
 
   /* Links carry the accent at full strength instead of the base's ink mix. */
-  --link-color: #234c92;
+  --link-color: #0369a1;
 
   /* --- Category B: tokens the base hardcodes to white or neutral grey --- */
-  --bg-drag-col: #dcdee3;
-  --bg-super-light: #eef0f4;
-  --right-panel-bg-mobile: #e1e2e8;
-  --bottom-panel-bg: #e1e2e8;
-  --selected-task-bg-color: #dcdee3;
-  --task-c-selected-bg: #dcdee3;
-  --extra-border-color: #d0d2d9;
-  --standard-note-bg: #eceef2; /* notes lift off the page like paper */
-  --standard-note-bg-hovered: #e6e7ed;
+  --bg-drag-col: #eeeeef;
+  --bg-super-light: #fafafa;
+  --right-panel-bg-mobile: #fcfcfc;
+  --bottom-panel-bg: #fcfcfc;
+  --selected-task-bg-color: #eeeeef;
+  --task-c-selected-bg: #eeeeef;
+  --extra-border-color: #e5e5e5;
+  --standard-note-bg: #fafafa; /* notes lift off the page like paper */
+  --standard-note-bg-hovered: #f2f2f3;
   --standard-note-fg: var(--ink);
-  --task-detail-bg: #e1e2e8;
-  --task-detail-bg-hover: #dcdee3;
-  --schedule-event-bg: #eceef2;
-  --sidenav-hover-bg: rgba(54, 60, 77, 0.07);
-  --scrollbar-thumb: rgba(54, 60, 77, 0.25);
-  --scrollbar-thumb-hover: rgba(54, 60, 77, 0.45);
+  --task-detail-bg: #fcfcfc;
+  --task-detail-bg-hover: #eeeeef;
+  --schedule-event-bg: #fafafa;
+  --sidenav-hover-bg: rgba(24, 24, 27, 0.06);
+  --scrollbar-thumb: rgba(24, 24, 27, 0.25);
+  --scrollbar-thumb-hover: rgba(24, 24, 27, 0.45);
   --scrollbar-track: transparent;
-  --grid-color: #cfd1d8;
-  --chip-outline-color: rgba(54, 60, 77, 0.24);
-  --progress-bg: rgba(54, 60, 77, 0.12);
+  --grid-color: #e7e7e7;
+  --chip-outline-color: rgba(24, 24, 27, 0.22);
+  --progress-bg: rgba(24, 24, 27, 0.1);
   --improvement-text: var(--ink);
   --improvement-button-text: var(--ink);
-  --improvement-border: rgba(54, 60, 77, 0.25);
+  --improvement-border: rgba(24, 24, 27, 0.22);
 
   /* Text selection */
-  --theme-selection-bg: rgba(41, 89, 170, 0.18);
+  --theme-selection-bg: rgba(14, 165, 233, 0.2);
 }
 
 /* ============================================================
@@ -275,8 +274,8 @@ body.isDarkTheme {
  * nav transparent so a wallpaper can show through; delete these two rules to
  * get that behaviour back. */
 body:not(.isDarkTheme) {
-  --sidenav-bg: #d6d8df;
-  --sidenav-bg-mobile: #d6d8df;
+  --sidenav-bg: #f5f5f5;
+  --sidenav-bg-mobile: #f5f5f5;
 }
 
 /* Electron draws the functional minimise, maximise and close controls itself.
@@ -324,7 +323,7 @@ body.isDarkTheme {
 /* The gutter behind the app (overscroll, iOS safe areas) is pinned to a neutral
    grey by the base; match it to the page instead. */
 html:has(body:not(.isDarkTheme)) {
-  background: #e6e7ed;
+  background: #ffffff;
 }
 
 html:has(body.isDarkTheme) {
@@ -558,13 +557,13 @@ body.isDarkTheme {
 }
 
 /* A tooltip is the one panel that should not match the page: it reads as a
-   label on top of the interface. Dark ink in light mode, a lifted purple in
+   label on top of the interface. Zinc ink in light mode, a lifted purple in
    dark mode — themed either way, never grey. */
 body:not(.isDarkTheme) {
-  --panel-shadow: 0 4px 16px rgba(38, 43, 58, 0.14);
-  --mat-tooltip-container-color: #262b3a;
+  --panel-shadow: 0 4px 16px rgba(9, 9, 11, 0.12);
+  --mat-tooltip-container-color: #18181b;
   --mat-tooltip-supporting-text-color: #ffffff;
-  --mdc-plain-tooltip-container-color: #262b3a;
+  --mdc-plain-tooltip-container-color: #18181b;
   --mdc-plain-tooltip-supporting-text-color: #ffffff;
 }
 
