@@ -1096,11 +1096,6 @@ body {
   --action-bar-scale: 0.85;
   /* Non-primary actions stay visible but recede until the rail is used. */
   --action-bar-idle-opacity: 0.25;
-  /* How long the pointer must be on the group before it comes up. Long enough
-     to be a wait rather than a stutter — a quarter of a second reads as
-     "responsive", not as "waiting", which is why the first attempt at this was
-     reported as doing nothing. */
-  --action-bar-undim-delay: 500ms;
   /* The time-tracking button is the one control in that strip you reach for
      while working, so it carries a size of its own rather than a scale. The
      app draws it at 40px. */
@@ -1276,23 +1271,10 @@ magic-side-nav nav-item plugin-icon.nav-icon::after {
     transition: opacity var(--transition-duration-s) var(--ani-standard-timing);
   }
 
-  /* The wait goes on the lit state, which is the one being entered and therefore
-     the one a delay holds back. Letting go stays immediate: the resting rule
-     above carries no delay of its own.
-
-     Worth knowing what this can and cannot do. The condition is "the pointer is
-     on one of these buttons", so the clock starts at the first one touched and
-     keeps running while the pointer moves along the group. Sweeping across the
-     strip to reach something else never completes it and the strip stays down,
-     which is the case worth preventing. But approaching your target across a
-     neighbour and pausing on the way spends part of the wait before you arrive.
-     CSS has no way to restart it per button — :has() cannot say which button —
-     so that is the edge this design keeps. */
   nav.action-nav-right:has(button:not(:where(.play-btn, .tour-addBtn)):hover)
     button:not(:where(.play-btn, .tour-addBtn)),
   nav.action-nav-right:focus-within button:not(:where(.play-btn, .tour-addBtn)) {
     opacity: 1;
-    transition-delay: var(--action-bar-undim-delay);
   }
 }
 
