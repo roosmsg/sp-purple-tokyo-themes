@@ -108,6 +108,13 @@ body:not(.isDarkTheme) {
      a run of text needs 4.5:1. The 700 clears it at 5.3:1. */
   --link-color: #a85336;
 
+  /* The play button in the action bar carries a white glyph rather than the
+     ink the rest of the salmon fills take: it is a 23px mark on a 46px circle,
+     read as a symbol rather than as a label, and white at 3.1:1 on the salmon
+     clears the 3:1 that size of graphic needs. Light mode only — the dark half
+     keeps the ink the app puts there. */
+  --play-icon-ink: #ffffff;
+
   /* --- Category B: tokens the base hardcodes to white or neutral grey --- */
   --bg-drag-col: #eeeeef;
   --bg-super-light: #fafafa;
@@ -1285,6 +1292,20 @@ body > nav.action-nav-right .play-btn mat-icon {
   width: calc(var(--play-button-size) / 2);
   height: calc(var(--play-button-size) / 2);
   line-height: calc(var(--play-button-size) / 2);
+}
+
+/* The glyph inside the play button. Material fills a fab's icon with the
+   primary palette's contrast colour, which is the ink these themes put on a
+   salmon or blue fill; `--play-icon-ink` lets a palette name a different one
+   without touching the contrast token, which every other filled button reads
+   too. Unset by default, so the app's own choice stands.
+
+   No `body >` prefix, unlike the sizing above: that prefix matches only the
+   experimental vertical rail, which the app teleports to the end of body. The
+   colour is worth having in the horizontal header as well, where the same nav
+   sits inside a wrapper. */
+nav.action-nav-right button.play-btn .mat-icon {
+  color: var(--play-icon-ink, inherit);
 }
 
 /* The ring that pulses behind the button while time runs is drawn at a fixed
