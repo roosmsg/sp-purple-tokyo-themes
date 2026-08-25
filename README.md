@@ -36,7 +36,7 @@ Each section in the file stands on its own and can be deleted without touching t
 | Action bar | In both the horizontal and experimental vertical layout, every button except Play and Add task sits at 25% opacity. They come up together when the pointer is on one of them — not when it is merely somewhere in the strip — and when the strip holds keyboard focus. |
 | Flat surfaces | Task rows separate with a hairline instead of a drop shadow. |
 | Material surfaces | Menus, dialogs, dropdowns, the date picker, cards and the snackbar take the theme's own surfaces instead of Material's grey. Tooltips stay deliberately contrasting. Segmented controls such as the dark-mode switch drop Material's grey for the theme's own surfaces. |
-| Today icon | Replaces the sun with a bolt on the today affordances. |
+| Today icon | Replaces the sun with a bolt on the today affordances, and on My Day's own row at the head of the left rail. That row is matched by position, since the icon on a work-context row is user data and a stylesheet cannot read what an element says — it can also simply be changed on the Today tag in the app, which needs no rule at all. |
 | Planner icon | Uses the built-in Material Symbols `next_week` glyph for Planner in the left navigation. |
 | Schedule icons | Uses the built-in Material Symbols `calendar_clock` glyph for Schema in the left navigation and `pending_actions` on its right-panel button in desktop and mobile layouts. |
 | Work view status bar | Puts one clock at the head of the "Resterende schatting / Vandaag werken / Zonder pauze" line by moving the icon the first reading already carries, drops the duplicate on the middle reading, and separates the three with a dot. The stopwatch on "Zonder pauze" stays. |
