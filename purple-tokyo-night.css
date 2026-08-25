@@ -1626,6 +1626,44 @@ magic-side-nav .nav-link .nav-icon.nav-icon:not(plugin-icon) {
   margin-right: 0;
 }
 
+/* A project keeps its own colour on the row you are looking at.
+ * ---------------------------------------------------------------------------
+ * A project or tag row carries its colour as an inline style on the icon, and
+ * the app repaints the icon of every active row with `--sidenav-active-text`
+ * through an `!important` rule. Important outranks inline, so opening a project
+ * drained the colour out of exactly the row being pointed at. No theme can hand
+ * the value back directly: it lives in the style attribute, which CSS cannot
+ * read.
+ *
+ * What CSS can reach is where that colour comes from. Opening a project hands
+ * its theme to the app, which writes the generated palette as inline custom
+ * properties on the `html` element, and `--palette-primary-500` is the same
+ * `theme.primary` the icon is coloured with. This theme replaces the palette on
+ * `body`, further in, so the alias is declared on `html` — above that override,
+ * where the project's own value is still the one in force.
+ *
+ * Only project rows take it. A tag stores its colour separately from its theme,
+ * so for tags the two can disagree; `[data-project-id]` is the attribute the app
+ * puts on a project row and nothing else. Before the palette has been written
+ * the declaration is dropped and the icon falls back to the active text colour,
+ * which is what it did before.
+ *
+ * The rule retires itself. `.has-context-color` is what an app that no longer
+ * overrides these icons marks them with — the fix on our fork of the app — so
+ * once that ships this steps aside and the inline colour stands on its own. The
+ * repeated classes are what it takes to outrank the app's `!important`, which
+ * Angular compiles with content attributes. */
+html {
+  --sp-project-primary: var(--palette-primary-500);
+}
+
+magic-side-nav
+  nav-item[data-project-id]
+  .nav-link.nav-link.active.active
+  .nav-icon.nav-icon:not(.has-context-color) {
+  color: var(--sp-project-primary) !important;
+}
+
 /* A tab is marked by a line, not by a shape. The Settings page rounds a tab's
    top corners and fills the selected one with `--state-selected`, which puts a
    slab behind the label that is round along the top and cut off flat against
