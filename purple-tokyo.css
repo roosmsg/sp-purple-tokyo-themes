@@ -1289,35 +1289,6 @@ nav.action-nav-right button.play-btn:focus-visible:not(:disabled):not(.mat-mdc-b
   }
 }
 
-/* Super Productivity does not expose a custom plugin id as a DOM attribute on
-   menu items. Dashboard is the visible plugin entry in this menu, so custom
-   plugin artwork in the left navigation uses the built-in avg_pace ligature.
-   Keep the replacement inside plugin-icon so the row and click target remain
-   untouched; no SVG asset is needed. */
-magic-side-nav nav-item plugin-icon.nav-icon > * {
-  display: none !important;
-}
-
-magic-side-nav nav-item plugin-icon.nav-icon::after {
-  content: 'avg_pace';
-  color: var(--ink-muted);
-  font-family: 'Material Symbols Outlined', sans-serif;
-  font-size: 22px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  white-space: nowrap;
-  direction: ltr;
-  font-feature-settings: 'liga';
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24;
-}
-
 /* Keep Play and Add task fully visible. Every other action sits at 25% opacity
    and they come up together — but only once the pointer is on one of them, not
    merely somewhere in the strip.
