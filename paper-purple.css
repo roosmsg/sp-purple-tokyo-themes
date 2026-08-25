@@ -851,7 +851,7 @@ html[data-lucide-icons] task.isSelected .show-additional-info-btn:not(:has(.upda
 html[data-lucide-icons] body,
 html[data-lucide-icons] body.isDarkTheme {
   --icon-scale: 0.92;
-  --icon-scale-tasks: 0.8;
+  --icon-scale-tasks: 0.7;
 }
 
 /* The task list, the view around it and the detail panel read their own scale.
@@ -1909,6 +1909,15 @@ task .title-and-tags-wrapper .tags > tag:first-child mat-icon {
   width: var(--task-project-icon-size);
   height: var(--task-project-icon-size);
   line-height: var(--task-project-icon-size);
+}
+
+/* The tags after it hand the scale back as well, at the size the app draws
+   them. A chip icon is not one of the row's controls: it belongs to the label
+   beside it and is read with it, so it should not be taken down with the play
+   and attachment buttons. Only those controls are meant by "the icons in a task
+   row". */
+task .title-and-tags-wrapper .tags > tag:not(:first-child) mat-icon {
+  --icon-scale: 1;
 }
 
 /* The done toggle, matched to PWM. There it is a Tailwind-forms checkbox:
