@@ -938,6 +938,14 @@ work-view .status-bar .item:first-child .no-wrap mat-icon {
   order: -1;
   margin-left: 0 !important;
   margin-right: 6px;
+}
+
+/* Both icons on this line take the muted ink. The clock at the head and the
+   stopwatch on "Zonder pauze" are labels for the figures beside them, not
+   figures themselves, so they sit a step back from the numbers they mark —
+   and the two of them reading alike is what makes them a pair rather than two
+   unrelated marks. */
+work-view .status-bar .item .no-wrap mat-icon {
   color: var(--ink-muted);
 }
 
