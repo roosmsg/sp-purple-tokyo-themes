@@ -316,6 +316,30 @@ body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen)::after {
   }
 }
 
+/* The task detail panel opens against the top right of the window, which is
+   where Electron draws minimise, maximise and close. Its first row ran under
+   them. This starts the panel's contents below that strip.
+
+   The height is the same `--window-controls-height` the strip above is drawn
+   at, so the two cannot drift: it reads Electron's own title-bar safe area and
+   falls back to 24px where that is not reported. Padding rather than margin, so
+   the panel's background still runs to the top edge and the strip has something
+   to sit on.
+
+   Scoped to the builds that have those controls in that place — Electron, not
+   macOS, obsidian-style header, not full screen — and to windows wide enough
+   for the panel to sit beside the list rather than over it. Everywhere else the
+   rule does not apply and nothing moves. */
+body {
+  --detail-panel-top-gap: calc(var(--window-controls-height) + var(--s-half, 4px));
+}
+
+@media screen and (min-width: 600px) {
+  body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen) task-detail-panel {
+    padding-top: var(--detail-panel-top-gap);
+  }
+}
+
 body.isDarkTheme {
   --sidenav-bg: #131327;
   --sidenav-bg-mobile: #131327;
@@ -1241,18 +1265,18 @@ magic-side-nav nav-item plugin-icon.nav-icon::after {
     transition-delay: var(--action-bar-hover-out-delay);
   }
 
-  /* Reaching for Play is not the same as reaching for the strip. Play sits at
-     the top of the rail and is the one control there you press while working,
-     so the pointer lands on it constantly — and every one of those trips was
-     lighting up the whole rail behind it. While the pointer is on Play the
-     rest stays where it was.
+  /* Reaching for Play or Add task is not the same as reaching for the strip.
+     Those two are the controls you press while working — they are also the two
+     that never dim — so the pointer lands on them constantly, and every one of
+     those trips was lighting up the whole rail behind them. While the pointer
+     is on either, the rest stays where it was.
 
      The :has() reads the hover from the button back up to the nav, which is
      the only way a stylesheet can say "hovered, but not there". Keyboard focus
      is still let through: :focus-within means someone is working the rail with
      the keyboard and needs to see it. No delay on this one — the rule takes
      effect on arrival, rather than fading in two seconds later. */
-  nav.action-nav-right:has(.play-btn:hover):not(:focus-within)
+  nav.action-nav-right:has(:where(.play-btn, .tour-addBtn):hover):not(:focus-within)
     button:not(:where(.play-btn, .tour-addBtn)) {
     opacity: var(--action-bar-idle-opacity);
     transition-delay: 0s;
@@ -1405,43 +1429,21 @@ body.isDarkTheme {
 }
 
 /* ---------------------------------------------------------------------------
- * Square hover states
+ * Square hover states — the left menu, and nothing else
  * ---------------------------------------------------------------------------
- * Almost no hover highlight in the app carries a radius of its own: it takes
- * the shape of the element under it. Rounded highlights therefore come from
- * four sources — icon buttons, which Material draws as circles; side-nav rows,
- * shaped here; list, option and tab rows, which follow Material's shape
- * tokens; and the quick-access strip, squared with the context menu above.
- * All four are squared below. Task cards keep their rounded corners: the app
- * shapes them through `--task-border-radius`, and squaring those turned the
- * list into a stack of blocks.
+ * A hover highlight in this app takes the shape of whatever it sits on, and
+ * Material's shapes are round. They stay that way here, with one exception: the
+ * rows in the left menu. Those are full-width bands in a vertical column, and a
+ * rounded band reads as a pill floating in the list rather than as the row being
+ * pointed at.
  *
- * Left alone on purpose: checkbox, radio and slide-toggle ripples, which
- * belong to round controls; tag and chip pills, whose shape is the point; and
- * the fills of ordinary buttons, cards and dialogs, which are not hover
- * states. */
-/* Material gives icon buttons a circular state layer. The button itself has no
-   fill, so this changes nothing but the hover and focus shape. */
-.mat-mdc-icon-button,
-.mat-mdc-icon-button .mat-mdc-button-persistent-ripple,
-.mat-mdc-icon-button .mat-mdc-button-persistent-ripple::before,
-.mat-mdc-icon-button .mat-mdc-button-ripple,
-.mat-mdc-icon-button .mat-mdc-focus-indicator,
-.mat-mdc-icon-button .mat-ripple {
-  border-radius: 0 !important;
-}
-
-/* Rows in lists and selects: the state layer follows the row, so the row is
-   what has to lose its radius. Tabs are deliberately absent — the settings
-   tab bar keeps Material's rounded indicator. */
-.mat-mdc-list-item,
-.mat-mdc-list-item .mat-mdc-focus-indicator,
-.mat-mdc-option,
-.mat-mdc-option .mat-mdc-focus-indicator {
-  border-radius: 0 !important;
-}
-
-/* The side-nav row tint, squared to match the rest. */
+ * This section used to square every rounded highlight in the app — icon buttons,
+ * list and option rows, the side nav — and then hand the shape back to the
+ * action bar and to the task row, one exception at a time. Squaring the one
+ * place that wanted it says the same thing and leaves the rest of the interface
+ * as its own design intends. Icon buttons are circular wherever they are, and
+ * list, option and tab rows keep Material's radius.
+ */
 magic-side-nav nav-item:hover,
 magic-side-nav nav-item:focus-within {
   border-radius: 0;
@@ -1459,35 +1461,11 @@ magic-side-nav .g-multi-btn-wrapper {
   border-radius: 0;
 }
 
-/* Exception: the right-hand action bar keeps Material's circular hover. Its
-   buttons sit apart from any list or row, so a round highlight reads as
-   deliberate there rather than as a leftover. Both desktop layouts use the
-   same element, so the horizontal strip and the vertical rail stay in step. */
-nav.action-nav-right .mat-mdc-icon-button,
-nav.action-nav-right .mat-mdc-icon-button .mat-mdc-button-persistent-ripple,
-nav.action-nav-right .mat-mdc-icon-button .mat-mdc-button-persistent-ripple::before,
-nav.action-nav-right .mat-mdc-icon-button .mat-mdc-button-ripple,
-nav.action-nav-right .mat-mdc-icon-button .mat-mdc-focus-indicator,
-nav.action-nav-right .mat-mdc-icon-button .mat-ripple {
-  border-radius: 50% !important;
-}
-
-/* Same exception inside a task row. Those buttons appear on hover in a tight
-   line beside the task's own text, where a square state layer reads as a block
-   dropped on the row; Material's circle is what the app intends there. */
-task .mat-mdc-icon-button,
-task .mat-mdc-icon-button .mat-mdc-button-persistent-ripple,
-task .mat-mdc-icon-button .mat-mdc-button-persistent-ripple::before,
-task .mat-mdc-icon-button .mat-mdc-button-ripple,
-task .mat-mdc-icon-button .mat-mdc-focus-indicator,
-task .mat-mdc-icon-button .mat-ripple {
-  border-radius: 50% !important;
-}
-
 /* The buttons keep the size the app gives them; only the hover layer is
    capped. It stretched with the row — which is what made it an oval on a row
    with tags — so it gets a ceiling and is centred on the button rather than
-   filling it. */
+   filling it. Nothing to do with shape: the circle is Material's own, and is
+   left alone. */
 task .mat-mdc-icon-button {
   align-self: center;
 }
