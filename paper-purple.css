@@ -883,7 +883,7 @@ work-view .status-bar .item {
   align-items: center;
 }
 
-work-view .status-bar .item:not(:first-child) .no-wrap mat-icon {
+work-view .status-bar .item:nth-child(2) .no-wrap mat-icon {
   display: none;
 }
 
@@ -1460,6 +1460,18 @@ magic-side-nav .g-multi-btn-wrapper {
   border-radius: 0;
 }
 
+/* The other direction, for once. A settings tab is drawn with its top corners
+   rounded, but the hover layer inside it is left square by the app, so pointing
+   at a tab put a rectangle inside a rounded shape. `inherit` hands the ripple
+   the tab's own radius rather than restating the figure, so it keeps following
+   the tab if the app ever changes it. */
+.mat-mdc-tab .mdc-tab__ripple,
+.mat-mdc-tab .mat-ripple,
+.mat-mdc-tab-link .mdc-tab__ripple,
+.mat-mdc-tab-link .mat-ripple {
+  border-radius: inherit;
+}
+
 /* The buttons keep the size the app gives them; only the hover layer is
    capped. It stretched with the row — which is what made it an oval on a row
    with tags — so it gets a ceiling and is centred on the button rather than
@@ -1672,177 +1684,6 @@ task .attachment-btn .mat-icon,
      instance of Material Symbols — 466 KB with the axes pinned, keeping only
      a STAT table that names them — so 'wght' and 'GRAD' have nothing to act
      on. Thinner strokes would need a different icon source, not a setting. */
-}
-
-/* ---------------------------------------------------------------------------
- * Project on the task line, tags below it
- * ---------------------------------------------------------------------------
- * A task row stacks its title and its chips: `.title-and-tags-wrapper` is a
- * block, so `tag-list` always starts a second line — even when the only chip
- * is the project. The project belongs beside the title; the tags do not.
- *
- * The app renders both from one list, with the project always first and no
- * class to tell them apart, so the split is done in the layout. `display:
- * contents` dissolves `tag-list` and its two wrappers, which lifts the chips
- * into the row's own flex container; `order` then puts the project on the
- * title's line and the tags after it, and a zero-height full-width `::after`
- * sits between the two orders as a forced line break — the standard way to
- * break a flex line without an element to break on.
- *
- * Note the one case this cannot tell apart: inside a project view the app
- * hides the project chip, so the first chip is an ordinary tag and lands on
- * the title line. A parent task's breadcrumb keeps its own line above. */
-task .title-and-tags-wrapper {
-  display: flex;
-  flex-flow: row wrap;
-  /* Centre, not baseline. The project sits in a chip whose first child is an
-     icon, and a flex container takes its baseline from that first item — so
-     with the project text at a different size than the title, baseline
-     alignment lined the title up with the icon's baseline instead of the
-     project's text, and the two lines drifted apart. Centring the boxes keeps
-     both texts on one optical line whatever size either one is. */
-  align-items: center;
-  /* A wrapping flex container stretches its lines to fill spare height by
-     default, which put uneven air between the title and the tags. Centring
-     the lines instead keeps them together and sits them in the middle of the
-     row, so a task with tags is balanced rather than top-heavy. */
-  align-content: center;
-  column-gap: var(--s);
-  row-gap: 0;
-  /* Only a row that wraps grows on this: a single-line row is still shorter
-     than the 44px minimum, so its height is unchanged. */
-  padding-top: 3px;
-  padding-bottom: 3px;
-}
-
-task .title-and-tags-wrapper > .parent-title {
-  order: -2;
-  flex: 0 0 100%;
-}
-
-/* Shrink-to-fit so the project can follow the text; everything else about the
-   title — font, size, weight, padding — is left to the app. */
-task .title-and-tags-wrapper > .task-title {
-  order: -1;
-  flex: 0 1 auto;
-  min-width: 0;
-}
-
-task .title-and-tags-wrapper > tag-list,
-task .title-and-tags-wrapper .tags-container,
-task .title-and-tags-wrapper .tags {
-  display: contents;
-}
-
-/* The project sits on the title's line behind a divider, as in PWM: name,
-   8px, a hairline, 8px, then the project. PWM writes that divider as a `|`
-   glyph; here it is a background stripe on the chip, because a border would
-   run the chip's full height and a pseudo-element would land inside it. */
-task .title-and-tags-wrapper .tags > tag:first-child {
-  order: 0;
-  margin-left: 0;
-  padding-left: 17px;
-  /* PWM writes the divider as a `|` in its quaternary text colour, a muted
-     violet that stays clearly visible; `--separator` is a card-edge colour and
-     came out far too dark for that job. */
-  background-image: linear-gradient(
-    color-mix(in srgb, var(--ink-muted) 70%, transparent),
-    color-mix(in srgb, var(--ink-muted) 70%, transparent)
-  );
-  background-size: 1px 1.9em;
-  background-position: 8px center;
-  background-repeat: no-repeat;
-}
-
-/* The break. Zero height, so it costs nothing when there are no tags. */
-task .title-and-tags-wrapper::after {
-  content: '';
-  order: 1;
-  flex: 0 0 100%;
-  height: 0;
-}
-
-/* Everything after the project drops to the line below and flows there. The
-   tag line is pulled up against the title: the visible gap at this point is
-   line-height, not margin, so the chips take a tighter leading and a negative
-   top margin eats the rest. The 2px underneath keeps the last line off the
-   card's edge. */
-task .title-and-tags-wrapper .tags > tag:not(:first-child) {
-  order: 2;
-  margin-top: -1px;
-  margin-bottom: 2px;
-  line-height: 1.15;
-}
-
-/* The tag line keeps the 3px indent the app gives its tag container. */
-task .title-and-tags-wrapper .tags > tag:nth-child(2) {
-  margin-left: 3px;
-}
-
-task .title-and-tags-wrapper .tags-container {
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-  margin-left: 0 !important;
-}
-
-/* The task line, drawn after the reference: PWM sets the name in the interface
-   face at `text-sm` — 14px on a 20px line, regular weight, in the primary ink —
-   and those are the values here. Tag and project icons are left exactly as the
-   app draws them. */
-task .task-title,
-task .task-title .display-value,
-task .task-title textarea,
-task .task-title input {
-  font-family: var(--font-body-stack) !important;
-  font-size: 14px;
-  /* The title component states `line-height: 1.5` on the value, the edit
-     textarea and the hidden element that measures it, from a selector that
-     outranks this one on the last two; the flag lands PWM's 20px on all
-     three, so an open row and a row being edited keep the same leading. */
-  line-height: 20px !important;
-  font-weight: 400;
-  letter-spacing: normal;
-  color: var(--ink);
-}
-
-/* Row metrics, taken from PWM's task card: 12px above and below the line and
-   a 44px row, against Super Productivity's 4px and 40px. Tag text matches the
-   title instead of the 90% the tag component gives it. The first two are the
-   app's own variables, so subtask rows and the planner follow along. */
-body,
-body.isDarkTheme {
-  --task-first-line-min-height: 44px;
-  --task-inner-padding-top-bottom: 13px;
-}
-
-task .title-and-tags-wrapper .tags > tag .tag-title {
-  font-size: 1.3em;
-}
-
-/* The project reads as a heading for the line rather than as another chip on
-   it, so it is set larger than the tags that follow it — text and icon
-   together, or the icon is left looking like a leftover beside the name.
-
-   The icon hands `--icon-scale` back to 1. That scale exists to correct sizes
-   the app chose and the theme did not; here the theme states the size, and a
-   figure written in this file should be the figure drawn — in the icon-font
-   build and with the Lucide plugin alike. */
-body,
-body.isDarkTheme {
-  --task-project-size: 1.45em;
-  --task-project-icon-size: 1.35em;
-}
-
-task .title-and-tags-wrapper .tags > tag:first-child .tag-title {
-  font-size: var(--task-project-size);
-}
-
-task .title-and-tags-wrapper .tags > tag:first-child mat-icon {
-  --icon-scale: 1;
-  font-size: var(--task-project-icon-size);
-  width: var(--task-project-icon-size);
-  height: var(--task-project-icon-size);
-  line-height: var(--task-project-icon-size);
 }
 
 /* The done toggle, matched to PWM. There it is a Tailwind-forms checkbox:
