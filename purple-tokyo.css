@@ -1622,16 +1622,35 @@ magic-side-nav .nav-link .nav-icon.nav-icon:not(plugin-icon) {
   margin-right: 0;
 }
 
-/* The other direction, for once. A settings tab is drawn with its top corners
-   rounded, but the hover layer inside it is left square by the app, so pointing
-   at a tab put a rectangle inside a rounded shape.
+/* A tab is marked by a line, not by a shape. The Settings page rounds a tab's
+   top corners and fills the selected one with `--state-selected`, which puts a
+   slab behind the label that is round along the top and cut off flat against
+   the header rule below it — half a rounded rectangle. Squaring the tab and
+   dropping that fill leaves the work to the active indicator: a straight
+   horizontal line under the selected tab, which is how selection is drawn
+   everywhere else here.
 
-   The layer that paints is `.mdc-tab__ripple::before` — the element itself is a
-   zero-width placeholder and rounding it changed nothing visible, which is why
-   the first attempt at this looked right in the stylesheet and wrong on screen.
-   Both are named now, and both take `inherit` rather than a restated figure, so
-   the chain runs tab -> ripple -> ::before and follows the tab if the app ever
-   changes its corners. */
+   Three things have to agree for that. The tab loses its radius. The hover
+   layer follows it through `inherit` — the layer that paints is
+   `.mdc-tab__ripple::before`, and the element itself is a zero-width
+   placeholder, which is why both are named; the chain runs tab -> ripple ->
+   ::before, so it keeps following the tab whatever the app does to its corners.
+   And the indicator's underline is squared as well, since Material rounds its
+   ends from a token of its own.
+
+   The page reaches its tabs with `::ng-deep` from a host element, which Angular
+   compiles to an attribute selector — a plain class ties with that, so the
+   class is repeated to win. */
+.mat-mdc-tab-group .mat-mdc-tab.mat-mdc-tab,
+.mat-mdc-tab-nav-bar .mat-mdc-tab-link.mat-mdc-tab-link {
+  border-radius: 0;
+}
+
+.mat-mdc-tab-group .mat-mdc-tab.mat-mdc-tab.mdc-tab--active,
+.mat-mdc-tab-nav-bar .mat-mdc-tab-link.mat-mdc-tab-link.mdc-tab--active {
+  background-color: transparent;
+}
+
 .mat-mdc-tab .mdc-tab__ripple,
 .mat-mdc-tab .mat-ripple,
 .mat-mdc-tab-link .mdc-tab__ripple,
@@ -1644,6 +1663,11 @@ magic-side-nav .nav-link .nav-icon.nav-icon:not(plugin-icon) {
 .mat-mdc-tab-link .mdc-tab__ripple::before,
 .mat-mdc-tab-link .mat-ripple::before {
   border-radius: inherit;
+}
+
+.mat-mdc-tab .mdc-tab-indicator__content--underline,
+.mat-mdc-tab-link .mdc-tab-indicator__content--underline {
+  border-radius: 0;
 }
 
 /* The buttons keep the size the app gives them; only the hover layer is
