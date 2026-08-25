@@ -268,6 +268,23 @@ body.isDarkTheme {
 }
 
 /* ============================================================
+ * PAGE BACKDROP
+ * ============================================================
+ * In light mode the app paints two primary-tinted glows behind the page
+ * (`body.isLightTheme::before`: radial gradients in --palette-primary-200 and
+ * --palette-primary-400). Against these flat surfaces they read as a smudge
+ * rather than as depth, so the light slot keeps its own page colour. Dark mode
+ * is left alone: its single corner glow sits well on the deep surfaces.
+ *
+ * `!important` because the rule being overridden has the same specificity and
+ * the order an installed theme is loaded in is not something to rely on; the
+ * built-in themes that do without the backdrop (dark-base, arc, nord-snow-storm,
+ * dracula, velvet) hide the same pseudo-element the same way. */
+body:not(.isDarkTheme)::before {
+  display: none !important;
+}
+
+/* ============================================================
  * CHROME
  * ============================================================
  * PWM keeps the side bar a step darker than the page. The base leaves the side
