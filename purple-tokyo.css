@@ -901,7 +901,7 @@ body,
 body.isDarkTheme {
   /* The day headers across the top, and the week with its date range. */
   --schedule-header-date-size: 15px;
-  --schedule-header-title-size: 15px;
+  --schedule-header-title-size: 17px;
   /* The round controls in that bar: the box, and the icon inside it. */
   --schedule-header-btn-size: 32px;
   --schedule-header-btn-icon-size: 19px;
