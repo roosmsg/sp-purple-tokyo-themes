@@ -859,43 +859,35 @@ work-view .status-bar .item {
   align-items: center;
 }
 
-work-view .status-bar .item .no-wrap mat-icon {
+work-view .status-bar .item:not(:first-child) .no-wrap mat-icon {
   display: none;
 }
 
-/* The clock. Written as the Material ligature, which is what the icon font
-   build needs; with the Lucide plugin installed the rule below draws the same
-   clock from Lucide instead, because a pseudo-element on a div is not a
-   mat-icon and the plugin has nothing to translate. */
-work-view .status-bar .item:first-child::before {
-  content: 'schedule';
-  font-family: 'Material Symbols Outlined', sans-serif;
-  font-size: 17px;
-  font-weight: 400;
-  font-style: normal;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  white-space: nowrap;
-  direction: ltr;
-  font-feature-settings: 'liga';
-  margin-right: 6px;
-  color: var(--ink-muted);
+/* The clock is the app's own icon, moved rather than replaced.
+ *
+ * The first reading already carries one; the earlier attempt hid it and drew a
+ * new one in a pseudo-element, which cost a data: URI to hold the Lucide
+ * outline — and the app's theme validator rejects data: URLs outright, so the
+ * file would not install at all. Moving the element it already has needs no
+ * artwork: it is a real mat-icon, so the icon font draws it and the Lucide
+ * plugin replaces it, each without being told.
+ *
+ * `display: contents` dissolves the span wrapping the value and its icon, so
+ * both become items of `.item` and `order` can put the icon first. The span
+ * carried `white-space: nowrap`, which goes with it; the readings are short
+ * enough that it was doing nothing.
+ *
+ * The inline `margin-left: 2px` the template writes on this icon is cleared —
+ * it was spacing the icon from the value it used to follow. */
+work-view .status-bar .item:first-child .no-wrap {
+  display: contents;
 }
 
-html[data-lucide-icons] work-view .status-bar .item:first-child::before {
-  content: '';
-  width: 16px;
-  height: 16px;
-  background-color: var(--ink-muted);
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2210%22%20%2F%3E%20%3Cpath%20d%3D%22M12%206v6l4%202%22%20%2F%3E%20%3C%2Fsvg%3E");
-  mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2210%22%20%2F%3E%20%3Cpath%20d%3D%22M12%206v6l4%202%22%20%2F%3E%20%3C%2Fsvg%3E");
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-  -webkit-mask-size: contain;
-  mask-size: contain;
+work-view .status-bar .item:first-child .no-wrap mat-icon {
+  order: -1;
+  margin-left: 0 !important;
+  margin-right: 6px;
+  color: var(--ink-muted);
 }
 
 /* The dot, at the head of every reading after the first — so it falls between
