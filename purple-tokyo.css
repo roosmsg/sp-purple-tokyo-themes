@@ -900,6 +900,33 @@ work-view .task-list-wrapper {
   }
 }
 
+/* The hours down the side of Schema, and the two markers that sit in the same
+   gutter. The app sets them at 11.2px and 10px, and the zoom above takes a
+   further tenth off both, which is a small figure made smaller — these are
+   the labels the whole grid is read against, so they get some of it back.
+
+   `!important` on both: the app states these sizes from selectors Angular
+   compiles with two content attributes, which outrank anything a theme can
+   write against the same elements. The marker text is named as well as its
+   container — the label is a child div carrying a size of its own, so setting
+   the container alone left it exactly where it was. */
+body,
+body.isDarkTheme {
+  --schedule-time-size: 12.5px;
+  --schedule-marker-size: 11.5px;
+}
+
+schedule .grid-container > .time {
+  font-size: var(--schedule-time-size) !important;
+}
+
+schedule .work-start,
+schedule .work-end,
+schedule .work-start > div,
+schedule .work-end > div {
+  font-size: var(--schedule-marker-size) !important;
+}
+
 /* ============================================================
  * CHROME SCALE — navigation smaller than the content
  * ============================================================
