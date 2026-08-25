@@ -1097,8 +1097,6 @@ body {
   --action-bar-scale: 0.85;
   /* Non-primary actions stay visible but recede until the rail is used. */
   --action-bar-idle-opacity: 0.25;
-  /* Wait long enough after hover-out for the delay to be unmistakable. */
-  --action-bar-hover-out-delay: 2s;
   /* The time-tracking button is the one control in that strip you reach for
      while working, so it carries a size of its own rather than a scale. The
      app draws it at 40px. */
@@ -1249,37 +1247,35 @@ magic-side-nav nav-item plugin-icon.nav-icon::after {
     'opsz' 24;
 }
 
-/* Keep Play and Add task fully visible. Other actions remain present at 25%
-   opacity and return to their normal opacity while the action bar is hovered
-   or contains keyboard focus. The same rule follows the nav when it is either
-   the horizontal header row or the experimental teleported vertical rail;
-   mobile controls remain unaffected. */
+/* Keep Play and Add task fully visible. Every other action sits at 25% opacity
+   and they come up together — but only once the pointer is on one of them, not
+   merely somewhere in the strip.
+ *
+ * That distinction is the whole rule. The strip used to light whenever the
+ * pointer entered it, so crossing it on the way somewhere else lit everything,
+ * and Play and Add task had to be carved out because they sit where the pointer
+ * lands most. Keying the lift to the dimmed buttons themselves says what was
+ * meant the first time: they are one group, and reaching for the group is what
+ * raises it. Play and Add task are excluded from the trigger rather than from a
+ * behaviour, so the exception disappears with the problem.
+ *
+ * The :has() reads the hover from a button back up to the nav, which is the only
+ * way a stylesheet can raise an element's siblings. Keyboard focus lifts the
+ * group too: someone tabbing through cannot point at anything and needs to see
+ * where they are going.
+ *
+ * The same rule follows the nav whether it is the horizontal header row or the
+ * experimental teleported vertical rail; mobile controls are unaffected. */
 @media screen and (min-width: 600px) {
   nav.action-nav-right button:not(:where(.play-btn, .tour-addBtn)) {
+    opacity: var(--action-bar-idle-opacity);
     transition: opacity var(--transition-duration-s) var(--ani-standard-timing);
   }
 
-  nav.action-nav-right:not(:hover):not(:focus-within)
-    button:not(:where(.play-btn, .tour-addBtn)) {
-    opacity: var(--action-bar-idle-opacity);
-    transition-delay: var(--action-bar-hover-out-delay);
-  }
-
-  /* Reaching for Play or Add task is not the same as reaching for the strip.
-     Those two are the controls you press while working — they are also the two
-     that never dim — so the pointer lands on them constantly, and every one of
-     those trips was lighting up the whole rail behind them. While the pointer
-     is on either, the rest stays where it was.
-
-     The :has() reads the hover from the button back up to the nav, which is
-     the only way a stylesheet can say "hovered, but not there". Keyboard focus
-     is still let through: :focus-within means someone is working the rail with
-     the keyboard and needs to see it. No delay on this one — the rule takes
-     effect on arrival, rather than fading in two seconds later. */
-  nav.action-nav-right:has(:where(.play-btn, .tour-addBtn):hover):not(:focus-within)
-    button:not(:where(.play-btn, .tour-addBtn)) {
-    opacity: var(--action-bar-idle-opacity);
-    transition-delay: 0s;
+  nav.action-nav-right:has(button:not(:where(.play-btn, .tour-addBtn)):hover)
+    button:not(:where(.play-btn, .tour-addBtn)),
+  nav.action-nav-right:focus-within button:not(:where(.play-btn, .tour-addBtn)) {
+    opacity: 1;
   }
 }
 
@@ -1685,6 +1681,177 @@ task .attachment-btn .mat-icon,
      instance of Material Symbols — 466 KB with the axes pinned, keeping only
      a STAT table that names them — so 'wght' and 'GRAD' have nothing to act
      on. Thinner strokes would need a different icon source, not a setting. */
+}
+
+/* ---------------------------------------------------------------------------
+ * Project on the task line, tags below it
+ * ---------------------------------------------------------------------------
+ * A task row stacks its title and its chips: `.title-and-tags-wrapper` is a
+ * block, so `tag-list` always starts a second line — even when the only chip
+ * is the project. The project belongs beside the title; the tags do not.
+ *
+ * The app renders both from one list, with the project always first and no
+ * class to tell them apart, so the split is done in the layout. `display:
+ * contents` dissolves `tag-list` and its two wrappers, which lifts the chips
+ * into the row's own flex container; `order` then puts the project on the
+ * title's line and the tags after it, and a zero-height full-width `::after`
+ * sits between the two orders as a forced line break — the standard way to
+ * break a flex line without an element to break on.
+ *
+ * Note the one case this cannot tell apart: inside a project view the app
+ * hides the project chip, so the first chip is an ordinary tag and lands on
+ * the title line. A parent task's breadcrumb keeps its own line above. */
+task .title-and-tags-wrapper {
+  display: flex;
+  flex-flow: row wrap;
+  /* Centre, not baseline. The project sits in a chip whose first child is an
+     icon, and a flex container takes its baseline from that first item — so
+     with the project text at a different size than the title, baseline
+     alignment lined the title up with the icon's baseline instead of the
+     project's text, and the two lines drifted apart. Centring the boxes keeps
+     both texts on one optical line whatever size either one is. */
+  align-items: center;
+  /* A wrapping flex container stretches its lines to fill spare height by
+     default, which put uneven air between the title and the tags. Centring
+     the lines instead keeps them together and sits them in the middle of the
+     row, so a task with tags is balanced rather than top-heavy. */
+  align-content: center;
+  column-gap: var(--s);
+  row-gap: 0;
+  /* Only a row that wraps grows on this: a single-line row is still shorter
+     than the 44px minimum, so its height is unchanged. */
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+task .title-and-tags-wrapper > .parent-title {
+  order: -2;
+  flex: 0 0 100%;
+}
+
+/* Shrink-to-fit so the project can follow the text; everything else about the
+   title — font, size, weight, padding — is left to the app. */
+task .title-and-tags-wrapper > .task-title {
+  order: -1;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+task .title-and-tags-wrapper > tag-list,
+task .title-and-tags-wrapper .tags-container,
+task .title-and-tags-wrapper .tags {
+  display: contents;
+}
+
+/* The project sits on the title's line behind a divider, as in PWM: name,
+   8px, a hairline, 8px, then the project. PWM writes that divider as a `|`
+   glyph; here it is a background stripe on the chip, because a border would
+   run the chip's full height and a pseudo-element would land inside it. */
+task .title-and-tags-wrapper .tags > tag:first-child {
+  order: 0;
+  margin-left: 0;
+  padding-left: 17px;
+  /* PWM writes the divider as a `|` in its quaternary text colour, a muted
+     violet that stays clearly visible; `--separator` is a card-edge colour and
+     came out far too dark for that job. */
+  background-image: linear-gradient(
+    color-mix(in srgb, var(--ink-muted) 70%, transparent),
+    color-mix(in srgb, var(--ink-muted) 70%, transparent)
+  );
+  background-size: 1px 1.9em;
+  background-position: 8px center;
+  background-repeat: no-repeat;
+}
+
+/* The break. Zero height, so it costs nothing when there are no tags. */
+task .title-and-tags-wrapper::after {
+  content: '';
+  order: 1;
+  flex: 0 0 100%;
+  height: 0;
+}
+
+/* Everything after the project drops to the line below and flows there. The
+   tag line is pulled up against the title: the visible gap at this point is
+   line-height, not margin, so the chips take a tighter leading and a negative
+   top margin eats the rest. The 2px underneath keeps the last line off the
+   card's edge. */
+task .title-and-tags-wrapper .tags > tag:not(:first-child) {
+  order: 2;
+  margin-top: -1px;
+  margin-bottom: 2px;
+  line-height: 1.15;
+}
+
+/* The tag line keeps the 3px indent the app gives its tag container. */
+task .title-and-tags-wrapper .tags > tag:nth-child(2) {
+  margin-left: 3px;
+}
+
+task .title-and-tags-wrapper .tags-container {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  margin-left: 0 !important;
+}
+
+/* The task line, drawn after the reference: PWM sets the name in the interface
+   face at `text-sm` — 14px on a 20px line, regular weight, in the primary ink —
+   and those are the values here. Tag and project icons are left exactly as the
+   app draws them. */
+task .task-title,
+task .task-title .display-value,
+task .task-title textarea,
+task .task-title input {
+  font-family: var(--font-body-stack) !important;
+  font-size: 14px;
+  /* The title component states `line-height: 1.5` on the value, the edit
+     textarea and the hidden element that measures it, from a selector that
+     outranks this one on the last two; the flag lands PWM's 20px on all
+     three, so an open row and a row being edited keep the same leading. */
+  line-height: 20px !important;
+  font-weight: 400;
+  letter-spacing: normal;
+  color: var(--ink);
+}
+
+/* Row metrics, taken from PWM's task card: 12px above and below the line and
+   a 44px row, against Super Productivity's 4px and 40px. Tag text matches the
+   title instead of the 90% the tag component gives it. The first two are the
+   app's own variables, so subtask rows and the planner follow along. */
+body,
+body.isDarkTheme {
+  --task-first-line-min-height: 44px;
+  --task-inner-padding-top-bottom: 13px;
+}
+
+task .title-and-tags-wrapper .tags > tag .tag-title {
+  font-size: 1.3em;
+}
+
+/* The project reads as a heading for the line rather than as another chip on
+   it, so it is set larger than the tags that follow it — text and icon
+   together, or the icon is left looking like a leftover beside the name.
+
+   The icon hands `--icon-scale` back to 1. That scale exists to correct sizes
+   the app chose and the theme did not; here the theme states the size, and a
+   figure written in this file should be the figure drawn — in the icon-font
+   build and with the Lucide plugin alike. */
+body,
+body.isDarkTheme {
+  --task-project-size: 1.45em;
+  --task-project-icon-size: 1.35em;
+}
+
+task .title-and-tags-wrapper .tags > tag:first-child .tag-title {
+  font-size: var(--task-project-size);
+}
+
+task .title-and-tags-wrapper .tags > tag:first-child mat-icon {
+  --icon-scale: 1;
+  font-size: var(--task-project-icon-size);
+  width: var(--task-project-icon-size);
+  height: var(--task-project-icon-size);
+  line-height: var(--task-project-icon-size);
 }
 
 /* The done toggle, matched to PWM. There it is a Tailwind-forms checkbox:
