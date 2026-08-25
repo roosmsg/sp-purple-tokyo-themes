@@ -915,8 +915,12 @@ schedule .day-day {
 /* The flag is needed here and not on the day headers above: the app states this
    one from a selector Angular compiles with a content attribute on top of the
    class, which outranks a theme's plain selector. Measured, not guessed — the
-   headers moved on the first attempt and the title did not. */
-schedule .title {
+   headers moved on the first attempt and the title did not.
+
+   Named through its container, not as `schedule .title`. Every event in the
+   grid below carries a `.title` of its own, so the looser selector would have
+   set those to the header's size as well. */
+schedule .schedule-nav-controls .title {
   font-size: var(--schedule-header-title-size) !important;
 }
 
@@ -940,6 +944,49 @@ schedule .time-view-btn .mat-icon {
   width: var(--schedule-header-btn-icon-size);
   height: var(--schedule-header-btn-icon-size);
   line-height: var(--schedule-header-btn-icon-size);
+}
+
+/* ============================================================
+ * SCHEMA GRID
+ * ============================================================
+ * The other half of the balance the bar above started. The hours down the side
+ * and the two work markers are what the grid is read against, and the app draws
+ * them at 11.2px and 10px — small for labels doing that much work. The events
+ * themselves are the opposite case: at 14px they are the loudest thing on a
+ * screen full of them.
+ *
+ * So the labels come up and the events come down, which is the same edit twice
+ * rather than two unrelated ones: it puts the scale where the reading happens.
+ *
+ * `!important` throughout, for the reason the bar above needed it — the app
+ * states these from selectors Angular compiles with content attributes. The
+ * marker text is named as well as its container, since the label is a child div
+ * carrying a size of its own and setting the container alone does not reach it. */
+body,
+body.isDarkTheme {
+  --schedule-time-size: 13px;
+  --schedule-marker-size: 12px;
+  --schedule-event-size: 12.5px;
+}
+
+schedule .grid-container > .time {
+  font-size: var(--schedule-time-size) !important;
+}
+
+schedule .work-start,
+schedule .work-end,
+schedule .work-start > div,
+schedule .work-end > div {
+  font-size: var(--schedule-marker-size) !important;
+}
+
+/* The task or appointment itself. `.title` holds the block's text and
+   `.title-text` the span inside it; naming both means the size holds whether or
+   not the app wraps the text that day. The time badge on an event is left as it
+   is — it is already the smallest thing in the block. */
+schedule-event .title,
+schedule-event .title-text {
+  font-size: var(--schedule-event-size) !important;
 }
 
 /* ============================================================
