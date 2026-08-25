@@ -38,12 +38,9 @@
  * already states width and height beside font-size, and an SVG icon fills
  * that box.
  *
- * Two swaps stay on the ligature mechanism, because the fork has not moved
- * those icons yet: the left navigation's main entries and the plugin fallback
- * icon still reach the template as ligature names from
- * magic-nav-config.service.ts and still render in the icon font. Those rules
- * work here unchanged. When the fork moves them, they need the mask treatment
- * as well, and the shape to copy stands directly above them.
+ * Every swap in this file is a mask. The left navigation was the last surface
+ * still drawn in the icon font, and the fork moved it, so nothing here writes
+ * a ligature any more.
  */
 
 /* ============================================================
@@ -668,24 +665,30 @@ body.isDarkTheme {
   /* Lucide `calendar-clock`, in the slot where the font build puts the
      pending_actions glyph. */
   --schedule-panel-mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3Cpath%20d%3D%22M16%2014v2.2l1.6%201%22%20%2F%3E%20%3Cpath%20d%3D%22M16%202v3%22%20%2F%3E%20%3Cpath%20d%3D%22M21%207.338V5a2%202%200%2000-2-2H5a2%202%200%2000-2%202v14a2%202%200%20002%202h2.338%22%20%2F%3E%20%3Cpath%20d%3D%22M3%209h5.859%22%20%2F%3E%20%3Cpath%20d%3D%22M8%202v3%22%20%2F%3E%20%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%226%22%20%2F%3E%20%3C%2Fsvg%3E");
-  /* Still ligatures: see the note in the file header. */
-  --planner-nav-icon: 'next_week';
-  --schedule-nav-icon: 'calendar_clock';
+  /* Planner. The font build puts Material's `next_week` here, which is a
+     briefcase carrying a chevron; Lucide has no briefcase-with-arrow, so this
+     keeps the meaning rather than the drawing. Lucide `briefcase` is the
+     literal shape if continuity matters more. Worth knowing before changing
+     either: the fork's own icon for Planner is `calendar-cog`, a calendar
+     with a gear, so deleting this swap no longer returns you to the drawing
+     the font build was overriding. */
+  --planner-nav-mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3Crect%20x%3D%223%22%20y%3D%223%22%20width%3D%2218%22%20height%3D%2218%22%20rx%3D%222%22%20%2F%3E%20%3Cpath%20d%3D%22M16%202v3%22%20%2F%3E%20%3Cpath%20d%3D%22M3%209h18%22%20%2F%3E%20%3Cpath%20d%3D%22M8%202v3%22%20%2F%3E%20%3Cpath%20d%3D%22M17%2013h-6%22%20%2F%3E%20%3Cpath%20d%3D%22M13%2017H7%22%20%2F%3E%20%3Cpath%20d%3D%22M7%2013h.01%22%20%2F%3E%20%3Cpath%20d%3D%22M17%2017h.01%22%20%2F%3E%20%3C%2Fsvg%3E");
+  /* Schema, the same `calendar-clock` the right-panel button below carries.
+     The fork's own icon for it is a plain `clock`. */
+  --schedule-nav-mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3Cpath%20d%3D%22M16%2014v2.2l1.6%201%22%20%2F%3E%20%3Cpath%20d%3D%22M16%202v3%22%20%2F%3E%20%3Cpath%20d%3D%22M21%207.338V5a2%202%200%2000-2-2H5a2%202%200%2000-2%202v14a2%202%200%20002%202h2.338%22%20%2F%3E%20%3Cpath%20d%3D%22M3%209h5.859%22%20%2F%3E%20%3Cpath%20d%3D%22M8%202v3%22%20%2F%3E%20%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%226%22%20%2F%3E%20%3C%2Fsvg%3E");
 }
 
-/* Covered: the "Voeg toe aan Mijn Day" button on Today, the add-to-today
-   control that appears when hovering a task row, the today button on the
-   Timeline, the "plan what is left of today" button on the day summary, the
-   today shortcut in the date picker, and the right-panel Schema button. Each
-   of these sits in a container where the icon being replaced is the only one,
-   so the swap cannot reach a neighbour by accident. The second selector keys
-   off the Dutch button title, so it follows the interface language — with the
-   app in another language that line needs the string from that language. */
-.overdue-btn-wrapper button mat-icon,
-[title^='Voeg toe aan Mijn Day'] mat-icon,
-.today-btn mat-icon,
-plan-tasks-tomorrow mat-icon,
-.quick-access > button:first-of-type mat-icon,
+/* Every sun in the app, matched by the icon's own name. Angular Material
+   writes the registered name onto the host as `data-mat-icon-name`, so the
+   fork can say which icon this is; the font build could not, and had to name
+   each container the sun appeared in instead — one of them by the Dutch text
+   of a button title, which quietly stopped matching as soon as the interface
+   was in another language. That is gone: this covers the add-to-today control
+   on a task row, the same button in the task context menu's icon strip, the
+   "add everything overdue" button on Today, the Timeline's today button, the
+   day summary's "plan what is left of today", the date picker's today
+   shortcut, and the sun wherever else the app draws it, in every language. */
+mat-icon[data-mat-icon-name='wb_sunny'],
 .e2e-toggle-schedule-day-panel mat-icon {
   visibility: hidden !important;
   position: relative;
@@ -696,11 +699,7 @@ plan-tasks-tomorrow mat-icon,
    icon clips what overflows, so anything sitting on the text baseline would be
    cut off at the bottom edge. `inset: 0` with a contained mask keeps the
    replacement inside whatever box the button gives it. */
-.overdue-btn-wrapper button mat-icon::after,
-[title^='Voeg toe aan Mijn Day'] mat-icon::after,
-.today-btn mat-icon::after,
-plan-tasks-tomorrow mat-icon::after,
-.quick-access > button:first-of-type mat-icon::after,
+mat-icon[data-mat-icon-name='wb_sunny']::after,
 .e2e-toggle-schedule-day-panel mat-icon::after {
   content: '';
   visibility: visible;
@@ -715,11 +714,7 @@ plan-tasks-tomorrow mat-icon::after,
   mask-size: contain;
 }
 
-.overdue-btn-wrapper button mat-icon::after,
-[title^='Voeg toe aan Mijn Day'] mat-icon::after,
-.today-btn mat-icon::after,
-plan-tasks-tomorrow mat-icon::after,
-.quick-access > button:first-of-type mat-icon::after {
+mat-icon[data-mat-icon-name='wb_sunny']::after {
   -webkit-mask-image: var(--today-icon-mask);
   mask-image: var(--today-icon-mask);
 }
@@ -729,10 +724,8 @@ plan-tasks-tomorrow mat-icon::after,
   mask-image: var(--schedule-panel-mask);
 }
 
-/* Planner and Schema in the left navigation are still icon-font entries on
-   this branch, so they keep the ligature swap: the glyph is hidden and the
-   replacement is written into the pseudo-element, which inherits the icon face
-   from the element it sits in. */
+/* Planner and Schema in the left navigation, on the same mask mechanism as
+   the icons above. */
 magic-side-nav nav-item a.nav-link[href$='/planner'] > mat-icon.nav-icon,
 magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon {
   visibility: hidden !important;
@@ -741,21 +734,27 @@ magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon {
 
 magic-side-nav nav-item a.nav-link[href$='/planner'] > mat-icon.nav-icon::after,
 magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon::after {
+  content: '';
   visibility: visible;
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
 }
 
 magic-side-nav nav-item a.nav-link[href$='/planner'] > mat-icon.nav-icon::after {
-  content: var(--planner-nav-icon);
+  -webkit-mask-image: var(--planner-nav-mask);
+  mask-image: var(--planner-nav-mask);
 }
 
 magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon::after {
-  content: var(--schedule-nav-icon);
+  -webkit-mask-image: var(--schedule-nav-mask);
+  mask-image: var(--schedule-nav-mask);
 }
 
 /* ============================================================
@@ -778,6 +777,12 @@ magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon::after
  */
 body,
 body.isDarkTheme {
+  /* How large an SVG icon is drawn, as a multiple of the font-size its
+     element carries — see the size rule below. `1` is the app's own figure;
+     `0.92` is a shade under it, which is where Lucide's geometry settles next
+     to 14px text. Boxes do not move, so this is safe to push further than a
+     box scale would be. */
+  --icon-scale: 0.92;
   --lucide-stroke: 2;
   /* Play is a filled triangle in the reference and an outline in Lucide.
      `currentColor` fills it; `none` leaves Lucide's own drawing. */
@@ -786,6 +791,35 @@ body.isDarkTheme {
 
 mat-icon[data-mat-icon-namespace='lucide'] svg {
   stroke-width: var(--lucide-stroke);
+}
+
+/* Size, and the reason the fork needs a rule for it at all.
+ *
+ * A glyph is drawn at the element's font-size; an SVG fills the element's box.
+ * The app sets those to different values in places — the left rail states an
+ * 18px font-size inside a 24px box — so on this branch every icon there came
+ * out a third larger than the glyph it replaced. Nothing in the theme asked
+ * for that; it is what swapping the medium did.
+ *
+ * Sizing the drawing to `1em` puts it back on the app's own figure, and the
+ * scale rides along, which makes this the one place the size of every icon in
+ * the interface is decided. It works where a box rule cannot: the app's
+ * component styles outrank anything a theme can write against `.mat-icon`,
+ * but nothing styles the `svg` inside it. Boxes keep the dimensions the app
+ * and the sections below give them, so no layout moves.
+ *
+ * Angular Material writes `width="100%" height="100%"` onto the svg as
+ * attributes, and a presentation attribute loses to any CSS declaration. The
+ * flex box centres what is now smaller than the box holding it. */
+mat-icon[data-mat-icon-type='svg'] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+mat-icon[data-mat-icon-type='svg'] > svg {
+  width: calc(1em * var(--icon-scale));
+  height: calc(1em * var(--icon-scale));
 }
 
 /* The fill is set on the children rather than on the `svg`: `fill="none"` is a
@@ -942,32 +976,41 @@ body > nav.action-nav-right .play-btn-wrapper .pulse-circle {
 }
 
 /* Super Productivity does not expose a custom plugin id as a DOM attribute on
-   menu items. Dashboard is the visible plugin entry in this menu, so custom
-   plugin artwork in the left navigation uses the built-in avg_pace ligature.
-   Keep the replacement inside plugin-icon so the row and click target remain
-   untouched; no SVG asset is needed. */
+   menu items. Dashboard is the visible plugin entry in this menu, so its rail
+   artwork is set here. The font build writes the `avg_pace` ligature, a dial
+   with a sweeping needle; Lucide `gauge` is the same drawing, and using it
+   keeps the rail entirely in one icon set — plugin-icon is the one component
+   in the navigation the fork has not moved, and it would otherwise leave a
+   single Material glyph among Lucide ones.
+
+   The replacement stays inside plugin-icon so the row and its click target are
+   untouched. Unlike the icons above this hides the child rather than the host:
+   plugin-icon is not a mat-icon, and its `visibility: hidden` would take the
+   pseudo-element's own box with it. */
+magic-side-nav nav-item plugin-icon.nav-icon {
+  position: relative;
+}
+
 magic-side-nav nav-item plugin-icon.nav-icon > * {
   display: none !important;
 }
 
 magic-side-nav nav-item plugin-icon.nav-icon::after {
-  content: 'avg_pace';
-  color: var(--ink-muted);
-  font-family: 'Material Symbols Outlined', sans-serif;
-  font-size: 22px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  white-space: nowrap;
-  direction: ltr;
-  font-feature-settings: 'liga';
-  font-variation-settings:
-    'FILL' 0,
-    'wght' 400,
-    'GRAD' 0,
-    'opsz' 24;
+  content: '';
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: calc(22px * var(--icon-scale));
+  height: calc(22px * var(--icon-scale));
+  transform: translate(-50%, -50%);
+  background-color: var(--ink-muted);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3Cpath%20d%3D%22m12%2014%204-4%22%20%2F%3E%20%3Cpath%20d%3D%22M3.34%2019a10%2010%200%201%201%2017.32%200%22%20%2F%3E%20%3C%2Fsvg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3Cpath%20d%3D%22m12%2014%204-4%22%20%2F%3E%20%3Cpath%20d%3D%22M3.34%2019a10%2010%200%201%201%2017.32%200%22%20%2F%3E%20%3C%2Fsvg%3E");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
 }
 
 /* Keep Play and Add task fully visible. Other actions remain present at 25%
