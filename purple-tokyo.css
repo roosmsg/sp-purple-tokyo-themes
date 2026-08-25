@@ -708,6 +708,42 @@ magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon::after
   content: var(--schedule-panel-icon);
 }
 
+/* The detail-panel toggle, made one icon everywhere.
+ *
+ * Two different buttons open that panel. The one in the hover controls draws
+ * right_panel_open; the one on a row that carries notes or an issue is a
+ * different template drawing chat, close or update from a signal, depending on
+ * what the row has and whether the panel is open. Same control, three
+ * drawings, and only the first of them looked like a panel.
+ *
+ * This puts right_panel_open on the others as well. The update state is left
+ * alone: the app marks it with .updated-icon and colours it, because it is
+ * telling you the issue changed upstream — that is information, not decoration,
+ * and it should not be flattened into a panel glyph.
+ *
+ * With the Lucide plugin installed the substituted name is read and drawn as
+ * panel-right, the same as the hover control beside it. */
+body,
+body.isDarkTheme {
+  --task-detail-icon: 'right_panel_open';
+}
+
+task .show-additional-info-btn mat-icon:not(.updated-icon) {
+  visibility: hidden !important;
+  position: relative;
+}
+
+task .show-additional-info-btn mat-icon:not(.updated-icon)::after {
+  content: var(--task-detail-icon);
+  visibility: visible;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
 /* ============================================================
  * LUCIDE ICONS PLUGIN
  * ============================================================
@@ -800,6 +836,7 @@ work-view .no-tasks-illu-wrapper .no-tasks-label {
 body {
   --work-view-scale: 1;
   --settings-view-scale: 0.95;
+  --schedule-view-scale: 0.9;
 }
 
 work-view .task-list-wrapper {
@@ -812,6 +849,21 @@ work-view .task-list-wrapper {
     width: calc(100% / var(--settings-view-scale)) !important;
     height: calc(100% / var(--settings-view-scale)) !important;
     zoom: var(--settings-view-scale);
+  }
+
+  /* Schema is a grid of hours against days, and it is the view that most wants
+     more of both on screen at once. It scales the same way Settings does and
+     for the same reason: `zoom` is a layout property, so the view really is
+     smaller and lays out to the room it now has, rather than being drawn
+     smaller and clipped the way a transform would leave it.
+
+     Held to the desktop with the rule above it. On a narrow window the
+     calendar is already tight, and taking a further tenth off it would cost
+     more than it gives. */
+  .route-wrapper > router-outlet + schedule {
+    width: calc(100% / var(--schedule-view-scale)) !important;
+    height: calc(100% / var(--schedule-view-scale)) !important;
+    zoom: var(--schedule-view-scale);
   }
 }
 
@@ -911,6 +963,51 @@ body > nav.action-nav-right .play-btn-wrapper .pulse-circle {
   left: 0;
 }
 
+/* The play button is the one control in this strip that never dims, and the
+   only one the theme sizes for itself, so it is also the one worth answering
+   the pointer. Two things happen at once, both small: the circle grows a
+   little, and Material's own hover layer over it deepens.
+
+   The layer is raised by redefining the token Material reads rather than by
+   drawing anything — `--mat-fab-hover-state-layer-opacity` is what the
+   button's persistent ripple already uses for its hover state, and 0.04 is a
+   figure meant for a large flat surface, not for a 46px circle. Redefining it
+   on the element keeps the app's own mechanism, its timing and its shape, and
+   leaves nothing behind if the button is ever built differently.
+
+   The growth needs no transition of its own: Material already transitions
+   `transform` on a fab, so stating the end state is enough. It is scoped away
+   from the disabled state, which is how the button sits when no task is
+   selected — a control that cannot be pressed should not react to being
+   pointed at.
+
+   Unlike the rules above, these do not start at `body >`. That prefix is there
+   for the experimental vertical rail, which the app teleports to the end of
+   body; in the default horizontal header the same nav sits inside a wrapper
+   and the prefix quietly stops matching. Sizing only concerns the vertical
+   rail, so it is right there. A hover is worth having in both layouts. */
+body {
+  --play-button-hover-scale: 1.06;
+  --play-button-hover-layer-opacity: 0.12;
+}
+
+nav.action-nav-right button.play-btn:hover:not(:disabled):not(.mat-mdc-button-disabled),
+nav.action-nav-right button.play-btn:focus-visible:not(:disabled):not(.mat-mdc-button-disabled) {
+  transform: scale(var(--play-button-hover-scale));
+  --mat-fab-hover-state-layer-opacity: var(--play-button-hover-layer-opacity);
+  --mat-fab-focus-state-layer-opacity: var(--play-button-hover-layer-opacity);
+}
+
+/* Someone who has asked the system for less movement gets the deeper hover
+   layer and none of the growth. */
+@media (prefers-reduced-motion: reduce) {
+  nav.action-nav-right button.play-btn:hover:not(:disabled):not(.mat-mdc-button-disabled),
+  nav.action-nav-right
+    button.play-btn:focus-visible:not(:disabled):not(.mat-mdc-button-disabled) {
+    transform: none;
+  }
+}
+
 /* Super Productivity does not expose a custom plugin id as a DOM attribute on
    menu items. Dashboard is the visible plugin entry in this menu, so custom
    plugin artwork in the left navigation uses the built-in avg_pace ligature.
@@ -954,6 +1051,23 @@ magic-side-nav nav-item plugin-icon.nav-icon::after {
     button:not(:where(.play-btn, .tour-addBtn)) {
     opacity: var(--action-bar-idle-opacity);
     transition-delay: var(--action-bar-hover-out-delay);
+  }
+
+  /* Reaching for Play is not the same as reaching for the strip. Play sits at
+     the top of the rail and is the one control there you press while working,
+     so the pointer lands on it constantly — and every one of those trips was
+     lighting up the whole rail behind it. While the pointer is on Play the
+     rest stays where it was.
+
+     The :has() reads the hover from the button back up to the nav, which is
+     the only way a stylesheet can say "hovered, but not there". Keyboard focus
+     is still let through: :focus-within means someone is working the rail with
+     the keyboard and needs to see it. No delay on this one — the rule takes
+     effect on arrival, rather than fading in two seconds later. */
+  nav.action-nav-right:has(.play-btn:hover):not(:focus-within)
+    button:not(:where(.play-btn, .tour-addBtn)) {
+    opacity: var(--action-bar-idle-opacity);
+    transition-delay: 0s;
   }
 }
 
@@ -1538,6 +1652,32 @@ body.isDarkTheme {
 
 task .title-and-tags-wrapper .tags > tag .tag-title {
   font-size: 1.3em;
+}
+
+/* The project reads as a heading for the line rather than as another chip on
+   it, so it is set larger than the tags that follow it — text and icon
+   together, or the icon is left looking like a leftover beside the name.
+
+   The icon hands `--icon-scale` back to 1. That scale exists to correct sizes
+   the app chose and the theme did not; here the theme states the size, and a
+   figure written in this file should be the figure drawn — in the icon-font
+   build and with the Lucide plugin alike. */
+body,
+body.isDarkTheme {
+  --task-project-size: 1.45em;
+  --task-project-icon-size: 1.35em;
+}
+
+task .title-and-tags-wrapper .tags > tag:first-child .tag-title {
+  font-size: var(--task-project-size);
+}
+
+task .title-and-tags-wrapper .tags > tag:first-child mat-icon {
+  --icon-scale: 1;
+  font-size: var(--task-project-icon-size);
+  width: var(--task-project-icon-size);
+  height: var(--task-project-icon-size);
+  line-height: var(--task-project-icon-size);
 }
 
 /* The done toggle, matched to PWM. There it is a Tailwind-forms checkbox:
