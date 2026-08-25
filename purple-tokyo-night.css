@@ -1048,6 +1048,33 @@ work-view .no-tasks-illu-wrapper .no-tasks-label {
 }
 
 /* ============================================================
+ * ADD TASK POP-UP — further down the page
+ * ============================================================
+ * The floating add-task bar opens 48px below the top edge with a further 20px
+ * of margin, which puts it against the header. `--add-task-bar-top` is the
+ * distance from the top edge to the panel; the app's margin is cleared so that
+ * one number is the whole story.
+ *
+ * Desktop only, and only where a mouse is the primary input: with touch the app
+ * pins the same bar above the keyboard at the bottom of the screen, which this
+ * must not disturb. The 600px is the app's own `xs` breakpoint, where the bar
+ * changes from edge-to-edge to a centred panel.
+ *
+ * `!important` because the rules being overridden are component styles, whose
+ * compiled `:host` selector carries a specificity a plain element selector in
+ * an installed theme cannot reach. */
+body {
+  --add-task-bar-top: 120px;
+}
+
+@media screen and (min-width: 600px) {
+  body:not(.isTouchPrimary) add-task-bar.global {
+    top: var(--add-task-bar-top) !important;
+    margin-top: 0 !important;
+  }
+}
+
+/* ============================================================
  * CONTENT VIEW SCALE
  * ============================================================
  * Ctrl + scroll changes the whole window, which made the task work view and
