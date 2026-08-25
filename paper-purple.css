@@ -741,6 +741,23 @@ magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon::after
 html[data-lucide-icons] body,
 html[data-lucide-icons] body.isDarkTheme {
   --icon-scale: 0.92;
+  --icon-scale-tasks: 0.8;
+}
+
+/* The task list, the view around it and the detail panel read their own scale.
+   These are the places where an icon sits beside 14px text rather than beside
+   a label in a rail or a menu, and the size that reads as balanced there is a
+   step below the rest of the interface.
+
+   It is the same variable, redefined on the containers rather than matched by
+   another selector: a custom property inherits, so every icon inside a task
+   row or the panel picks the smaller figure up on its own, whatever markup the
+   app puts in between. */
+html[data-lucide-icons] work-view,
+html[data-lucide-icons] task,
+html[data-lucide-icons] task-detail-panel,
+html[data-lucide-icons] task-detail-item {
+  --icon-scale: var(--icon-scale-tasks);
 }
 
 html[data-lucide-icons] mat-icon[data-lucide-icon]::after {
