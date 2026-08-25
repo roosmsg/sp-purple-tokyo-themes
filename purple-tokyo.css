@@ -320,11 +320,12 @@ body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen)::after {
    Electron draws minimise, maximise and close, so its first row ran under them.
    This starts its contents below that strip.
 
-   Named per pane rather than on the panel itself, because the panel is a shell
-   the app fills with one of five components and only some of them start at the
-   very top. The task detail panel and the project notes are the two that do;
-   `issue-panel`, `schedule-day-panel` and `plugin-panel-container` take the
-   same rule by adding their name here if they ever need it.
+   On the panel rather than on what it holds. The panel is a shell the app fills
+   with one of several components — the task detail panel, project notes, an
+   issue panel, the day's schedule, a plugin's own view — and every one of them
+   opens in the same place under the same buttons. Padding the shell covers all
+   of them, and covers whatever is added to that list later without this file
+   needing to hear about it.
 
    The height is the same `--window-controls-height` the strip above is drawn
    at, so the two cannot drift: it reads Electron's own title-bar safe area and
@@ -341,8 +342,7 @@ body {
 }
 
 @media screen and (min-width: 600px) {
-  body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen) task-detail-panel,
-  body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen) notes {
+  body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen) .right-panel {
     padding-top: var(--detail-panel-top-gap);
   }
 }
