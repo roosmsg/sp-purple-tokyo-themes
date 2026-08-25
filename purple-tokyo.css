@@ -870,7 +870,6 @@ work-view .no-tasks-illu-wrapper .no-tasks-label {
 body {
   --work-view-scale: 1;
   --settings-view-scale: 0.95;
-  --schedule-view-scale: 0.8;
 }
 
 work-view .task-list-wrapper {
@@ -884,69 +883,6 @@ work-view .task-list-wrapper {
     height: calc(100% / var(--settings-view-scale)) !important;
     zoom: var(--settings-view-scale);
   }
-
-  /* Schema is a grid of hours against days, and it is the view that most wants
-     more of both on screen at once. It scales the same way Settings does and
-     for the same reason: `zoom` is a layout property, so the view really is
-     smaller and lays out to the room it now has, rather than being drawn
-     smaller and clipped the way a transform would leave it.
-
-     Held to the desktop with the rule above it. On a narrow window the
-     calendar is already tight, and taking a further tenth off it would cost
-     more than it gives. */
-  .route-wrapper > router-outlet + schedule {
-    width: calc(100% / var(--schedule-view-scale)) !important;
-    height: calc(100% / var(--schedule-view-scale)) !important;
-    zoom: var(--schedule-view-scale);
-  }
-}
-
-/* The hours down the side of Schema, and the two markers in the same gutter.
-   The app sets them at 11.2px and 10px, and the view scale takes a further
-   fifth off both — a small figure made smaller, on the labels the whole grid is
-   read against.
-
-   All three sizes here are stated at the size they are to be *read* at, and
-   divided by the scale so the zoom multiplies them straight back out. That is
-   worth the arithmetic: it means zooming the view out again does not quietly
-   shrink its labels along with it, and there is one number per label rather
-   than a number and a correction to keep in step.
-
-   `!important` on both: the app states these sizes from selectors Angular
-   compiles with two content attributes, which outrank anything a theme can
-   write against the same elements. The marker text is named as well as its
-   container — the label is a child div carrying a size of its own, so setting
-   the container alone left it exactly where it was. */
-body,
-body.isDarkTheme {
-  --schedule-time-size: 12.5px;
-  --schedule-marker-size: 11.5px;
-  /* The size the week heading is to be *read* at, not the size it is set
-     at. See the rule below. */
-  --schedule-title-size: 18px;
-}
-
-schedule .grid-container > .time {
-  font-size: calc(var(--schedule-time-size) / var(--schedule-view-scale)) !important;
-}
-
-schedule .work-start,
-schedule .work-end,
-schedule .work-start > div,
-schedule .work-end > div {
-  font-size: calc(var(--schedule-marker-size) / var(--schedule-view-scale)) !important;
-}
-
-/* The week heading, held at a constant size while the view around it is
-   scaled. Dividing by the scale is what does it: the zoom multiplies every
-   length inside the view by that same figure, so a font-size stated as
-   size ÷ scale arrives back at size on the screen. Move the scale and the
-   heading stays exactly where it is, with no second number to remember.
-
-   The app's own page title — the word Schema in the header — is outside the
-   scaled element and never shrank with it, so it is not touched here. */
-schedule .title {
-  font-size: calc(var(--schedule-title-size) / var(--schedule-view-scale)) !important;
 }
 
 /* ============================================================
