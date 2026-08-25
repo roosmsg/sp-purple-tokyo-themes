@@ -1467,13 +1467,25 @@ magic-side-nav .g-multi-btn-wrapper {
 
 /* The other direction, for once. A settings tab is drawn with its top corners
    rounded, but the hover layer inside it is left square by the app, so pointing
-   at a tab put a rectangle inside a rounded shape. `inherit` hands the ripple
-   the tab's own radius rather than restating the figure, so it keeps following
-   the tab if the app ever changes it. */
+   at a tab put a rectangle inside a rounded shape.
+
+   The layer that paints is `.mdc-tab__ripple::before` — the element itself is a
+   zero-width placeholder and rounding it changed nothing visible, which is why
+   the first attempt at this looked right in the stylesheet and wrong on screen.
+   Both are named now, and both take `inherit` rather than a restated figure, so
+   the chain runs tab -> ripple -> ::before and follows the tab if the app ever
+   changes its corners. */
 .mat-mdc-tab .mdc-tab__ripple,
 .mat-mdc-tab .mat-ripple,
 .mat-mdc-tab-link .mdc-tab__ripple,
 .mat-mdc-tab-link .mat-ripple {
+  border-radius: inherit;
+}
+
+.mat-mdc-tab .mdc-tab__ripple::before,
+.mat-mdc-tab .mat-ripple::before,
+.mat-mdc-tab-link .mdc-tab__ripple::before,
+.mat-mdc-tab-link .mat-ripple::before {
   border-radius: inherit;
 }
 
