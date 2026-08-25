@@ -14,7 +14,7 @@ Two further files pair the same interface changes with other palettes from Perso
 | File | Light slot | Dark slot |
 | --- | --- | --- |
 | `purple-tokyo.css` | Tokyo Light | Shades of Purple (Super Dark) |
-| `paper-purple.css` | Licht — white and near-white zinc surfaces, sky blue accent | Shades of Purple (Super Dark) |
+| `paper-purple.css` | Licht — white and near-white zinc surfaces, Claude salmon accent | Shades of Purple (Super Dark) |
 | `purple-tokyo-night.css` | Shades of Purple — indigo surfaces, white text, salmon accent | Tokyo Night — near-black blue surfaces, pale blue text, the theme's blue accent |
 
 `purple-tokyo-night.css` puts a dark palette in the light slot, as asked. Shades of Purple is a dark theme in Personal Work Manager as well; it is the lighter of the two purples, not a light theme. Switching modes therefore moves between two dark looks rather than between light and dark, and Super Productivity still treats the light slot as light mode — its drop shadows and the platform's `color-scheme` for native widgets are the light-mode ones.
