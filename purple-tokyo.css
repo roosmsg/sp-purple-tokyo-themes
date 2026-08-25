@@ -766,8 +766,14 @@ html[data-lucide-icons] task .show-additional-info-btn:not(:has(.updated-icon)) 
   transition: opacity var(--transition-duration-s) var(--ani-standard-timing);
 }
 
+/* Pointed at, reached by keyboard, or already open. `.isSelected` is the class
+   the app puts on a row whose detail panel is showing — not `.isCurrent`, which
+   marks the task being tracked and is a different thing entirely. A control that
+   is currently doing something should stay where the eye last saw it, and this
+   one is also the way back out of the panel. */
 html[data-lucide-icons] task:hover .show-additional-info-btn:not(:has(.updated-icon)),
-html[data-lucide-icons] task:focus-within .show-additional-info-btn:not(:has(.updated-icon)) {
+html[data-lucide-icons] task:focus-within .show-additional-info-btn:not(:has(.updated-icon)),
+html[data-lucide-icons] task.isSelected .show-additional-info-btn:not(:has(.updated-icon)) {
   opacity: 1 !important;
   pointer-events: auto;
 }
@@ -864,7 +870,7 @@ work-view .no-tasks-illu-wrapper .no-tasks-label {
 body {
   --work-view-scale: 1;
   --settings-view-scale: 0.95;
-  --schedule-view-scale: 0.85;
+  --schedule-view-scale: 0.8;
 }
 
 work-view .task-list-wrapper {
@@ -895,10 +901,16 @@ work-view .task-list-wrapper {
   }
 }
 
-/* The hours down the side of Schema, and the two markers that sit in the same
-   gutter. The app sets them at 11.2px and 10px, and the zoom above takes a
-   further tenth off both, which is a small figure made smaller — these are
-   the labels the whole grid is read against, so they get some of it back.
+/* The hours down the side of Schema, and the two markers in the same gutter.
+   The app sets them at 11.2px and 10px, and the view scale takes a further
+   fifth off both — a small figure made smaller, on the labels the whole grid is
+   read against.
+
+   All three sizes here are stated at the size they are to be *read* at, and
+   divided by the scale so the zoom multiplies them straight back out. That is
+   worth the arithmetic: it means zooming the view out again does not quietly
+   shrink its labels along with it, and there is one number per label rather
+   than a number and a correction to keep in step.
 
    `!important` on both: the app states these sizes from selectors Angular
    compiles with two content attributes, which outrank anything a theme can
@@ -915,14 +927,14 @@ body.isDarkTheme {
 }
 
 schedule .grid-container > .time {
-  font-size: var(--schedule-time-size) !important;
+  font-size: calc(var(--schedule-time-size) / var(--schedule-view-scale)) !important;
 }
 
 schedule .work-start,
 schedule .work-end,
 schedule .work-start > div,
 schedule .work-end > div {
-  font-size: var(--schedule-marker-size) !important;
+  font-size: calc(var(--schedule-marker-size) / var(--schedule-view-scale)) !important;
 }
 
 /* The week heading, held at a constant size while the view around it is
@@ -2055,13 +2067,21 @@ task.isDone task-hover-controls button {
   height: auto !important;
 }
 
-/* The detail panel's row icons at the same 24px as the task list, so the two
-   halves of the screen carry one icon scale. Material's own default is 24px
-   as well; stating it here keeps the panel steady if a component decides
-   otherwise. */
+/* The detail panel's row icons. They stand beside short labels in a narrow
+   column, where the 24px the task list is drawn at is more than the panel needs.
+   The drawing steps down and the 24px box stays, so the rows keep the rhythm
+   they had and nothing moves.
+
+   Material's own default is 24px as well; stating the box here keeps the panel
+   steady if a component decides otherwise. */
+body,
+body.isDarkTheme {
+  --detail-panel-icon-size: 20px;
+}
+
 task-detail-panel .mat-icon,
 task-detail-item .mat-icon {
-  font-size: 24px;
+  font-size: var(--detail-panel-icon-size);
   width: 24px;
   height: 24px;
   line-height: 24px;
