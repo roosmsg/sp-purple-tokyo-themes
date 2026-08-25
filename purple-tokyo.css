@@ -3,8 +3,8 @@
  *
  *   Dark  — Shades of Purple (Super Dark): deep indigo surfaces, white text,
  *           a muted violet for supporting text, Claude salmon as the accent.
- *   Light — Tokyo Light: cool blue-grey surfaces, ink-blue text, Claude salmon
- *           as the accent — the dark half's hue, deepened for a grey page.
+ *   Light — Tokyo Light: cool blue-grey surfaces, ink-blue text, the violet of
+ *           Shades of Purple as the accent, deepened for a light page.
  *
  * Both halves are the palettes used in Personal Work Manager, remapped onto
  * Super Productivity's token contract (docs/theming-contract.md): the surface
@@ -53,28 +53,24 @@ body:not(.isDarkTheme) {
   --bg-overlay: rgba(230, 231, 237, 0.85);
   --system-surface: #d6d8df; /* Android system bars; must stay opaque */
 
-  /* Primary — Claude salmon, in place of Tokyo Night Light's blue, so the
-     accent is the dark half's and holds its hue across a mode switch.
-     Deliberately not the dark half's hex values, though: this page is a grey
-     blue-grey (#e6e7ed), not white, and salmon #d97757 sits at 2.5:1 against
-     it — under the 3:1 a control or a glyph needs, where the blue it replaces
-     was at 5.5:1. The ladder is therefore the same ramp two stops deeper, so
-     the working stops land where the page can hold them: 500 reaches 4.3:1 on
-     the page and 3.7:1 on the darker side nav, and carries white text at
-     5.3:1. The pale end moves less: those stops are backgrounds behind text
-     rather than marks read against the page. */
-  --palette-primary-50: #f7e4dc;
-  --palette-primary-100: #f2cdbf;
-  --palette-primary-200: #e9a991;
-  --palette-primary-300: #d97757;
-  --palette-primary-400: #c96442;
-  --palette-primary-500: #a85336;
-  --palette-primary-600: #964a30;
-  --palette-primary-700: #85422b;
-  --palette-primary-800: #6b3623;
-  --palette-primary-900: #52291a;
-  /* Ink on the pale stops, white from 400 on. The 300 stop carries the ink at
-     4.5:1; at 400 both are close and white is the stronger of the two. */
+  /* Primary — the violet of Shades of Purple, brought down to a light page.
+     PWM's Tokyo Light carries a blue here; this is the hue of the dark half's
+     supporting text (#a599e9), which at 2.0:1 on this page is a colour for
+     text on a dark surface rather than a mark on a light one. The ladder is
+     built around a 500 that stands where the blue stood — 5.5:1 on the page,
+     white text at 6.8:1, against the blue's 5.5:1 and 6.8:1 — so nothing
+     drawn in the accent changes weight, only hue. */
+  --palette-primary-50: #f0edfa;
+  --palette-primary-100: #ddd7f4;
+  --palette-primary-200: #c1b8ea;
+  --palette-primary-300: #9e8fdc;
+  --palette-primary-400: #7c68cd;
+  --palette-primary-500: #5f47b8;
+  --palette-primary-600: #523da0;
+  --palette-primary-700: #453388;
+  --palette-primary-800: #372a6c;
+  --palette-primary-900: #2a2053;
+  /* Ink on the pale stops, white from 400 on. */
   --palette-primary-contrast-50: #262b3a;
   --palette-primary-contrast-100: #262b3a;
   --palette-primary-contrast-200: #262b3a;
@@ -108,10 +104,8 @@ body:not(.isDarkTheme) {
   --c-info: #0f4b6e;
   --sun-yellow: #8f5e15;
 
-  /* Links carry the accent instead of the base's ink mix, at the 700 stop:
-     500 is a fill colour here and reaches 4.3:1 on the page, just short of the
-     4.5:1 a run of text needs. The 700 clears it at 6.1:1. */
-  --link-color: #85422b;
+  /* Links carry the accent at full strength instead of the base's ink mix. */
+  --link-color: #523da0;
 
   /* --- Category B: tokens the base hardcodes to white or neutral grey --- */
   --bg-drag-col: #dcdee3;
@@ -139,7 +133,7 @@ body:not(.isDarkTheme) {
   --improvement-border: rgba(54, 60, 77, 0.25);
 
   /* Text selection */
-  --theme-selection-bg: rgba(168, 83, 54, 0.18);
+  --theme-selection-bg: rgba(95, 71, 184, 0.18);
 }
 
 /* ============================================================

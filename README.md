@@ -3,7 +3,7 @@
 A light/dark theme pair for [Super Productivity](https://github.com/super-productivity/super-productivity), plus a set of interface changes that go with it.
 
 - **Dark — Shades of Purple (Super Dark):** deep indigo surfaces, white text, a muted violet for supporting text, Claude salmon as the accent.
-- **Light — Tokyo Light:** cool blue-grey surfaces, ink-blue text, Claude salmon as the accent — the dark half's hue, two stops deeper so it holds against a grey page.
+- **Light — Tokyo Light:** cool blue-grey surfaces, ink-blue text, the violet of Shades of Purple as the accent, deepened so it carries on a light page.
 
 Both palettes are taken from Personal Work Manager and remapped onto Super Productivity's [theming contract](https://github.com/super-productivity/super-productivity/blob/master/docs/theming-contract.md): the surface ladder and the ink primitives drive the semantic tokens, so most of the app follows from the two colour blocks at the top of the file. The rest covers the tokens the base pins to a neutral grey ramp that the ladder does not reach.
 
