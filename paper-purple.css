@@ -1475,7 +1475,7 @@ magic-side-nav .g-multi-btn-wrapper {
  * them. */
 body,
 body.isDarkTheme {
-  --side-nav-icon-gap: 12px;
+  --side-nav-icon-gap: 15px;
 }
 
 magic-side-nav .nav-link.nav-link:not(:has(plugin-icon)) {
