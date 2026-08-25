@@ -1097,11 +1097,6 @@ body {
   --action-bar-scale: 0.85;
   /* Non-primary actions stay visible but recede until the rail is used. */
   --action-bar-idle-opacity: 0.25;
-  /* How long the pointer has to stay on one of these before the group comes up.
-     It is the wait on the way in, not on the way out: sweeping across the strip
-     to reach something else should not set it off, while meaning to use it
-     costs a moment that is barely noticed. */
-  --action-bar-undim-delay: 250ms;
   /* The time-tracking button is the one control in that strip you reach for
      while working, so it carries a size of its own rather than a scale. The
      app draws it at 40px. */
@@ -1275,20 +1270,12 @@ magic-side-nav nav-item plugin-icon.nav-icon::after {
   nav.action-nav-right button:not(:where(.play-btn, .tour-addBtn)) {
     opacity: var(--action-bar-idle-opacity);
     transition: opacity var(--transition-duration-s) var(--ani-standard-timing);
-    /* Nothing on the way down: once the pointer has gone the group has no
-       reason to linger. */
-    transition-delay: 0s;
   }
 
-  /* The wait is on the lift. A transition-delay on the state being entered is
-     what holds it back, so this is the rule that carries it — and because the
-     resting rule above states 0s, the group drops as soon as the pointer
-     leaves rather than waiting the same amount again. */
   nav.action-nav-right:has(button:not(:where(.play-btn, .tour-addBtn)):hover)
     button:not(:where(.play-btn, .tour-addBtn)),
   nav.action-nav-right:focus-within button:not(:where(.play-btn, .tour-addBtn)) {
     opacity: 1;
-    transition-delay: var(--action-bar-undim-delay);
   }
 }
 
@@ -1468,6 +1455,29 @@ magic-side-nav .nav-link.nav-link.active,
 magic-side-nav nav-item.nav-item,
 magic-side-nav .g-multi-btn-wrapper {
   border-radius: 0;
+}
+
+/* The space between a rail icon and its label. The app leaves 20px — a 16px
+   gap on the row plus a 4px margin on the icon — and this theme was making it
+   29px without meaning to: the compact-menus section sets a 12px margin on
+   `.mat-mdc-menu-item .mat-icon`, and a nav link carries `mat-menu-item`, so
+   the rail was collecting a rule written for context menus.
+ *
+ * The margin is cleared and the row's own gap carries the whole distance, which
+ * leaves one number to change instead of two that add up. Both selectors repeat
+ * a class to clear the app's own, which Angular compiles with content
+ * attributes. */
+body,
+body.isDarkTheme {
+  --side-nav-icon-gap: 12px;
+}
+
+magic-side-nav .nav-link.nav-link {
+  gap: var(--side-nav-icon-gap);
+}
+
+magic-side-nav .nav-link .nav-icon.nav-icon {
+  margin-right: 0;
 }
 
 /* The other direction, for once. A settings tab is drawn with its top corners
