@@ -673,19 +673,16 @@ body.isDarkTheme {
 /* Covered: the "Voeg toe aan Mijn Day" button on Today, the add-to-today
    control that appears when hovering a task row, the today button on the
    Timeline, the "plan what is left of today" button on the day summary, the
-   today shortcut in the date picker, and My Day's own row at the head of the
-   left rail.
+   today shortcut in the date picker.
 
-   That last one is matched by position rather than by which icon it holds, and
-   it is worth knowing why. The icon on a work-context row is user data — the
-   Today tag carries whichever one was picked for it — and a stylesheet cannot
-   read what an element says. The row is reliably first: the app builds the rail
-   with the main work context ahead of everything else. If it is ever not first,
-   this rule marks the wrong row rather than no row, which is the failure to
-   look for.
-
-   Worth knowing too: this icon can simply be changed in the app, on the Today
-   tag itself, which reaches both builds and needs no rule at all. Each of these sits in a container
+   My Day's row in the rail is deliberately not here. It was, matched by
+   position — and `nav-item:first-of-type` turned out to mean "first in its
+   own list", so every project group's first row took the bolt as well. The
+   icon on those rows is user data and a stylesheet cannot read what an element
+   says, so there is no honest selector for it. The Lucide plugin maps the sun
+   to a bolt instead, which reaches the row by name rather than by guessing at
+   its position; failing that, the icon can be changed on the Today tag inside
+   the app. Each of these sits in a container
    where the sun is the only icon, so the swap cannot reach a neighbour by
    accident. The second selector keys off the Dutch button title, so it follows
    the interface language — with the app in another language that line needs
@@ -694,8 +691,7 @@ body.isDarkTheme {
 [title^='Voeg toe aan Mijn Day'] mat-icon,
 .today-btn mat-icon,
 plan-tasks-tomorrow mat-icon,
-.quick-access > button:first-of-type mat-icon,
-magic-side-nav nav-item:first-of-type mat-icon.nav-icon {
+.quick-access > button:first-of-type mat-icon {
   visibility: hidden !important;
   position: relative;
 }
@@ -708,8 +704,7 @@ magic-side-nav nav-item:first-of-type mat-icon.nav-icon {
 [title^='Voeg toe aan Mijn Day'] mat-icon::after,
 .today-btn mat-icon::after,
 plan-tasks-tomorrow mat-icon::after,
-.quick-access > button:first-of-type mat-icon::after,
-magic-side-nav nav-item:first-of-type mat-icon.nav-icon::after {
+.quick-access > button:first-of-type mat-icon::after {
   content: var(--today-icon);
   visibility: visible;
   position: absolute;
