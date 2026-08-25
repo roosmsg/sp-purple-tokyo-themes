@@ -9,13 +9,16 @@ Both palettes are taken from Personal Work Manager and remapped onto Super Produ
 
 ## Variants
 
-Two further files pair the same interface changes with other palettes from Personal Work Manager. Everything below the two colour blocks is identical in all three, so a change to one section has to be repeated in the others; Super Productivity's installer accepts a single self-contained file and no `@import`, which is why the shared part is copied rather than referenced.
+Two further files pair the same interface changes with other palettes from Personal Work Manager, and a fourth is a build of `paper-purple.css` for the icon fork. Everything below the two colour blocks is identical in the three palette files, so a change to one section has to be repeated in the others; Super Productivity's installer accepts a single self-contained file and no `@import`, which is why the shared part is copied rather than referenced. The fork build departs from `paper-purple.css` in its icon sections and nowhere else.
 
 | File | Light slot | Dark slot |
 | --- | --- | --- |
 | `purple-tokyo.css` | Tokyo Light | Shades of Purple (Super Dark) |
 | `paper-purple.css` | Licht — white and near-white zinc surfaces, sky blue accent | Shades of Purple (Super Dark) |
 | `purple-tokyo-night.css` | Shades of Purple — indigo surfaces, white text, salmon accent | Tokyo Night — near-black blue surfaces, pale blue text, the theme's blue accent |
+| `paper-purple-fork.css` | As `paper-purple.css` | As `paper-purple.css` |
+
+`paper-purple-fork.css` is not another palette. It is `paper-purple.css` built for the `lucide-icons` branch of the fork, where the interface is drawn with Lucide SVG icons instead of the Material Symbols font, and it is the file to install there — the stock files assume the icon font and would write the word `bolt` where the bolt should be. Install it on a stock build and the same thing happens in reverse: nothing breaks, but the two swapped icons go missing. See [Fork build](#fork-build) below.
 
 `purple-tokyo-night.css` puts a dark palette in the light slot, as asked. Shades of Purple is a dark theme in Personal Work Manager as well; it is the lighter of the two purples, not a light theme. Switching modes therefore moves between two dark looks rather than between light and dark, and Super Productivity still treats the light slot as light mode — its drop shadows and the platform's `color-scheme` for native widgets are the light-mode ones.
 
@@ -52,11 +55,23 @@ Each section in the file stands on its own and can be deleted without touching t
 | Text rendering | Restores Windows subpixel rendering, which Material and the app switch off with `-webkit-font-smoothing: antialiased`. Icon faces keep greyscale smoothing. Bold type caps at SemiBold and inline emphasis at Medium, with table and section headers a step smaller. |
 | Chrome scale | Puts the two navigation rails a step below the content in size. |
 
+## Fork build
+
+An icon in the font build is text, which is what lets this theme swap one: hide the glyph, write a different ligature into a pseudo-element, and it inherits the face, the size and the colour from the element it stands in. On the fork the same icons are SVG, and a pseudo-element has nothing to write — so `paper-purple-fork.css` cuts those two swaps as masks instead, from Lucide outlines inlined in the file. They still take the colour of the button they sit in.
+
+Sizing needed no work. Every icon rule in the theme already states `width` and `height` beside `font-size`, and an SVG icon fills that box.
+
+What the fork build adds is a weight knob. Lucide draws each icon as a stroke, so its weight is a setting rather than a property of a font, and `--lucide-stroke` moves it everywhere at once — which is the point if you are judging the icon set rather than living with it.
+
+Two swaps are deliberately left on the ligature mechanism, because the fork has not moved those icons yet: the main entries in the left navigation (Today, Planner, Schema, Boards, Settings) and the plugin fallback icon still reach the template as ligature names and still render in the icon font. They therefore work unchanged. It also means the left rail is the one surface where the fork still shows Material Symbols; that is a gap in the fork rather than in the theme.
+
 ## Tuning
 
-- `--today-icon` — the Material Symbols ligature drawn in place of the sun. `bolt` by default; `electric_bolt`, `offline_bolt`, `flash_on` and `thunderstorm` are the other candidates in the app's icon picker.
+- `--today-icon` — the Material Symbols ligature drawn in place of the sun. `bolt` by default; `electric_bolt`, `offline_bolt`, `flash_on` and `thunderstorm` are the other candidates in the app's icon picker. In `paper-purple-fork.css` this is `--today-icon-mask` instead, holding the Lucide `zap` outline as an inline data URI; paste another Lucide outline in the same form to change it.
 - `--planner-nav-icon` — the Material Symbols ligature used for Planner in the left navigation (`next_week`).
-- `--schedule-nav-icon` and `--schedule-panel-icon` — the Material Symbols ligatures used for Schema in the left navigation (`calendar_clock`) and on the right-panel control (`pending_actions`).
+- `--schedule-nav-icon` and `--schedule-panel-icon` — the Material Symbols ligatures used for Schema in the left navigation (`calendar_clock`) and on the right-panel control (`pending_actions`). In `paper-purple-fork.css` the right-panel control is a Lucide icon, so its knob is `--schedule-panel-mask` and carries the `calendar-clock` outline; the navigation entry is still a ligature and keeps its own.
+- `--lucide-stroke` (`paper-purple-fork.css` only) — the stroke width every Lucide icon is drawn at, in the 24-unit box Lucide designs in. `2` is Lucide's default and the value that sits closest to the icon font this replaces; `1.5` is what Lucide calls light. The two masked icons above do not follow it: their width is baked into the data URI.
+- `--lucide-play-fill` (`paper-purple-fork.css` only) — `none` by default, which leaves Lucide's outline triangle on the play controls. `currentColor` fills it, closer to the reference and to the font build.
 - `--work-view-scale` and `--settings-view-scale` — independent scales for the task work view (`1`) and desktop Settings page (`0.95`). Adjusting Settings does not change project pages.
 - `--side-nav-scale`, `--nav-footer-scale`, `--action-bar-scale` — the navigation scale in three places: the left rail (`1.05`), the search/timeline/settings group at the foot of that rail relative to the rail itself (`1`, matching the other rail buttons), and the right action strip (`0.85`). `--action-bar-idle-opacity` (`0.25`) dims every action-bar button except Play and Add task by 75% while the bar is idle, in both desktop layouts. `--action-bar-hover-out-delay` (`2s`) delays both layouts' return to idle opacity. `--play-button-size` (`46px`) sets the time-tracking button apart from the vertical strip scale; the strip widens to fit it.
 - `--font-body-stack` and `--font-heading-stack` — the interface face. Both resolve to Inter, the face Personal Work Manager uses; install it (PWM carries `InterVariable.woff2`/`.ttf` under `src/renderer/public/fonts/`) or the stack falls back to Super Productivity's own default. Point `--font-heading-stack` at another family to set headings apart again.

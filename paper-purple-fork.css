@@ -1,0 +1,1905 @@
+/**
+ * Paper Purple (Lucide fork) — a light/dark pair for Super Productivity
+ *
+ *   Light — Licht: Personal Work Manager's neutral light, white and near-white
+ *           surfaces on a zinc ink ramp, with sky blue as the accent.
+ *   Dark  — Shades of Purple (Super Dark): deep indigo surfaces, white text,
+ *           a muted violet for supporting text, Claude salmon as the accent.
+ *
+ * Both halves are the palettes used in Personal Work Manager, remapped onto
+ * Super Productivity's token contract (docs/theming-contract.md): the surface
+ * ladder and the ink primitives drive the semantic tokens (--bg, --card-bg,
+ * --text-color, …), so most of the app follows from the two blocks below. The
+ * remaining declarations cover the "category B" tokens, which the base pins to
+ * a neutral grey ramp that the ladder does not reach.
+ *
+ * Selectors: light primitives sit on `body:not(.isDarkTheme)` rather than plain
+ * `body`, so nothing declared for light can leak into dark mode. Both selectors
+ * outrank the base's `body` declarations.
+ *
+ * Card surfaces: as in PWM, cards and task rows sit a step *below* the page
+ * rather than above it. Hover, current and selected states step up, so
+ * interaction still reads as a lift.
+ *
+ * After the two colour blocks the file continues with the parts that are not
+ * colour: the font stack, the side nav (section buttons on hover, no Help
+ * entry) and the flat card treatment. Each section stands on its own and can
+ * be deleted without touching the rest.
+ *
+ * FORK BUILD. This is paper-purple.css adapted to the `lucide-icons` branch
+ * of the fork, where most of the interface is drawn with Lucide SVG icons
+ * instead of the Material Symbols font. Two things follow from that.
+ *
+ * An icon is no longer text, so the ligature substitutions this theme uses to
+ * put a different glyph in a slot have nothing to write; they are redrawn as
+ * masks under LUCIDE ICON SWAPS. And the icons are strokes rather than glyphs,
+ * so their weight is a setting instead of a property of the font: LUCIDE ICON
+ * WEIGHT gives it one knob. Sizing needed nothing — every icon rule here
+ * already states width and height beside font-size, and an SVG icon fills
+ * that box.
+ *
+ * Two swaps stay on the ligature mechanism, because the fork has not moved
+ * those icons yet: the left navigation's main entries and the plugin fallback
+ * icon still reach the template as ligature names from
+ * magic-nav-config.service.ts and still render in the icon font. Those rules
+ * work here unchanged. When the fork moves them, they need the mask treatment
+ * as well, and the shape to copy stands directly above them.
+ */
+
+/* ============================================================
+ * LIGHT — Licht
+ * ============================================================ */
+body:not(.isDarkTheme) {
+  /* Surface ladder: chrome → page → cards → elevated → highest */
+  --surface-0: #f5f5f5; /* deepest: toolbars, side nav (PWM --color-bg-background) */
+  --surface-1: #ffffff; /* app background (PWM --color-bg-primary) */
+  --surface-2: #fcfcfc; /* cards, tasks, dialogs (PWM --color-bg-secondary) */
+  --surface-3: #eeeeef; /* elevated: current task, drag-drop targets */
+  --surface-4: #e1e1e3; /* highest: banner, mobile bottom panel */
+
+  /* Ink */
+  --ink-strong: #09090b;
+  --ink: #18181b; /* PWM --color-text-primary */
+  /* PWM's tertiary text (#57575c) clears AA on white; kept as is. */
+  --ink-muted: #57575c;
+  --ink-on-channel: 24, 24, 27; /* #18181b — overlays read zinc, not pure black */
+
+  /* Separators, scrim, overlays */
+  --separator: #dfdfdf; /* PWM --color-border-tertiary */
+  --divider: #e5e5e5; /* PWM --color-border-secondary */
+  --scrim: rgba(9, 9, 11, 0.45);
+  --bg-overlay: rgba(255, 255, 255, 0.85);
+  --system-surface: #f5f5f5; /* Android system bars; must stay opaque */
+
+  /* Primary — the sky blue PWM's neutral themes carry (--color-accent-*) */
+  --palette-primary-50: #f0f9ff;
+  --palette-primary-100: #e0f2fe;
+  --palette-primary-200: #bae6fd;
+  --palette-primary-300: #7dd3fc;
+  --palette-primary-400: #38bdf8;
+  --palette-primary-500: #0ea5e9;
+  --palette-primary-600: #0284c7;
+  --palette-primary-700: #0369a1;
+  --palette-primary-800: #075985;
+  --palette-primary-900: #0c4a6e;
+  /* Sky carries dark text through 500; white from 600 on. */
+  --palette-primary-contrast-50: #18181b;
+  --palette-primary-contrast-100: #18181b;
+  --palette-primary-contrast-200: #18181b;
+  --palette-primary-contrast-300: #18181b;
+  --palette-primary-contrast-400: #18181b;
+  --palette-primary-contrast-500: #18181b;
+  --palette-primary-contrast-600: #ffffff;
+  --palette-primary-contrast-700: #ffffff;
+  --palette-primary-contrast-800: #ffffff;
+  --palette-primary-contrast-900: #ffffff;
+
+  /* Warn — red, at the strength a white page needs */
+  --palette-warn-300: #fca5a5;
+  --palette-warn-400: #f87171;
+  --palette-warn-500: #dc2626;
+  --palette-warn-600: #b91c1c;
+  --palette-warn-700: #991b1b;
+  --palette-warn-contrast-300: #18181b;
+  --palette-warn-contrast-400: #18181b;
+  --palette-warn-contrast-500: #ffffff;
+  --palette-warn-contrast-600: #ffffff;
+  --palette-warn-contrast-700: #ffffff;
+
+  /* Status — readable on white */
+  --color-success: #15803d;
+  --color-warning: #b45309;
+  --color-danger: #b91c1c;
+  --c-success: #15803d;
+  --c-warning: #b45309;
+  --c-error: #b91c1c;
+  --c-info: #0369a1;
+  --sun-yellow: #b45309;
+
+  /* Links carry the accent at full strength instead of the base's ink mix. */
+  --link-color: #0369a1;
+
+  /* --- Category B: tokens the base hardcodes to white or neutral grey --- */
+  --bg-drag-col: #eeeeef;
+  --bg-super-light: #fafafa;
+  --right-panel-bg-mobile: #fcfcfc;
+  --bottom-panel-bg: #fcfcfc;
+  --selected-task-bg-color: #eeeeef;
+  --task-c-selected-bg: #eeeeef;
+  --extra-border-color: #e5e5e5;
+  --standard-note-bg: #fafafa; /* notes lift off the page like paper */
+  --standard-note-bg-hovered: #f2f2f3;
+  --standard-note-fg: var(--ink);
+  --task-detail-bg: #fcfcfc;
+  --task-detail-bg-hover: #eeeeef;
+  --schedule-event-bg: #fafafa;
+  --sidenav-hover-bg: rgba(24, 24, 27, 0.06);
+  --scrollbar-thumb: rgba(24, 24, 27, 0.25);
+  --scrollbar-thumb-hover: rgba(24, 24, 27, 0.45);
+  --scrollbar-track: transparent;
+  --grid-color: #e7e7e7;
+  --chip-outline-color: rgba(24, 24, 27, 0.22);
+  --progress-bg: rgba(24, 24, 27, 0.1);
+  --improvement-text: var(--ink);
+  --improvement-button-text: var(--ink);
+  --improvement-border: rgba(24, 24, 27, 0.22);
+
+  /* Text selection */
+  --theme-selection-bg: rgba(14, 165, 233, 0.2);
+}
+
+/* ============================================================
+ * DARK — Shades of Purple (Super Dark)
+ * ============================================================ */
+body.isDarkTheme {
+  /* Surface ladder */
+  --surface-0: #131327; /* deepest: toolbars, side nav (PWM --color-bg-background) */
+  --surface-1: #191830; /* app background (PWM --color-bg-primary) */
+  --surface-2: #15152b; /* cards, tasks, dialogs (PWM --color-bg-secondary) */
+  --surface-3: #232144; /* elevated: current task, drag-drop targets */
+  --surface-4: #2f2c5c; /* highest: banner, mobile bottom panel */
+
+  /* Ink — white body text, violet for supporting text, as in the editor theme */
+  --ink-strong: #ffffff;
+  --ink: #ffffff;
+  --ink-muted: #a599e9; /* PWM --color-text-secondary */
+  --ink-on-channel: 255, 255, 255;
+
+  /* Separators, scrim, overlays */
+  --separator: #2c2a52; /* PWM --color-border-tertiary */
+  --divider: #232144; /* PWM --color-border-secondary */
+  --scrim: rgba(9, 9, 20, 0.7);
+  --bg-overlay: rgba(19, 19, 39, 0.85);
+  --system-surface: #131327;
+
+  /* Primary — Claude salmon (PWM --color-accent-*) */
+  --palette-primary-50: #fdf2ee;
+  --palette-primary-100: #f7e4dc;
+  --palette-primary-200: #f2cdbf;
+  --palette-primary-300: #e9a991;
+  --palette-primary-400: #e08e70;
+  --palette-primary-500: #d97757;
+  --palette-primary-600: #c96442;
+  --palette-primary-700: #a85336;
+  --palette-primary-800: #85422b;
+  --palette-primary-900: #6b3623;
+  /* Salmon stays light enough to carry dark text through 600. */
+  --palette-primary-contrast-50: #1b1a33;
+  --palette-primary-contrast-100: #1b1a33;
+  --palette-primary-contrast-200: #1b1a33;
+  --palette-primary-contrast-300: #1b1a33;
+  --palette-primary-contrast-400: #1b1a33;
+  --palette-primary-contrast-500: #1b1a33;
+  --palette-primary-contrast-600: #1b1a33;
+  --palette-primary-contrast-700: #ffffff;
+  --palette-primary-contrast-800: #ffffff;
+  --palette-primary-contrast-900: #ffffff;
+
+  /* Warn — Shades of Purple pink */
+  --palette-warn-300: #ffa3ba;
+  --palette-warn-400: #ff83a3;
+  --palette-warn-500: #ff628c;
+  --palette-warn-600: #e04d76;
+  --palette-warn-700: #b93b5e;
+  --palette-warn-contrast-300: #1b1a33;
+  --palette-warn-contrast-400: #1b1a33;
+  --palette-warn-contrast-500: #1b1a33;
+  --palette-warn-contrast-600: #ffffff;
+  --palette-warn-contrast-700: #ffffff;
+
+  /* Status — Shades of Purple */
+  --color-success: #3ad900;
+  --color-warning: #fad000;
+  --color-danger: #ff628c;
+  --c-success: #3ad900;
+  --c-warning: #fad000;
+  --c-error: #ff628c;
+  --c-info: #9effff;
+  --sun-yellow: #fad000;
+
+  --link-color: #e08e70;
+
+  /* --- Category B: the base maps these to a neutral grey ramp --- */
+  --bg-slightly-lighter: #1e1d3a;
+  --bg-super-light: #3a3768;
+  --text-color-less-intense: rgba(255, 255, 255, 0.82);
+  --text-color-more-intense: #ffffff;
+  --selected-task-bg-color: #232144;
+  --task-c-selected-bg: #232144;
+  --sub-task-c-bg: #1a1934; /* nested rows lift off the card */
+  --sub-task-c-bg-in-selected: #232144;
+  --sub-task-c-bg-done: #131327;
+  --task-c-bg-done: #131327;
+  --extra-border-color: #2c2a52;
+  --standard-note-bg: #1b1a35;
+  --standard-note-bg-hovered: #232144;
+  --standard-note-fg: #ffffff;
+  --task-detail-bg: #1b1a35;
+  --task-detail-bg-hover: #232144;
+  --bottom-panel-bg: #131327;
+  --schedule-event-bg: #1e1d3a;
+  --schedule-event-bg-in-side-panel: #232144;
+  --sidenav-hover-bg: rgba(165, 153, 233, 0.09);
+  --sidenav-item-active-bg: rgba(217, 119, 87, 0.2);
+  --mat-sidenav-scrim-color: rgba(9, 9, 20, 0.75);
+  --scrollbar-thumb: rgba(165, 153, 233, 0.22);
+  --scrollbar-thumb-hover: rgba(165, 153, 233, 0.45);
+  --scrollbar-track: transparent;
+  --grid-color: rgba(165, 153, 233, 0.1);
+  --chip-outline-color: rgba(165, 153, 233, 0.3);
+  --progress-bg: rgba(165, 153, 233, 0.16);
+  --improvement-text: #ffffff;
+  --improvement-button-text: #ffffff;
+  --improvement-border: rgba(165, 153, 233, 0.3);
+
+  --theme-selection-bg: rgba(217, 119, 87, 0.28);
+}
+
+/* ============================================================
+ * ONE ACCENT PER MODE
+ * ============================================================
+ * PWM works with a single accent colour, so Super Productivity's accent role
+ * mirrors the primary ladder above rather than introducing a second hue.
+ * Delete this block to hand the accent role back to the app default. */
+body,
+body.isDarkTheme {
+  --palette-accent-50: var(--palette-primary-50);
+  --palette-accent-100: var(--palette-primary-100);
+  --palette-accent-200: var(--palette-primary-200);
+  --palette-accent-300: var(--palette-primary-300);
+  --palette-accent-400: var(--palette-primary-400);
+  --palette-accent-500: var(--palette-primary-500);
+  --palette-accent-600: var(--palette-primary-600);
+  --palette-accent-700: var(--palette-primary-700);
+  --palette-accent-800: var(--palette-primary-800);
+  --palette-accent-900: var(--palette-primary-900);
+  --palette-accent-contrast-50: var(--palette-primary-contrast-50);
+  --palette-accent-contrast-100: var(--palette-primary-contrast-100);
+  --palette-accent-contrast-200: var(--palette-primary-contrast-200);
+  --palette-accent-contrast-300: var(--palette-primary-contrast-300);
+  --palette-accent-contrast-400: var(--palette-primary-contrast-400);
+  --palette-accent-contrast-500: var(--palette-primary-contrast-500);
+  --palette-accent-contrast-600: var(--palette-primary-contrast-600);
+  --palette-accent-contrast-700: var(--palette-primary-contrast-700);
+  --palette-accent-contrast-800: var(--palette-primary-contrast-800);
+  --palette-accent-contrast-900: var(--palette-primary-contrast-900);
+  --c-accent: var(--palette-accent-500);
+}
+
+/* ============================================================
+ * CHROME
+ * ============================================================
+ * PWM keeps the side bar a step darker than the page. The base leaves the side
+ * nav transparent so a wallpaper can show through; delete these two rules to
+ * get that behaviour back. */
+body:not(.isDarkTheme) {
+  --sidenav-bg: #f5f5f5;
+  --sidenav-bg-mobile: #f5f5f5;
+}
+
+/* Electron draws the functional minimise, maximise and close controls itself.
+   Put the compact darkened strip from the Windows reference behind that native
+   overlay without replacing its glyphs or click targets. */
+body {
+  --window-controls-width: 138px;
+  --window-controls-height: env(titlebar-area-height, var(--wco-height, 24px));
+  --window-controls-bg: var(--surface-0);
+  --vertical-action-bar-play-padding-top: calc(
+    var(--s, 8px) + var(--s-half, 4px)
+  );
+}
+
+body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen)::after {
+  content: '';
+  position: fixed;
+  z-index: var(--z-main-header, 10);
+  inset: 0 0 auto auto;
+  width: calc(
+    100vw - env(titlebar-area-x, 0px) -
+      env(titlebar-area-width, calc(100vw - var(--window-controls-width)))
+  );
+  height: var(--window-controls-height);
+  background: var(--window-controls-bg);
+  pointer-events: none;
+}
+
+/* Start the purple rail directly below the native controls. Move the former
+   external gap inside as top padding, so Play keeps its original position. */
+@media screen and (min-width: 600px) {
+  body.isElectron.isNoMac.isObsidianStyleHeader.isVerticalActionBar
+    > nav.action-nav-right.action-nav-right--teleported {
+    top: var(--window-controls-height);
+    padding-top: var(--vertical-action-bar-play-padding-top);
+    background: var(--window-controls-bg);
+  }
+}
+
+body.isDarkTheme {
+  --sidenav-bg: #131327;
+  --sidenav-bg-mobile: #131327;
+}
+
+/* The gutter behind the app (overscroll, iOS safe areas) is pinned to a neutral
+   grey by the base; match it to the page instead. */
+html:has(body:not(.isDarkTheme)) {
+  background: #ffffff;
+}
+
+html:has(body.isDarkTheme) {
+  background: #191830;
+}
+
+::selection {
+  background: var(--theme-selection-bg);
+}
+
+/* ============================================================
+ * TYPOGRAPHY
+ * ============================================================
+ * Themes cannot ship or fetch font files (the installer rejects external
+ * assets), so the stack can only name families the machine already has.
+ *
+ * Body copy is set in Inter, the face Personal Work Manager uses — it ships
+ * InterVariable under src/renderer/public/fonts/ and sets it through Tailwind.
+ * Install that file (or any complete Inter) and this theme picks it up on its
+ * own. Watch out for a partial install: a Cyrillic-only Inter from fontsource
+ * registers under the same family name and carries no Latin, so the alphabet
+ * falls through glyph by glyph to the next face. Where Inter is absent the
+ * stack continues into Super Productivity's own default, which keeps the
+ * interface coherent rather than landing on an unrelated substitute.
+ *
+ * Headings run on the same face: PWM sets its whole interface in Inter, so
+ * this theme does too. `--font-heading-stack` still exists and simply points
+ * at the body stack, which keeps the split available for later.
+ *
+ * Other complete families on this machine, should the body face need another
+ * try: 'Figtree' (nearest to Inter), 'Karla' (grotesque with more character),
+ * 'Atkinson Hyperlegible Next' (drawn for legibility), 'Outfit' (geometric),
+ * 'Rubik' (rounder). */
+:root {
+  /* One face for the whole interface, as in PWM: headings share the body
+     stack rather than running on a second family. The variable stays so the
+     two can be split again — point it at another family and every heading
+     follows, without touching a single rule. */
+  --font-heading-stack: var(--font-body-stack);
+  /* Body text is set in Inter, the face Personal Work Manager ships as
+     InterVariable and the one this theme is drawn against. Themes cannot ship
+     font files, so Inter has to be installed on the machine; where it is not,
+     the stack falls through to the app's own default — the same faces Super
+     Productivity would pick anyway, so the interface stays coherent instead
+     of landing on an unrelated substitute. */
+  --font-body-stack:
+    'Inter', 'Inter Variable', -apple-system, BlinkMacSystemFont,
+    'Segoe UI Variable Text', 'Segoe UI', Roboto, 'Open Sans', 'Helvetica Neue',
+    Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Noto Color Emoji', sans-serif;
+  /* The app reads this one directly in a dozen components. */
+  --font-primary-stack: var(--font-body-stack);
+  --font-mono-stack:
+    'JetBrains Mono', 'Cascadia Code', ui-monospace, 'SF Mono', Consolas,
+    'Liberation Mono', 'Courier New', monospace;
+}
+
+/* Angular Material compiles its own font-family into the typography classes
+   from a literal string, so those components never read the variable above.
+   Icon faces are excluded — they are fonts whose glyphs are the icons. */
+[class*='mat-']:not(.material-icons):not(.mat-ligature-font):not(
+    [class*='material-symbols']
+  ),
+[class*='mdc-']:not(.material-icons):not(.mat-ligature-font):not(
+    [class*='material-symbols']
+  ) {
+  font-family: var(--font-primary-stack);
+}
+
+/* Titles are the exception: they read well as they are, so they stay on the
+   heading face while everything around them moves to the body face. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.mat-mdc-card-title,
+.mat-mdc-dialog-title,
+.mat-expansion-panel-header-title {
+  font-family: var(--font-heading-stack);
+}
+
+/* The plugin manager makes every security-risk bullet bold in its component
+   stylesheet. At the reduced Settings scale that turns explanatory copy into
+   a dense block, so keep the warning's paragraph and list text at body weight. */
+config-page plugin-management .warning-content p,
+config-page plugin-management .warning-content li {
+  font-weight: 400 !important;
+}
+
+/* ============================================================
+ * SIDE NAV — quiet chrome
+ * ============================================================ */
+
+/* The buttons in the Projects and Tags headers (add, add folder, visibility)
+   only appear while the row is hovered or holds keyboard focus. The app already
+   does this for mouse-primary devices, but reverts to permanently visible when
+   it detects a touch-primary device — these rules keep the behaviour on both. */
+magic-side-nav .g-multi-btn-wrapper .additional-btns {
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity var(--transition-duration-s) var(--ani-standard-timing);
+}
+
+magic-side-nav .g-multi-btn-wrapper:hover .additional-btns,
+magic-side-nav .g-multi-btn-wrapper:focus-within .additional-btns {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+/* The Projects and Tags headings follow the same rule as the buttons sitting
+   in them: out of sight until the row is hovered or holds keyboard focus. The
+   row keeps its height, so the list below never jumps. Opacity rather than
+   visibility on purpose — a row hidden with visibility drops out of the tab
+   order, which would put the collapse toggle out of reach for the keyboard. */
+magic-side-nav nav-list-tree .g-multi-btn-wrapper > nav-item {
+  opacity: 0;
+  transition: opacity var(--transition-duration-s) var(--ani-standard-timing);
+}
+
+magic-side-nav nav-list-tree .g-multi-btn-wrapper:hover > nav-item,
+magic-side-nav nav-list-tree .g-multi-btn-wrapper:focus-within > nav-item {
+  opacity: 1;
+}
+
+/* Hover covers the whole row. The tint sits on the link only, which stops
+   short of the task count and the three-dot button, so hovering those left the
+   row half-lit. Moving it to the row element — the link, the counter and the
+   button are its children — lights the row as one, from either end. */
+magic-side-nav nav-item:hover,
+magic-side-nav nav-item:focus-within {
+  background-color: var(--sidenav-hover-bg);
+  border-radius: var(--radius-sm);
+}
+
+/* Without this the link would add its own tint on top of the row's and the
+   left half would come out darker. The active item keeps its own fill. */
+magic-side-nav nav-item .nav-link:hover:not(.active),
+magic-side-nav nav-item .nav-link:focus:not(.active) {
+  background: transparent;
+}
+
+/* Help removed. It is the only entry in the navigation built as a fold-out
+   menu, so hiding that component removes Help and nothing else. Its contents
+   (docs, bug report, feedback, the tours) stay reachable from Settings and the
+   project pages.
+
+   The component sets `display: contents` on its own host element, and Angular
+   compiles that to an attribute selector — which outranks a plain element
+   selector. Hence `!important`, and the list item is hidden as well so the row
+   disappears even if the host rule changes. */
+nav-mat-menu,
+nav-mat-menu > li {
+  display: none !important;
+}
+
+/* ============================================================
+ * FLAT SURFACES
+ * ============================================================
+ * PWM separates its cards with a hairline border and no drop shadow. Task rows
+ * already carry `1px solid var(--task-border-color)`, so dropping the shadows
+ * leaves exactly that idiom. Panels keep a whisper of shadow because nothing
+ * outlines them. */
+body,
+body.isDarkTheme {
+  --task-shadow: none;
+  --task-shadow-sub-task: none;
+  --task-selected-shadow: none;
+  --task-current-shadow: none;
+  --banner-shadow: none;
+  --task-border-color: var(--separator);
+}
+
+body:not(.isDarkTheme) {
+  --card-shadow: 0 1px 2px rgba(38, 43, 58, 0.07);
+  /* Controls that appear on hover do so without an outline, as in dark mode. */
+  --hover-controls-border: none;
+  --hover-controls-border-opacity: 0;
+}
+
+body.isDarkTheme {
+  --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+/* ============================================================
+ * MATERIAL SURFACES — the grey panels
+ * ============================================================
+ * The app maps its own tokens onto everything it draws itself, but the
+ * Material components keep the palette of the Material theme underneath: a
+ * neutral grey (#424242 in dark, near-white in light) for menus, dialogs,
+ * dropdowns, cards and the date picker. Against these surfaces that grey reads
+ * as a foreign patch, so every container is pointed at the theme's own
+ * elevated surface — the same one PWM uses for popovers and modals — with a
+ * hairline and a soft shadow so a floating panel still separates from the page.
+ *
+ * Two layers on purpose: the variables are the clean route, since the
+ * components read them themselves, and the element rules below cover the
+ * components whose variable names shift between Material releases. */
+body,
+body.isDarkTheme {
+  --mat-menu-container-color: var(--surface-2);
+  --mat-menu-item-label-text-color: var(--text-color);
+  --mat-menu-item-icon-color: var(--ink-muted);
+  --mat-select-panel-background-color: var(--surface-2);
+  --mat-autocomplete-background-color: var(--surface-2);
+  --mat-dialog-container-color: var(--surface-2);
+  --mdc-dialog-container-color: var(--surface-2);
+  --mat-datepicker-calendar-container-background-color: var(--surface-2);
+  --mat-datepicker-calendar-container-text-color: var(--text-color);
+  --mat-bottom-sheet-container-background-color: var(--surface-2);
+  --mat-card-elevated-container-color: var(--card-bg);
+  --mat-card-outlined-container-color: var(--card-bg);
+  --mdc-elevated-card-container-color: var(--card-bg);
+  --mdc-outlined-card-container-color: var(--card-bg);
+  --mat-expansion-container-background-color: var(--card-bg);
+  --mat-expansion-container-text-color: var(--text-color);
+  --mat-snack-bar-container-color: var(--surface-4);
+  --mat-snack-bar-supporting-text-color: var(--text-color);
+  --mdc-snackbar-container-color: var(--surface-4);
+  --mdc-snackbar-supporting-text-color: var(--text-color);
+  --mat-table-background-color: transparent;
+  --mat-toolbar-container-background-color: transparent;
+  --mat-paginator-container-background-color: transparent;
+  --mat-tree-container-background-color: transparent;
+  --mat-stepper-container-color: transparent;
+  --mat-sidenav-container-background-color: transparent;
+  --mat-timepicker-container-background-color: var(--surface-2);
+}
+
+/* A tooltip is the one panel that should not match the page: it reads as a
+   label on top of the interface. Zinc ink in light mode, a lifted purple in
+   dark mode — themed either way, never grey. */
+body:not(.isDarkTheme) {
+  --panel-shadow: 0 4px 16px rgba(9, 9, 11, 0.12);
+  --mat-tooltip-container-color: #18181b;
+  --mat-tooltip-supporting-text-color: #ffffff;
+  --mdc-plain-tooltip-container-color: #18181b;
+  --mdc-plain-tooltip-supporting-text-color: #ffffff;
+}
+
+body.isDarkTheme {
+  --panel-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --mat-tooltip-container-color: #2f2c5c;
+  --mat-tooltip-supporting-text-color: #ffffff;
+  --mdc-plain-tooltip-container-color: #2f2c5c;
+  --mdc-plain-tooltip-supporting-text-color: #ffffff;
+}
+
+/* Floating panels: theme surface, hairline, one soft shadow. */
+.mat-mdc-menu-panel,
+.mat-mdc-select-panel,
+.mat-mdc-autocomplete-panel,
+.mat-datepicker-content,
+.mat-bottom-sheet-container {
+  background: var(--surface-2);
+  color: var(--text-color);
+  border: 1px solid var(--separator);
+  box-shadow: var(--panel-shadow);
+}
+
+/* Mirrors Material's own two-class selector so it wins on source order. */
+.mat-mdc-dialog-container .mat-mdc-dialog-surface {
+  background: var(--surface-2);
+  color: var(--text-color);
+  border: 1px solid var(--separator);
+  box-shadow: var(--panel-shadow);
+}
+
+.mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  background-color: var(--surface-4);
+  color: var(--text-color);
+}
+
+/* Cards and expansion panels sit inside the page, so they take the card
+   surface and no shadow of their own — the border does the work. */
+.mat-mdc-card,
+.mat-expansion-panel {
+  background: var(--card-bg);
+  color: var(--text-color);
+}
+
+/* Tables inherit whatever they are placed on instead of painting their own
+   grey behind the rows. */
+.mat-mdc-table,
+.mat-mdc-header-row,
+.mat-mdc-row,
+.mat-mdc-paginator,
+.mat-toolbar {
+  background: transparent;
+}
+
+/* ============================================================
+ * LUCIDE ICON SWAPS — bolt instead of the sun, and the schedule panel
+ * ============================================================
+ * The font build hides the glyph and draws a replacement one in a
+ * pseudo-element: the substitute inherits the icon font, the size, the colour
+ * and the weight axis from the element it sits in, so it lands exactly where
+ * the original stood. On the fork these icons are SVG, and a pseudo-element
+ * has no text to set — so the same idea moves to a different medium. The SVG
+ * is hidden and the pseudo-element carries a mask cut from a Lucide outline,
+ * painted in the current ink. A mask rather than a background image, so the
+ * icon still takes the colour of the button it sits in, exactly as the glyph
+ * did.
+ *
+ * The artwork is inlined as a data URI rather than pointed at
+ * assets/icons/lucide/. The fork copies only the icons its own templates name
+ * — see the assets glob in angular.json — and neither of these two is among
+ * them, so there is no file at that path to link to.
+ *
+ * One limit worth knowing: the stroke width is baked into the data URI at
+ * Lucide's default of 2 and does not follow --lucide-stroke below. Moving that
+ * knob far from 2 leaves these two icons behind; the fix is to edit the
+ * stroke-width inside the URI to match.
+ */
+body,
+body.isDarkTheme {
+  /* Lucide `zap`, ISC licensed, from lucide-static v1.33.0. Paste another
+     Lucide outline here in the same form to carry a different bolt. */
+  --today-icon-mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3Cpath%20d%3D%22M15.914%204a1.5%201.5%200%2000-2.474-1.561l-9%209A1.5%201.5%200%20005.5%2014h4.002a.5.5%200%2001.471.666L8.086%2020a1.5%201.5%200%20002.475%201.56l9-9A1.5%201.5%200%200018.5%2010h-3.997a.5.5%200%2001-.472-.667z%22%20%2F%3E%20%3C%2Fsvg%3E");
+  /* Lucide `calendar-clock`, in the slot where the font build puts the
+     pending_actions glyph. */
+  --schedule-panel-mask: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3Cpath%20d%3D%22M16%2014v2.2l1.6%201%22%20%2F%3E%20%3Cpath%20d%3D%22M16%202v3%22%20%2F%3E%20%3Cpath%20d%3D%22M21%207.338V5a2%202%200%2000-2-2H5a2%202%200%2000-2%202v14a2%202%200%20002%202h2.338%22%20%2F%3E%20%3Cpath%20d%3D%22M3%209h5.859%22%20%2F%3E%20%3Cpath%20d%3D%22M8%202v3%22%20%2F%3E%20%3Ccircle%20cx%3D%2216%22%20cy%3D%2216%22%20r%3D%226%22%20%2F%3E%20%3C%2Fsvg%3E");
+  /* Still ligatures: see the note in the file header. */
+  --planner-nav-icon: 'next_week';
+  --schedule-nav-icon: 'calendar_clock';
+}
+
+/* Covered: the "Voeg toe aan Mijn Day" button on Today, the add-to-today
+   control that appears when hovering a task row, the today button on the
+   Timeline, the "plan what is left of today" button on the day summary, the
+   today shortcut in the date picker, and the right-panel Schema button. Each
+   of these sits in a container where the icon being replaced is the only one,
+   so the swap cannot reach a neighbour by accident. The second selector keys
+   off the Dutch button title, so it follows the interface language — with the
+   app in another language that line needs the string from that language. */
+.overdue-btn-wrapper button mat-icon,
+[title^='Voeg toe aan Mijn Day'] mat-icon,
+.today-btn mat-icon,
+plan-tasks-tomorrow mat-icon,
+.quick-access > button:first-of-type mat-icon,
+.e2e-toggle-schedule-day-panel mat-icon {
+  visibility: hidden !important;
+  position: relative;
+}
+
+/* The mask is sized to the icon box rather than laid out as a line of text:
+   inside a button that box is 18px while the line height stays 24px, and the
+   icon clips what overflows, so anything sitting on the text baseline would be
+   cut off at the bottom edge. `inset: 0` with a contained mask keeps the
+   replacement inside whatever box the button gives it. */
+.overdue-btn-wrapper button mat-icon::after,
+[title^='Voeg toe aan Mijn Day'] mat-icon::after,
+.today-btn mat-icon::after,
+plan-tasks-tomorrow mat-icon::after,
+.quick-access > button:first-of-type mat-icon::after,
+.e2e-toggle-schedule-day-panel mat-icon::after {
+  content: '';
+  visibility: visible;
+  position: absolute;
+  inset: 0;
+  background-color: currentColor;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+.overdue-btn-wrapper button mat-icon::after,
+[title^='Voeg toe aan Mijn Day'] mat-icon::after,
+.today-btn mat-icon::after,
+plan-tasks-tomorrow mat-icon::after,
+.quick-access > button:first-of-type mat-icon::after {
+  -webkit-mask-image: var(--today-icon-mask);
+  mask-image: var(--today-icon-mask);
+}
+
+.e2e-toggle-schedule-day-panel mat-icon::after {
+  -webkit-mask-image: var(--schedule-panel-mask);
+  mask-image: var(--schedule-panel-mask);
+}
+
+/* Planner and Schema in the left navigation are still icon-font entries on
+   this branch, so they keep the ligature swap: the glyph is hidden and the
+   replacement is written into the pseudo-element, which inherits the icon face
+   from the element it sits in. */
+magic-side-nav nav-item a.nav-link[href$='/planner'] > mat-icon.nav-icon,
+magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon {
+  visibility: hidden !important;
+  position: relative;
+}
+
+magic-side-nav nav-item a.nav-link[href$='/planner'] > mat-icon.nav-icon::after,
+magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon::after {
+  visibility: visible;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+magic-side-nav nav-item a.nav-link[href$='/planner'] > mat-icon.nav-icon::after {
+  content: var(--planner-nav-icon);
+}
+
+magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon::after {
+  content: var(--schedule-nav-icon);
+}
+
+/* ============================================================
+ * LUCIDE ICON WEIGHT
+ * ============================================================
+ * Lucide draws every icon as a 2-unit stroke inside a 24-unit box, and the
+ * stroke scales with the box: the 17px icons in the context menu land at about
+ * 1.4 device pixels, the 24px ones at 2. That sits close to the weight the
+ * Material Symbols build carries, so the default below changes nothing — it is
+ * here so the weight can be moved from one place while the icon set is being
+ * judged. Lucide's own documentation calls 1.5 the light setting.
+ *
+ * The width is stated on the `svg` and not on its paths: Lucide declares it as
+ * a presentation attribute on the root element only, a presentation attribute
+ * loses to any CSS declaration, and the paths inherit whatever the root
+ * computes. The namespace attribute — which Angular Material writes onto the
+ * host when an icon is registered under one — keeps this off the app's own SVG
+ * icons, sp and github among them, which are filled shapes with no stroke to
+ * widen.
+ */
+body,
+body.isDarkTheme {
+  --lucide-stroke: 2;
+  /* Play is a filled triangle in the reference and an outline in Lucide.
+     `currentColor` fills it; `none` leaves Lucide's own drawing. */
+  --lucide-play-fill: none;
+}
+
+mat-icon[data-mat-icon-namespace='lucide'] svg {
+  stroke-width: var(--lucide-stroke);
+}
+
+/* The fill is set on the children rather than on the `svg`: `fill="none"` is a
+   presentation attribute on the root, which beats a value inherited from the
+   icon box, so the paths have to be named directly. */
+.start-task-btn mat-icon[data-mat-icon-namespace='lucide'] svg > *,
+body > nav.action-nav-right .play-btn mat-icon[data-mat-icon-namespace='lucide'] svg > * {
+  fill: var(--lucide-play-fill);
+}
+
+/* ============================================================
+ * EMPTY STATE
+ * ============================================================
+ * "Geen geplande taken" ships with a horizon drawing (a moon in dark mode).
+ * The heading carries the message on its own. */
+.no-tasks-illu-wrapper .inline-block-container {
+  display: none;
+}
+
+work-view .no-tasks-illu-wrapper {
+  padding-top: calc(var(--s4, 32px) + var(--s2, 16px));
+  margin-bottom: var(--s4, 32px) !important;
+}
+
+/* Component-scoped app styles have higher specificity and absolutely centre
+   this heading. Important overrides are required to return it to normal flow,
+   so the wrapper height and the action gap can take effect. */
+work-view .no-tasks-illu-wrapper .no-tasks-label {
+  position: static !important;
+  inset: auto !important;
+  transform: none !important;
+  margin: 0 !important;
+}
+
+/* ============================================================
+ * CONTENT VIEW SCALE
+ * ============================================================
+ * Ctrl + scroll changes the whole window, which made the task work view and
+ * Settings inseparable. Keep project tasks at their existing larger scale and
+ * independently zoom Settings out. Size compensation keeps both routed views
+ * filling their viewport. */
+body {
+  --work-view-scale: 1;
+  --settings-view-scale: 0.95;
+}
+
+work-view .task-list-wrapper {
+  width: calc(100% / var(--work-view-scale));
+  zoom: var(--work-view-scale);
+}
+
+@media screen and (min-width: 600px) {
+  .route-wrapper > router-outlet + config-page {
+    width: calc(100% / var(--settings-view-scale)) !important;
+    height: calc(100% / var(--settings-view-scale)) !important;
+    zoom: var(--settings-view-scale);
+  }
+}
+
+/* ============================================================
+ * CHROME SCALE — navigation smaller than the content
+ * ============================================================
+ * The window zoom (Ctrl + scroll) scales everything at once. This puts the
+ * navigation below the content instead, in three steps: the rail on the left,
+ * the group at its foot, and the action strip on the right. Raise a value
+ * towards 1 for a smaller difference, lower it for a bigger one. */
+body {
+  /* Left rail: the places you navigate to. Above 1 it draws larger than the
+     app does, which is the point — these are the buttons in reach all day. */
+  --side-nav-scale: 1.05;
+  /* Search, timeline and settings at the foot of that rail. Keep these at the
+     same size as the other navigation buttons in the rail. */
+  --nav-footer-scale: 1;
+  /* Right action strip. */
+  --action-bar-scale: 0.85;
+  /* Non-primary actions stay visible but recede until the rail is used. */
+  --action-bar-idle-opacity: 0.25;
+  /* Wait long enough after hover-out for the delay to be unmistakable. */
+  --action-bar-hover-out-delay: 2s;
+  /* The time-tracking button is the one control in that strip you reach for
+     while working, so it carries a size of its own rather than a scale. The
+     app draws it at 40px. */
+  --play-button-size: 46px;
+}
+
+/* The left rail carries its widths, paddings and icon sizes in a dozen places,
+   so it is scaled as a whole. `zoom` is a layout property: the rail really
+   becomes narrower and hands the space to the content, unlike `transform`.
+   One caveat — the drag-to-resize handle on the expanded rail computes from
+   unscaled pointer coordinates, so the edge follows the pointer at a slightly
+   different rate while dragging. */
+magic-side-nav {
+  zoom: var(--side-nav-scale);
+}
+
+/* The foot of the rail is everything after the separator that pushes itself
+   down with `margin-top: auto` — the app sets that inline, and it does so on
+   no other separator, which makes it the marker for where the group starts.
+   Zoom multiplies through, so this reads as a fraction of the rail around it
+   rather than of the window. */
+magic-side-nav .nav-list > hr.nav-separator[style*='auto'] ~ li {
+  zoom: var(--nav-footer-scale);
+}
+
+/* The right strip is parameterised, so it takes its scale through its own
+   measurements rather than a zoom. Its width is the same variable the content
+   is padded with, so the column and the padding stay in step — and the strip
+   sits flush against the window edge, so anything wider than this value is cut
+   off by the edge rather than spilling over the content. Hence the max(): the
+   column is as wide as the largest thing standing in it. */
+body {
+  --vertical-action-bar-width: max(
+    calc(48px * var(--action-bar-scale)),
+    calc(var(--play-button-size) + 4px)
+  );
+}
+
+body > nav.action-nav-right {
+  --header-button-size: calc(40px * var(--action-bar-scale));
+  --mat-mini-fab-size: calc(48px * var(--action-bar-scale));
+  --mdc-icon-button-state-layer-size: calc(40px * var(--action-bar-scale));
+  --mdc-icon-button-icon-size: calc(24px * var(--action-bar-scale));
+}
+
+body > nav.action-nav-right mat-icon {
+  font-size: calc(24px * var(--action-bar-scale));
+  width: calc(24px * var(--action-bar-scale));
+  height: calc(24px * var(--action-bar-scale));
+  line-height: calc(24px * var(--action-bar-scale));
+}
+
+/* The play button steps out of the strip's scale. Width and height are set on
+   the element rather than through the Material size variable, because which of
+   those variables governs the circle differs per Material release. */
+body > nav.action-nav-right button.play-btn {
+  width: var(--play-button-size);
+  height: var(--play-button-size);
+  min-width: var(--play-button-size);
+}
+
+body > nav.action-nav-right .play-btn mat-icon {
+  font-size: calc(var(--play-button-size) / 2);
+  width: calc(var(--play-button-size) / 2);
+  height: calc(var(--play-button-size) / 2);
+  line-height: calc(var(--play-button-size) / 2);
+}
+
+/* The ring that pulses behind the button while time runs is drawn at a fixed
+   42px, sized for the button the app ships. Keep it just inside the circle. */
+body > nav.action-nav-right .play-btn-wrapper .pulse-circle {
+  width: calc(var(--play-button-size) - 4px);
+  height: calc(var(--play-button-size) - 4px);
+  left: 0;
+}
+
+/* Super Productivity does not expose a custom plugin id as a DOM attribute on
+   menu items. Dashboard is the visible plugin entry in this menu, so custom
+   plugin artwork in the left navigation uses the built-in avg_pace ligature.
+   Keep the replacement inside plugin-icon so the row and click target remain
+   untouched; no SVG asset is needed. */
+magic-side-nav nav-item plugin-icon.nav-icon > * {
+  display: none !important;
+}
+
+magic-side-nav nav-item plugin-icon.nav-icon::after {
+  content: 'avg_pace';
+  color: var(--ink-muted);
+  font-family: 'Material Symbols Outlined', sans-serif;
+  font-size: 22px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24;
+}
+
+/* Keep Play and Add task fully visible. Other actions remain present at 25%
+   opacity and return to their normal opacity while the action bar is hovered
+   or contains keyboard focus. The same rule follows the nav when it is either
+   the horizontal header row or the experimental teleported vertical rail;
+   mobile controls remain unaffected. */
+@media screen and (min-width: 600px) {
+  nav.action-nav-right button:not(:where(.play-btn, .tour-addBtn)) {
+    transition: opacity var(--transition-duration-s) var(--ani-standard-timing);
+  }
+
+  nav.action-nav-right:not(:hover):not(:focus-within)
+    button:not(:where(.play-btn, .tour-addBtn)) {
+    opacity: var(--action-bar-idle-opacity);
+    transition-delay: var(--action-bar-hover-out-delay);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Compact context menus
+ * ---------------------------------------------------------------------------
+ * Material sizes menus for touch: 48px rows, a 14px label and a 24px glyph.
+ * On a pointer-driven desktop the task context menu and its submenus come out
+ * taller than the task list they belong to. Everything here scales that down.
+ *
+ * Two of the app's own stylesheets fight this, both compiled by Angular with
+ * `[_ngcontent]` attributes that add specificity: the context menu's own SCSS
+ * sizes and rounds the quick-access strip, and `select-option-row` lays out
+ * the tag, project and estimate rows. Where a plain selector loses to those,
+ * the class is repeated, `!important` is used, or — cleanest — the custom
+ * property their rule reads is redefined on the element itself. */
+
+/* Menu rows. `!important` because Material's own 48px min-height is set with
+   the same specificity and wins on source order otherwise. The `:not()` spares
+   the invisible focus-catcher the menu opens with — it is a menu item too,
+   carrying `height: 0` inline, and an `!important` height would inflate it
+   into an empty band above the icon strip. */
+.mat-mdc-menu-panel .mat-mdc-menu-item:not([style*='height: 0']) {
+  min-height: 40px !important;
+  height: auto !important;
+  padding-left: 12px;
+  padding-right: 12px;
+  font-size: 12.5px;
+}
+
+.mat-mdc-menu-item .mat-icon,
+.mat-mdc-menu-item .material-icons,
+.mat-mdc-menu-item .material-symbols-outlined {
+  width: 17px;
+  height: 17px;
+  font-size: 17px;
+  line-height: 17px;
+  margin-right: 12px;
+}
+
+/* The submenu chevron sits in the trailing slot and follows the same scale. */
+.mat-mdc-menu-item .mat-mdc-menu-submenu-icon {
+  height: 8px;
+  width: 8px;
+}
+
+/* `.key-i` is the app's own shortcut chip. It is secondary information and
+   never drives the row height. */
+.mat-mdc-menu-item .key-i:not(:empty) {
+  font-size: 10px;
+  min-width: 16px;
+  padding: 2px 5px;
+}
+
+/* Submenu rows — tags, projects, estimates — are menu items wrapping the
+   app's `select-option-row`: a 24px icon column beside the label with a 16px
+   gap, three columns once a checkbox joins. Narrower columns, closed gaps and
+   no vertical padding bring a long tag list to the density of the menu that
+   opened it. */
+.mat-mdc-menu-panel .mat-mdc-menu-item:has(select-option-row) {
+  min-height: 32px !important;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.mat-mdc-menu-item .custom-option-layout.custom-option-layout {
+  grid-template-columns: 20px 1fr;
+  column-gap: 10px;
+  row-gap: 0;
+}
+
+.mat-mdc-menu-item .custom-option-layout.custom-option-layout.has-checkbox {
+  grid-template-columns: 20px 20px 1fr;
+  column-gap: 8px;
+}
+
+.mat-mdc-menu-item .custom-option-layout .option-title {
+  font-size: 12.5px;
+  font-weight: 400 !important;
+}
+
+.mat-mdc-menu-item .custom-option-layout .folder-subtitle {
+  font-size: 10px;
+}
+
+/* The icon strip at the head of the menu. The app rounds each button with
+   `--card-border-radius` through an `!important` rule of its own; redefining
+   that variable on the row squares the buttons through the app's own rule,
+   which is cleaner than outranking it. The row's geometry — a 48px height and
+   the hairlines the app draws between the cells and under the strip — is left
+   alone, so the cells keep the proportions the app intends. Only the glyphs
+   step up, from 24px to a size that carries at this row height. */
+.quick-access {
+  --card-border-radius: 0;
+}
+
+.quick-access.quick-access.quick-access.quick-access.quick-access > button,
+.quick-access.quick-access.quick-access.quick-access.quick-access
+  > button
+  .mat-mdc-button-persistent-ripple,
+.quick-access.quick-access.quick-access.quick-access.quick-access
+  > button
+  .mat-mdc-button-ripple,
+.quick-access.quick-access.quick-access.quick-access.quick-access
+  > button
+  .mat-mdc-focus-indicator,
+.quick-access.quick-access.quick-access.quick-access.quick-access
+  > button::before,
+.quick-access.quick-access.quick-access.quick-access.quick-access
+  > button::after {
+  border-radius: 0 !important;
+}
+
+.quick-access > button .mat-icon,
+.quick-access > button .material-icons,
+.quick-access > button .material-symbols-outlined {
+  width: 23px;
+  height: 23px;
+  font-size: 23px;
+  line-height: 23px;
+}
+
+/* Segmented controls — the dark-mode switch in Settings is the visible one —
+   keep Material's grey unless every token is pointed at the theme. Unselected
+   segments sit flush on the page, the chosen one lifts to the highest surface
+   and the dividers use the same hairline as every other separator. */
+body,
+body.isDarkTheme {
+  --mat-button-toggle-background-color: transparent;
+  --mat-button-toggle-text-color: var(--ink-muted);
+  --mat-button-toggle-selected-state-background-color: var(--surface-4);
+  --mat-button-toggle-selected-state-text-color: var(--text-color);
+  --mat-button-toggle-divider-color: var(--separator);
+  --mat-button-toggle-state-layer-color: var(--text-color);
+  --mat-button-toggle-disabled-state-background-color: transparent;
+  --mat-button-toggle-disabled-state-text-color: var(--ink-muted);
+  --mat-button-toggle-disabled-selected-state-background-color: var(--surface-3);
+  --mat-button-toggle-legacy-state-layer-color: var(--text-color);
+  --mat-button-toggle-legacy-text-color: var(--ink-muted);
+  --mat-button-toggle-legacy-selected-state-background-color: var(--surface-4);
+  --mat-button-toggle-legacy-selected-state-text-color: var(--text-color);
+}
+
+.mat-button-toggle-group-appearance-standard,
+.mat-button-toggle-appearance-standard {
+  border-color: var(--separator);
+}
+
+/* ---------------------------------------------------------------------------
+ * Square hover states
+ * ---------------------------------------------------------------------------
+ * Almost no hover highlight in the app carries a radius of its own: it takes
+ * the shape of the element under it. Rounded highlights therefore come from
+ * four sources — icon buttons, which Material draws as circles; side-nav rows,
+ * shaped here; list, option and tab rows, which follow Material's shape
+ * tokens; and the quick-access strip, squared with the context menu above.
+ * All four are squared below. Task cards keep their rounded corners: the app
+ * shapes them through `--task-border-radius`, and squaring those turned the
+ * list into a stack of blocks.
+ *
+ * Left alone on purpose: checkbox, radio and slide-toggle ripples, which
+ * belong to round controls; tag and chip pills, whose shape is the point; and
+ * the fills of ordinary buttons, cards and dialogs, which are not hover
+ * states. */
+/* Material gives icon buttons a circular state layer. The button itself has no
+   fill, so this changes nothing but the hover and focus shape. */
+.mat-mdc-icon-button,
+.mat-mdc-icon-button .mat-mdc-button-persistent-ripple,
+.mat-mdc-icon-button .mat-mdc-button-persistent-ripple::before,
+.mat-mdc-icon-button .mat-mdc-button-ripple,
+.mat-mdc-icon-button .mat-mdc-focus-indicator,
+.mat-mdc-icon-button .mat-ripple {
+  border-radius: 0 !important;
+}
+
+/* Rows in lists and selects: the state layer follows the row, so the row is
+   what has to lose its radius. Tabs are deliberately absent — the settings
+   tab bar keeps Material's rounded indicator. */
+.mat-mdc-list-item,
+.mat-mdc-list-item .mat-mdc-focus-indicator,
+.mat-mdc-option,
+.mat-mdc-option .mat-mdc-focus-indicator {
+  border-radius: 0 !important;
+}
+
+/* The side-nav row tint, squared to match the rest. */
+magic-side-nav nav-item:hover,
+magic-side-nav nav-item:focus-within {
+  border-radius: 0;
+}
+
+/* The side-nav highlight is drawn on `.nav-link`, which the component rounds
+   at 6px — the row element this theme tints on hover sits underneath it, so
+   squaring only that left the rounded link on top. The class is repeated to
+   outrank the component's own rule; the active item's fill uses the same
+   shape and follows along. */
+magic-side-nav .nav-link.nav-link,
+magic-side-nav .nav-link.nav-link.active,
+magic-side-nav nav-item.nav-item,
+magic-side-nav .g-multi-btn-wrapper {
+  border-radius: 0;
+}
+
+/* Exception: the right-hand action bar keeps Material's circular hover. Its
+   buttons sit apart from any list or row, so a round highlight reads as
+   deliberate there rather than as a leftover. Both desktop layouts use the
+   same element, so the horizontal strip and the vertical rail stay in step. */
+nav.action-nav-right .mat-mdc-icon-button,
+nav.action-nav-right .mat-mdc-icon-button .mat-mdc-button-persistent-ripple,
+nav.action-nav-right .mat-mdc-icon-button .mat-mdc-button-persistent-ripple::before,
+nav.action-nav-right .mat-mdc-icon-button .mat-mdc-button-ripple,
+nav.action-nav-right .mat-mdc-icon-button .mat-mdc-focus-indicator,
+nav.action-nav-right .mat-mdc-icon-button .mat-ripple {
+  border-radius: 50% !important;
+}
+
+/* Same exception inside a task row. Those buttons appear on hover in a tight
+   line beside the task's own text, where a square state layer reads as a block
+   dropped on the row; Material's circle is what the app intends there. */
+task .mat-mdc-icon-button,
+task .mat-mdc-icon-button .mat-mdc-button-persistent-ripple,
+task .mat-mdc-icon-button .mat-mdc-button-persistent-ripple::before,
+task .mat-mdc-icon-button .mat-mdc-button-ripple,
+task .mat-mdc-icon-button .mat-mdc-focus-indicator,
+task .mat-mdc-icon-button .mat-ripple {
+  border-radius: 50% !important;
+}
+
+/* The buttons keep the size the app gives them; only the hover layer is
+   capped. It stretched with the row — which is what made it an oval on a row
+   with tags — so it gets a ceiling and is centred on the button rather than
+   filling it. */
+task .mat-mdc-icon-button {
+  align-self: center;
+}
+
+task .mat-mdc-icon-button .mat-mdc-button-persistent-ripple,
+task .mat-mdc-icon-button .mat-ripple {
+  width: 40px !important;
+  height: 40px !important;
+  top: 50% !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: translate(-50%, -50%);
+}
+
+/* ---------------------------------------------------------------------------
+ * Text rendering on Windows
+ * ---------------------------------------------------------------------------
+ * Material's typography partials set `-webkit-font-smoothing: antialiased` in
+ * roughly fifty places, and Super Productivity's own styles repeat it. That
+ * switch was written for macOS, where it thins glyphs that would otherwise
+ * look heavy. On Windows it does something else: it turns off ClearType's
+ * subpixel rendering and falls back to greyscale antialiasing, which makes
+ * light text on a dark background look thin and slightly blurred at body
+ * sizes — the effect is strongest exactly where this theme puts white on deep
+ * purple. Handing rendering back to the platform restores full-strength stems.
+ *
+ * If text still reads soft, two knobs are worth trying before changing fonts:
+ * set `--work-view-scale` to `1` (a fractional zoom rasterises glyphs at
+ * fractional sizes), and raise `--body-font-weight` below to `500`, which IBM
+ * Plex Sans carries as a real Medium rather than a synthesised bold. */
+:root {
+  --body-font-weight: 400;
+}
+
+body,
+body *,
+body *::before,
+body *::after {
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: subpixel-antialiased !important;
+  -moz-osx-font-smoothing: auto !important;
+  text-rendering: optimizeLegibility;
+}
+
+/* Icon faces are exempt: their glyphs are artwork, and greyscale coverage is
+   what keeps their edges even. */
+.material-icons,
+.material-symbols-outlined,
+.mat-ligature-font,
+mat-icon {
+  -webkit-font-smoothing: antialiased !important;
+  text-rendering: auto;
+}
+
+body {
+  font-weight: var(--body-font-weight);
+}
+
+/* ---------------------------------------------------------------------------
+ * Bold weight
+ * ---------------------------------------------------------------------------
+ * The app reaches for `font-weight: 700` or `bold` in roughly two hundred
+ * places: headings, table headers, section titles, emphasised words in body
+ * copy. A bold cut is a heavy face, and at the small sizes those elements use
+ * it fills its counters and reads as a dark smudge rather than as emphasis —
+ * the problem is weight, not colour. Headings and table headers cap
+ * at SemiBold, inline emphasis at Medium, both real cuts of the family rather
+ * than synthesised weights. Table and section headers also step down slightly
+ * in size, since a bold 14px header beside 13px body text is doing more work
+ * than the hierarchy needs.
+ *
+ * `!important` is unavoidable: the weights come from component stylesheets
+ * that Angular compiles with `[_ngcontent]` attributes. Raise the two
+ * variables back to `700` to undo this without touching the selectors. */
+:root {
+  --bold-font-weight: 600;
+  --emphasis-font-weight: 500;
+}
+
+body h1,
+body h2,
+body h3,
+body h4,
+body h5,
+body h6,
+body th,
+body legend,
+body .mat-mdc-header-cell,
+body .mat-mdc-card-title,
+body .mat-expansion-panel-header-title {
+  font-weight: var(--bold-font-weight) !important;
+}
+
+body b,
+body strong,
+body dt,
+body .mat-mdc-form-field .mdc-floating-label {
+  font-weight: var(--emphasis-font-weight) !important;
+}
+
+/* Headers sit one step down from their default, which keeps them clearly
+   above body copy without shouting. `em` so any zoom still applies. */
+body th,
+body .mat-mdc-header-cell {
+  font-size: 0.92em;
+  letter-spacing: 0.01em;
+}
+
+/* ---------------------------------------------------------------------------
+ * Plugin manager
+ * ---------------------------------------------------------------------------
+ * The plugin cards are built at Material's default card scale: a 40px icon
+ * beside a 20px title, with the description in full-strength body colour. At
+ * the reduced Settings scale that still reads as a wall of headings, and the
+ * descriptions compete with the names they belong to. Icon and title come
+ * down, the supporting lines take the muted ink this theme already uses for
+ * secondary text, and the `ID:`/`Talen:` labels lose their 700 weight.
+ * Everything is scoped to the plugin page. */
+config-page plugin-management plugin-icon {
+  width: 26px;
+  height: 26px;
+}
+
+config-page plugin-management mat-card-title,
+config-page plugin-management .mat-mdc-card-title,
+config-page plugin-management .plugin-name {
+  font-size: 20.5px;
+  line-height: 1.35;
+}
+
+config-page plugin-management mat-card-subtitle,
+config-page plugin-management .mat-mdc-card-subtitle {
+  font-size: 14.5px;
+  color: var(--ink-muted);
+  font-weight: 400 !important;
+}
+
+/* Descriptions and the metadata beneath them: one step quieter than the name
+   above, which is what makes a card scannable. */
+config-page plugin-management mat-card-content,
+config-page plugin-management .plugin-desc,
+config-page plugin-management .plugin-author,
+config-page plugin-management .plugin-info-section {
+  font-size: 15.5px;
+  line-height: 1.55;
+  color: var(--ink-muted);
+  font-weight: 400 !important;
+}
+
+/* The label column stays a label: same size as its value, no bold. */
+config-page plugin-management .label {
+  font-weight: 400 !important;
+  font-size: 15px;
+  margin-top: var(--s);
+  color: var(--ink-muted);
+}
+
+/* The security warning keeps its emphasis but not its poster-sized icon. */
+config-page plugin-management .info-card .warning-icon {
+  font-size: 22px;
+  width: 22px;
+  height: 22px;
+}
+
+/* ---------------------------------------------------------------------------
+ * Task row controls
+ * ---------------------------------------------------------------------------
+ * The play control and the detail-panel toggle sit at Material's 24px icon
+ * size, which makes them read as heavy as the task title beside them. Both
+ * step down slightly. Play also takes the accent instead of body ink: it is
+ * the one action in the row that starts something, and colour marks it faster
+ * than position does. `--c-primary` is the theme's own accent — Claude salmon
+ * in the purple themes, Tokyo Night's blue in the night variant — so each
+ * theme stays in its own palette. Hard-code a colour here to override that.
+ *
+ * The colour rule deliberately drops the `task` ancestor: the same button is
+ * rendered by a child component and also appears in the context menu, and the
+ * scoped version simply never matched. The big play button in the right-hand
+ * action bar is left out — it is a filled salmon circle, and a salmon glyph on
+ * it would vanish. `!important` is needed twice over: Material paints icon
+ * buttons through `--mdc-icon-button-icon-color`, not through `color`. */
+.start-task-btn,
+.start-task-btn .mat-icon,
+.play-icon {
+  color: var(--palette-primary-500) !important;
+  --mdc-icon-button-icon-color: var(--palette-primary-500) !important;
+  fill: currentColor;
+}
+
+/* Every control in the row shares one icon size: play, add-to-my-day,
+   attachments, the sub-task toggle and the detail-panel button. */
+task .ico-btn .mat-icon,
+task .toggle-sub-tasks-btn .mat-icon,
+task .show-additional-info-btn .mat-icon,
+task .attachment-btn .mat-icon,
+.start-task-btn .mat-icon {
+  /* 24px is the size Material Symbols is drawn at, so stems and curves land
+     on whole pixels; anything in between lands half on a pixel and softens. */
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  /* No weight adjustment here: the icon font the app bundles is a static
+     instance of Material Symbols — 466 KB with the axes pinned, keeping only
+     a STAT table that names them — so 'wght' and 'GRAD' have nothing to act
+     on. Thinner strokes would need a different icon source, not a setting. */
+}
+
+/* ---------------------------------------------------------------------------
+ * Project on the task line, tags below it
+ * ---------------------------------------------------------------------------
+ * A task row stacks its title and its chips: `.title-and-tags-wrapper` is a
+ * block, so `tag-list` always starts a second line — even when the only chip
+ * is the project. The project belongs beside the title; the tags do not.
+ *
+ * The app renders both from one list, with the project always first and no
+ * class to tell them apart, so the split is done in the layout. `display:
+ * contents` dissolves `tag-list` and its two wrappers, which lifts the chips
+ * into the row's own flex container; `order` then puts the project on the
+ * title's line and the tags after it, and a zero-height full-width `::after`
+ * sits between the two orders as a forced line break — the standard way to
+ * break a flex line without an element to break on.
+ *
+ * Note the one case this cannot tell apart: inside a project view the app
+ * hides the project chip, so the first chip is an ordinary tag and lands on
+ * the title line. A parent task's breadcrumb keeps its own line above. */
+task .title-and-tags-wrapper {
+  display: flex;
+  flex-flow: row wrap;
+  /* Centre, not baseline. The project sits in a chip whose first child is an
+     icon, and a flex container takes its baseline from that first item — so
+     with the project text at a different size than the title, baseline
+     alignment lined the title up with the icon's baseline instead of the
+     project's text, and the two lines drifted apart. Centring the boxes keeps
+     both texts on one optical line whatever size either one is. */
+  align-items: center;
+  /* A wrapping flex container stretches its lines to fill spare height by
+     default, which put uneven air between the title and the tags. Centring
+     the lines instead keeps them together and sits them in the middle of the
+     row, so a task with tags is balanced rather than top-heavy. */
+  align-content: center;
+  column-gap: var(--s);
+  row-gap: 0;
+  /* Only a row that wraps grows on this: a single-line row is still shorter
+     than the 44px minimum, so its height is unchanged. */
+  padding-top: 3px;
+  padding-bottom: 3px;
+}
+
+task .title-and-tags-wrapper > .parent-title {
+  order: -2;
+  flex: 0 0 100%;
+}
+
+/* Shrink-to-fit so the project can follow the text; everything else about the
+   title — font, size, weight, padding — is left to the app. */
+task .title-and-tags-wrapper > .task-title {
+  order: -1;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+task .title-and-tags-wrapper > tag-list,
+task .title-and-tags-wrapper .tags-container,
+task .title-and-tags-wrapper .tags {
+  display: contents;
+}
+
+/* The project sits on the title's line behind a divider, as in PWM: name,
+   8px, a hairline, 8px, then the project. PWM writes that divider as a `|`
+   glyph; here it is a background stripe on the chip, because a border would
+   run the chip's full height and a pseudo-element would land inside it. */
+task .title-and-tags-wrapper .tags > tag:first-child {
+  order: 0;
+  margin-left: 0;
+  padding-left: 17px;
+  /* PWM writes the divider as a `|` in its quaternary text colour, a muted
+     violet that stays clearly visible; `--separator` is a card-edge colour and
+     came out far too dark for that job. */
+  background-image: linear-gradient(
+    color-mix(in srgb, var(--ink-muted) 70%, transparent),
+    color-mix(in srgb, var(--ink-muted) 70%, transparent)
+  );
+  background-size: 1px 1.9em;
+  background-position: 8px center;
+  background-repeat: no-repeat;
+}
+
+/* The break. Zero height, so it costs nothing when there are no tags. */
+task .title-and-tags-wrapper::after {
+  content: '';
+  order: 1;
+  flex: 0 0 100%;
+  height: 0;
+}
+
+/* Everything after the project drops to the line below and flows there. The
+   tag line is pulled up against the title: the visible gap at this point is
+   line-height, not margin, so the chips take a tighter leading and a negative
+   top margin eats the rest. The 2px underneath keeps the last line off the
+   card's edge. */
+task .title-and-tags-wrapper .tags > tag:not(:first-child) {
+  order: 2;
+  margin-top: -1px;
+  margin-bottom: 2px;
+  line-height: 1.15;
+}
+
+/* The tag line keeps the 3px indent the app gives its tag container. */
+task .title-and-tags-wrapper .tags > tag:nth-child(2) {
+  margin-left: 3px;
+}
+
+task .title-and-tags-wrapper .tags-container {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  margin-left: 0 !important;
+}
+
+/* The task line, drawn after the reference: PWM sets the name in the interface
+   face at `text-sm` — 14px on a 20px line, regular weight, in the primary ink —
+   and those are the values here. Tag and project icons are left exactly as the
+   app draws them. */
+task .task-title,
+task .task-title .display-value,
+task .task-title textarea,
+task .task-title input {
+  font-family: var(--font-body-stack) !important;
+  font-size: 14px;
+  /* The title component states `line-height: 1.5` on the value, the edit
+     textarea and the hidden element that measures it, from a selector that
+     outranks this one on the last two; the flag lands PWM's 20px on all
+     three, so an open row and a row being edited keep the same leading. */
+  line-height: 20px !important;
+  font-weight: 400;
+  letter-spacing: normal;
+  color: var(--ink);
+}
+
+/* Row metrics, taken from PWM's task card: 12px above and below the line and
+   a 44px row, against Super Productivity's 4px and 40px. Tag text matches the
+   title instead of the 90% the tag component gives it. The first two are the
+   app's own variables, so subtask rows and the planner follow along. */
+body,
+body.isDarkTheme {
+  --task-first-line-min-height: 44px;
+  --task-inner-padding-top-bottom: 13px;
+}
+
+task .title-and-tags-wrapper .tags > tag .tag-title {
+  font-size: 1.3em;
+}
+
+/* The done toggle, matched to PWM. There it is a Tailwind-forms checkbox:
+   16px, a 4px corner, a 1px border in a muted grey, with 10px between it and
+   the task name. Super Productivity draws an SVG instead — a 19px square at
+   `rx: 5.5` and `stroke-width: 2` — so the shape is redrawn through CSS rather
+   than replaced, since SVG geometry is settable that way. The class is doubled
+   to outrank the component's own opacity, which the app still raises on hover
+   and when the task is done. */
+done-toggle {
+  margin-right: 10px;
+}
+
+done-toggle .done-shape.done-shape {
+  /* Geometry comes from SVG attributes, which any CSS beats, so width, height
+     and the corner radius apply as written. Stroke, its width and the opacity
+     are set in the component's own rule, which Angular compiles with both a
+     host and a content attribute — three simple selectors against our two, so
+     those three need !important rather than another repeated class. */
+  width: 16px;
+  height: 16px;
+  rx: 4px;
+  ry: 4px;
+  stroke: var(--ink-muted) !important;
+  stroke-width: 1 !important;
+  /* PWM draws the box in its quaternary border colour — a muted step below
+     the secondary text, not the text colour itself. Holding the ink and
+     dropping the opacity lands in the same place in both light and dark. */
+  opacity: 0.55 !important;
+}
+
+done-toggle .done-check {
+  stroke-width: 1.6 !important;
+}
+
+/* A finished task, after PWM: the box fills with the accent and carries a
+   light check, and the line itself steps back rather than staying at full
+   strength. `.is-done` sits on the toggle's host element, and the component's
+   own rules for it are compiled with host and content attributes, so these
+   need !important the same way the resting state does. */
+done-toggle.is-done .done-shape.done-shape {
+  fill: var(--palette-primary-500) !important;
+  stroke: var(--palette-primary-500) !important;
+  opacity: 1 !important;
+}
+
+/* The check is drawn as a dashed path the app reveals with a keyframe
+   animation. A row that is already done when it renders never runs that
+   animation, so the path stayed fully offset — a filled box with nothing in
+   it. Setting the offset to zero draws it outright; the animation still plays
+   on the click that marks a task done. */
+done-toggle.is-done .done-check {
+  stroke: #ffffff !important;
+  opacity: 1 !important;
+  stroke-dasharray: none !important;
+  stroke-dashoffset: 0 !important;
+}
+
+/* How far a finished task recedes. The app's own variable, so the strike-through
+   line, the title and the tags all fade together. */
+body,
+body.isDarkTheme {
+  --task-is-done-dim-opacity: 0.22;
+}
+
+/* The ink a finished name takes. PWM uses its tertiary text colour, which on
+   two of these palettes falls short of AA; the muted ink is that colour with
+   the contrast correction this theme already applies to every other muted
+   label, so the done row stays legible and in step with the rest. */
+body,
+body.isDarkTheme {
+  --task-done-ink: var(--ink-muted);
+}
+
+/* ---------------------------------------------------------------------------
+ * Accent, selection and the done row
+ * ---------------------------------------------------------------------------
+ * `--c-primary` is declared at `:root`, where it reads the palette the app
+ * writes onto the `<html>` element from its own settings rather than this
+ * theme's ladders, which live on `body`. Restating it on `body` looks like the
+ * obvious fix, and it is a trap: the app paints the page itself from it —
+ *
+ *   body.isDarkTheme::before { background:
+ *     radial-gradient(… color-mix(in srgb, var(--c-primary) 10%, transparent) …),
+ *     linear-gradient(… color-mix(in srgb, var(--c-primary) 4%, transparent) …) }
+ *
+ * so the whole background picked up a salmon haze. The glyph accents below
+ * therefore name `--palette-primary-500` directly, which tints exactly what it
+ * is written on and leaves the page to the app. */
+
+/* The title is the app's own weight, which is the browser default; stating it
+   here keeps it there whatever a future component rule decides. The edit
+   textarea and its measuring twin are set to Medium by the component, which
+   made the line thicken the moment it was clicked; they are named here so the
+   weight holds while editing as well. */
+task .task-title,
+task .task-title .display-value,
+task .task-title textarea,
+task .task-title .height-measure {
+  font-weight: 400 !important;
+}
+
+/* The finished name in the muted ink, so it reads as done by colour as well as
+   by the strike-through and the fade. */
+task.isDone .task-title,
+task.isDone .task-title .display-value,
+task.isDone .task-title textarea,
+task.isDone .task-title input {
+  color: var(--task-done-ink);
+}
+
+/* A finished task steps out of the card treatment altogether: no border, no
+   fill, just the dimmed line. */
+task.isDone .box.box {
+  border-color: transparent;
+  background: transparent;
+}
+
+/* The done-tasks divider sits centred under the list in PWM, with a small
+   caret rather than the app's oversized one. Scoped to the work view: the
+   same component carries the section headers in Settings, which are meant to
+   read as headings and keep the app's own styling. */
+work-view collapsible .collapsible-header {
+  justify-content: center;
+  gap: var(--s-half);
+}
+
+work-view collapsible .collapsible-header .mat-icon,
+work-view collapsible .collapsible-header mat-icon {
+  font-size: 16px;
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  color: var(--ink-muted);
+}
+
+/* The rect is drawn at x=2.5 y=2.5 inside a 24-unit viewBox, sized to fill it.
+   Shrinking it to 16 units without moving its origin left it 1.5 units above
+   and left of centre, while the check keeps the centre of the viewBox — so the
+   mark sat off inside the box. Moving the origin to 4 restores a shared
+   centre at 12. */
+done-toggle .done-shape.done-shape {
+  x: 4px;
+  y: 4px;
+}
+
+/* PWM shows the mark it would set while you hover an open task, in grey, so
+   the click needs no explaining. Same trick as the done state: the path is
+   dashed and only drawn by the animation, so the offset has to be cleared. */
+done-toggle:not(.is-done):hover .done-check {
+  /* PWM draws this preview mark in a plain grey (#888) rather than in the
+     theme's ink, so it reads as a hint and not as a set value. */
+  stroke: #888888 !important;
+  stroke-dasharray: none !important;
+  stroke-dashoffset: 0 !important;
+  opacity: 0.9 !important;
+}
+
+/* The check carries the weight it has in PWM rather than the hairline the
+   smaller box left it with. */
+done-toggle .done-check {
+  stroke-width: 2 !important;
+}
+
+/* "Eindig de dag" is a filled primary button, which makes the loudest element
+   on the page a link to a summary. It keeps its place and its icon, but takes
+   an elevated surface with a hairline instead of the accent fill. */
+.finish-day-button-wrapper .e2e-finish-day,
+.finish-day-button-wrapper .mat-mdc-unelevated-button.e2e-finish-day {
+  --mdc-filled-button-container-color: var(--surface-3);
+  --mdc-filled-button-label-text-color: var(--ink);
+  background-color: var(--surface-3);
+  color: var(--ink);
+  border: 1px solid var(--separator);
+}
+
+.finish-day-button-wrapper .e2e-finish-day .mat-icon {
+  color: var(--ink-muted);
+}
+
+/* ---------------------------------------------------------------------------
+ * Task row states
+ * ---------------------------------------------------------------------------
+ * Hover marks the row with a hairline rather than a fill, so nothing shifts
+ * in weight as the pointer travels down the list.
+ *
+ * The running task is the one state the app tints from the accent:
+ * `--task-c-current-bg` is `color-mix(in srgb, var(--c-accent) 10%,
+ * var(--surface-2))`, and with this theme's accent that comes out salmon. It
+ * is restated here in the theme's own violet, which keeps a running task
+ * clearly marked without borrowing the accent for a surface. */
+body,
+body.isDarkTheme {
+  --task-c-current-bg: color-mix(in srgb, var(--ink-muted) 12%, var(--surface-2));
+}
+
+/* The "Voltooide taken (n)" divider. Scoped to the work view on purpose: the
+   same collapsible carries the section headers in Settings, which are meant to
+   read as headings and keep the app's own 14px/700. */
+work-view collapsible .collapsible-title {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--ink-muted);
+  letter-spacing: 0.02em;
+}
+
+/* Selecting a task should not repaint its row: the detail panel already says
+   which one is open. The app fills the row from `--task-c-selected-bg`, and
+   that variable is also read by the hover controls, so it is neutralised at
+   the source and the row's own background is stated as well. A running task
+   keeps its tint — that one marks something you cannot see anywhere else.
+   Border and shadow stay on the theme's hairline so nothing accent-coloured
+   creeps back in. */
+body,
+body.isDarkTheme {
+  /* The app fills a normal row with `--task-c-bg`, which is `--surface-2`.
+     Pointing the selected row's two variables at the same surface is what
+     "no colour change on selection" actually means: the row still widens past
+     the list — that is the app's own behaviour — but it carries the same fill
+     as every other row instead of a lighter one. */
+  --task-c-selected-bg: var(--surface-2);
+  --selected-task-bg-color: var(--surface-2);
+}
+
+task.isSelected > swipe-block > .inner-wrapper > .box,
+task.isSelected .box.box {
+  background: var(--surface-2) !important;
+}
+
+/* The layers around the card stay unpainted, so only the card itself carries
+   a surface. */
+task.isSelected,
+task.isSelected > swipe-block,
+task.isSelected .inner-wrapper,
+task.isSelected .first-line {
+  background: transparent !important;
+}
+
+/* A focused row — what you get when you select a task with the detail panel
+   closed — is bordered in `--palette-primary-400` by the component, this
+   theme's salmon. Selection changes nothing here, so it takes the resting
+   hairline; hover below is the only state that marks a row. */
+task:focus .box.box,
+task:focus .inner-wrapper > .box {
+  border-color: var(--separator) !important;
+}
+
+task.isSelected .box.box,
+task.isCurrent .box.box {
+  border-color: var(--separator) !important;
+  box-shadow: none !important;
+}
+
+/* Hover is the only state that marks a row, so it comes last: at equal
+   specificity the later `!important` wins, which keeps hover visible on a row
+   that is also focused, selected or running. */
+task:hover .box.box,
+task:hover .inner-wrapper > .box {
+  border-color: color-mix(in srgb, var(--ink-muted) 45%, transparent) !important;
+}
+
+/* ---------------------------------------------------------------------------
+ * Page title face
+ * ---------------------------------------------------------------------------
+ * The interface runs on Inter; the title in the top-left corner is the one
+ * exception and keeps the app's own stack, which resolves to Segoe UI here.
+ * Only the family is set — size, weight and colour stay exactly as Super
+ * Productivity draws them. Point `--font-page-title-stack` at any installed
+ * family to give the title a voice of its own. */
+:root {
+  --font-page-title-stack:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI Variable Text', 'Segoe UI',
+    Roboto, 'Open Sans', 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+}
+
+.page-title.page-title.page-title,
+.page-title.page-title .page-title-text {
+  font-family: var(--font-page-title-stack);
+}
+
+/* ---------------------------------------------------------------------------
+ * Plugin pages
+ * ---------------------------------------------------------------------------
+ * A plugin opened from the left navigation renders `plugin-index`, which draws
+ * its own heading inside the page. The app's title bar then repeats it, so the
+ * page opens with the same words twice. The title is hidden on those routes
+ * only: `:has()` matches the header's own container against the routed
+ * component that follows it, so every other view keeps its title. */
+.content:has(> .route-wrapper plugin-index) page-title,
+.content:has(plugin-index) page-title {
+  display: none;
+}
+
+/* Hovering a finished task brings up its own control strip, and the app gives
+   that strip's buttons a full-height, card-radius fill — a filled block behind
+   a single icon, where every other row shows only the round state layer. The
+   fill is dropped so a done row hovers like the rest. */
+task.isDone task-hover-controls,
+task.isDone task-hover-controls button,
+task.isDone task-hover-controls .mat-mdc-button-persistent-ripple {
+  background: transparent !important;
+}
+
+task.isDone task-hover-controls button {
+  height: auto !important;
+}
+
+/* The detail panel's row icons at the same 24px as the task list, so the two
+   halves of the screen carry one icon scale. Material's own default is 24px
+   as well; stating it here keeps the panel steady if a component decides
+   otherwise. */
+task-detail-panel .mat-icon,
+task-detail-item .mat-icon {
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+}
+
+/* Icon buttons in the detail panel keep Material's circular hover, the same
+   exception the task row and the right-hand action bar already carry. */
+task-detail-panel .mat-mdc-icon-button,
+task-detail-panel .mat-mdc-icon-button .mat-mdc-button-persistent-ripple,
+task-detail-panel .mat-mdc-icon-button .mat-mdc-button-persistent-ripple::before,
+task-detail-panel .mat-mdc-icon-button .mat-mdc-button-ripple,
+task-detail-panel .mat-mdc-icon-button .mat-mdc-focus-indicator,
+task-detail-panel .mat-mdc-icon-button .mat-ripple,
+task-detail-item .mat-mdc-icon-button,
+task-detail-item .mat-mdc-icon-button .mat-mdc-button-persistent-ripple,
+task-detail-item .mat-mdc-icon-button .mat-mdc-button-persistent-ripple::before,
+task-detail-item .mat-mdc-icon-button .mat-mdc-button-ripple,
+task-detail-item .mat-mdc-icon-button .mat-mdc-focus-indicator,
+task-detail-item .mat-mdc-icon-button .mat-ripple {
+  border-radius: 50% !important;
+}
