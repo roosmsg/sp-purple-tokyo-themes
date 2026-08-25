@@ -709,6 +709,47 @@ magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon::after
 }
 
 /* ============================================================
+ * LUCIDE ICONS PLUGIN
+ * ============================================================
+ * Everything above draws the app's icons with the Material Symbols font,
+ * because that is what the app ships. With the Lucide Icons plugin installed
+ * the same icons are drawn from Lucide outlines instead, and this section is
+ * the only part of the file that needs to know.
+ *
+ * Nothing above needs changing for the plugin. The substitutions keep working
+ * unaltered: a theme changes an icon by writing a different ligature into a
+ * pseudo-element, and the plugin reads the ligature asked for and draws the
+ * Lucide equivalent — so the bolt on the today affordances arrives as Lucide's
+ * `zap`, not as a Material glyph standing among Lucide ones.
+ *
+ * The plugin sets `data-lucide-icons` on the root element while it is drawing
+ * and removes it when disabled, so everything here falls away on its own and
+ * the file goes back to styling the icon font.
+ *
+ * What does not carry across, so that it is not looked for: the stroke width is
+ * baked into the plugin's outlines and cannot be set from here, and a Lucide
+ * play is an outline triangle rather than a filled one — the plugin draws a
+ * mask, which has no separate fill to colour.
+ */
+
+/* How large an icon is drawn, as a multiple of the size a glyph would have
+   been. This is the same knob the icon-font build has no need of: a glyph is
+   drawn at the element's font-size, while the plugin's mask fills whatever it
+   is given, and the app states the two differently in places — the left rail
+   sets an 18px font-size inside a 24px box. The plugin already sizes its
+   drawing to `1em` for that reason; this scales that figure, and because the
+   box does not move, no layout does either. `1` is the app's own size. */
+html[data-lucide-icons] body,
+html[data-lucide-icons] body.isDarkTheme {
+  --icon-scale: 0.92;
+}
+
+html[data-lucide-icons] mat-icon[data-lucide-icon]::after {
+  -webkit-mask-size: calc(1em * var(--icon-scale)) calc(1em * var(--icon-scale));
+  mask-size: calc(1em * var(--icon-scale)) calc(1em * var(--icon-scale));
+}
+
+/* ============================================================
  * EMPTY STATE
  * ============================================================
  * "Geen geplande taken" ships with a horizon drawing (a moon in dark mode).

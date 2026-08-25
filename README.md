@@ -69,7 +69,8 @@ The drawing itself lives in that element's `::after`, as a mask. A rule of your 
 
 ## Tuning
 
-- `--today-icon` — the Material Symbols ligature drawn in place of the sun. `bolt` by default; `electric_bolt`, `offline_bolt`, `flash_on` and `thunderstorm` are the other candidates in the app's icon picker. With the Lucide plugin installed this is drawn as Lucide `zap`.
+- `--today-icon` — the Material Symbols ligature drawn in place of the sun. `bolt` by default; `electric_bolt`, `offline_bolt`, `flash_on` and `thunderstorm` are the other candidates in the app's icon picker. All five are carried by the Lucide plugin, so any of them still arrives as a bolt — Lucide's `zap`, or `cloud-lightning` for `thunderstorm` — rather than as a Material glyph among Lucide ones.
+- `--icon-scale` — how large the Lucide plugin draws an icon, as a multiple of the size a glyph would have been. `0.92` by default; `1` is the app's own figure. It sits inside the plugin section and does nothing without it, since the icon font needs no such adjustment: a glyph is drawn at the element's font-size, while a mask fills whatever it is given, and the app states the two differently in places. Boxes do not move, so this shifts no layout.
 - `--planner-nav-icon` — the Material Symbols ligature used for Planner in the left navigation (`next_week`).
 - `--schedule-nav-icon` and `--schedule-panel-icon` — the Material Symbols ligatures used for Schema in the left navigation (`calendar_clock`) and on the right-panel control (`pending_actions`).
 - `--work-view-scale` and `--settings-view-scale` — independent scales for the task work view (`1`) and desktop Settings page (`0.95`). Adjusting Settings does not change project pages.
