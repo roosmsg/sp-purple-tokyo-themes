@@ -763,12 +763,28 @@ task .show-additional-info-btn mat-icon:not(.updated-icon)::after {
  * reporting that the issue changed upstream, and hiding it would take that
  * away with no replacement.
  *
- * Only the button is hidden, not the space it sits in: `visibility` rather
- * than `display`, so the row's controls keep their positions and nothing
- * shifts as the pointer moves along a list. */
+ * `display` and not `opacity` or `visibility`, both of which were tried and
+ * both of which left something behind. Visibility is overridable by a
+ * descendant, and the substitution above and the plugin each set their
+ * pseudo-element back to visible in order to draw at all, so the icon
+ * reappeared inside its own hidden button. Opacity took care of that but kept
+ * the slot, which reads as a gap in the row — most obviously beside an open
+ * detail panel, where this button is the only thing that would have been
+ * there. Taking it out of the layout leaves no gap and shifts nothing, since
+ * it is out for every row alike.
+ *
+ * `!important` because the app raises these controls to full opacity in three
+ * states — hovered, focused, and inside `.isCurrent`, which is the state a row
+ * is in while its detail panel is open. Angular compiles that rule with both a
+ * host and a content attribute, so it outranks anything a theme can write
+ * against the same button, and the one place the button most needed to be gone
+ * was the one place it came back.
+ *
+ * The button stays in the document, which is what the plugin presses when a
+ * row is double-clicked. A programmatic click does not care that the element
+ * is not laid out. */
 html[data-lucide-icons] task .show-additional-info-btn:not(:has(.updated-icon)) {
-  visibility: hidden;
-  pointer-events: none;
+  display: none !important;
 }
 
 /* ============================================================
