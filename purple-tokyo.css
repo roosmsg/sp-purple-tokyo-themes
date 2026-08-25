@@ -939,6 +939,35 @@ work-view .status-bar .item .no-wrap mat-icon {
   color: var(--ink-muted);
 }
 
+/* The reset button on "Zonder pauze". The app hides it until that reading is
+   hovered and then brings it in at full size and full strength, which is a
+   solid 40px circle arriving beside a line of small grey text.
+
+   It comes in smaller and part-transparent instead, and goes to full strength
+   only when the pointer is actually on it — so it reads as available while you
+   are near it and as ready once you mean it.
+
+   The class is repeated to outrank the app's own rule, which Angular compiles
+   with a host and a content attribute; the transform restates the vertical
+   centring because it is a shorthand and setting a scale alone would drop it. */
+body,
+body.isDarkTheme {
+  --break-reset-scale: 0.75;
+  --break-reset-opacity: 0.55;
+}
+
+work-view .status-bar .item:hover .take-a-break-reset-btn.take-a-break-reset-btn {
+  opacity: var(--break-reset-opacity);
+  transform: translateY(-50%) scale(var(--break-reset-scale));
+}
+
+work-view
+  .status-bar
+  .item:hover
+  .take-a-break-reset-btn.take-a-break-reset-btn:hover {
+  opacity: 1;
+}
+
 /* The dot, at the head of every reading after the first — so it falls between
    them. The app already spaces the items with a margin; this sits inside that
    space rather than adding to it. */
