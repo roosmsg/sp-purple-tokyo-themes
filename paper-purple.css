@@ -632,6 +632,13 @@ body.isDarkTheme {
  * 'flash_on' and 'thunderstorm' are the other candidates in the icon picker. */
 body,
 body.isDarkTheme {
+  /* How large an icon is drawn in the task list, the view around it and the
+     detail panel — the places where an icon sits beside 14px text rather than
+     beside a label in a rail or a menu. It is stated as a font-size, which is
+     the figure a glyph is drawn at, while the boxes below stay at 24px so no
+     row moves. The Lucide plugin draws to the same figure, so the two builds
+     come out the same size. */
+  --task-icon-size: 20px;
   --today-icon: 'bolt';
   --planner-nav-icon: 'next_week';
   --schedule-nav-icon: 'calendar_clock';
@@ -741,23 +748,24 @@ magic-side-nav nav-item a.nav-link[href$='/schedule'] > mat-icon.nav-icon::after
 html[data-lucide-icons] body,
 html[data-lucide-icons] body.isDarkTheme {
   --icon-scale: 0.92;
-  --icon-scale-tasks: 0.8;
 }
 
-/* The task list, the view around it and the detail panel read their own scale.
-   These are the places where an icon sits beside 14px text rather than beside
-   a label in a rail or a menu, and the size that reads as balanced there is a
-   step below the rest of the interface.
+/* The scale exists because the app decides the size of an icon in most of the
+   interface and does not always mean the box it puts around it. In the task
+   list and the detail panel that is not so: `--task-icon-size` above states
+   the figure this theme wants, and the plugin already draws to it. So these
+   containers hand the scale back to 1 rather than taking a second reduction
+   off a size that was already chosen.
 
    It is the same variable, redefined on the containers rather than matched by
    another selector: a custom property inherits, so every icon inside a task
-   row or the panel picks the smaller figure up on its own, whatever markup the
-   app puts in between. */
+   row or the panel picks this up on its own, whatever markup the app puts in
+   between. */
 html[data-lucide-icons] work-view,
 html[data-lucide-icons] task,
 html[data-lucide-icons] task-detail-panel,
 html[data-lucide-icons] task-detail-item {
-  --icon-scale: var(--icon-scale-tasks);
+  --icon-scale: 1;
 }
 
 html[data-lucide-icons] mat-icon[data-lucide-icon]::after {
@@ -1382,9 +1390,11 @@ task .toggle-sub-tasks-btn .mat-icon,
 task .show-additional-info-btn .mat-icon,
 task .attachment-btn .mat-icon,
 .start-task-btn .mat-icon {
-  /* 24px is the size Material Symbols is drawn at, so stems and curves land
-     on whole pixels; anything in between lands half on a pixel and softens. */
-  font-size: 24px;
+  /* The drawing steps down; the box does not, so the row keeps its metrics
+     and the icons keep their spacing. 24px is where Material Symbols lands its
+     stems and curves on whole pixels, and a smaller size gives some of that up
+     — worth it here, where the icons were louder than the line they sit on. */
+  font-size: var(--task-icon-size);
   width: 24px;
   height: 24px;
   line-height: 24px;
@@ -1844,13 +1854,13 @@ task.isDone task-hover-controls button {
   height: auto !important;
 }
 
-/* The detail panel's row icons at the same 24px as the task list, so the two
-   halves of the screen carry one icon scale. Material's own default is 24px
-   as well; stating it here keeps the panel steady if a component decides
+/* The detail panel's row icons at the same size as the task list, so the two
+   halves of the screen carry one icon scale. Material's own default is a 24px
+   box; stating it here keeps the panel steady if a component decides
    otherwise. */
 task-detail-panel .mat-icon,
 task-detail-item .mat-icon {
-  font-size: 24px;
+  font-size: var(--task-icon-size);
   width: 24px;
   height: 24px;
   line-height: 24px;
