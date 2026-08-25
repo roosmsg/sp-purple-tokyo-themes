@@ -744,37 +744,32 @@ task .show-additional-info-btn mat-icon:not(.updated-icon)::after {
   line-height: 1;
 }
 
-/* With the Lucide Icons plugin installed the button goes altogether, and the
-   panel is opened by double-clicking the row instead — the plugin binds that,
-   since a stylesheet cannot. One less control on a line that already carries
-   play, add-to-today, attachments and the sub-task toggle.
+/* With the Lucide Icons plugin installed the button waits until the row is
+ * pointed at. The panel can also be opened by double-clicking the row — the
+ * plugin binds that, since a stylesheet cannot — so the control does not have
+ * to sit there announcing itself on every line of the list.
  *
- * The update state stays. It is not a way in to the panel, it is the app
- * reporting that the issue changed upstream, and hiding it would take that
- * away with no replacement.
+ * The update state is exempt. It is not a way in to the panel, it is the app
+ * reporting that the issue changed upstream, and something that is telling you
+ * a fact should not need to be hunted for.
  *
- * `display` and not `opacity` or `visibility`, both of which were tried and
- * both of which left something behind. Visibility is overridable by a
- * descendant, and the substitution above and the plugin each set their
- * pseudo-element back to visible in order to draw at all, so the icon
- * reappeared inside its own hidden button. Opacity took care of that but kept
- * the slot, which reads as a gap in the row — most obviously beside an open
- * detail panel, where this button is the only thing that would have been
- * there. Taking it out of the layout leaves no gap and shifts nothing, since
- * it is out for every row alike.
- *
- * `!important` because the app raises these controls to full opacity in three
- * states — hovered, focused, and inside `.isCurrent`, which is the state a row
- * is in while its detail panel is open. Angular compiles that rule with both a
- * host and a content attribute, so it outranks anything a theme can write
- * against the same button, and the one place the button most needed to be gone
- * was the one place it came back.
- *
- * The button stays in the document, which is what the plugin presses when a
- * row is double-clicked. A programmatic click does not care that the element
- * is not laid out. */
+ * `opacity` keeps the slot, which is what is wanted here: the button comes
+ * back on hover, and a row whose controls shift under the pointer as it
+ * arrives is worse than a little reserved space. `!important` on both states,
+ * because the app raises these controls to full opacity when hovered, focused
+ * or inside `.isCurrent` — a rule Angular compiles with two attributes, which
+ * outranks anything a theme writes against the same button. The resting state
+ * has to beat that; the hover state then has to beat the resting one. */
 html[data-lucide-icons] task .show-additional-info-btn:not(:has(.updated-icon)) {
-  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none;
+  transition: opacity var(--transition-duration-s) var(--ani-standard-timing);
+}
+
+html[data-lucide-icons] task:hover .show-additional-info-btn:not(:has(.updated-icon)),
+html[data-lucide-icons] task:focus-within .show-additional-info-btn:not(:has(.updated-icon)) {
+  opacity: 1 !important;
+  pointer-events: auto;
 }
 
 /* ============================================================
@@ -869,7 +864,7 @@ work-view .no-tasks-illu-wrapper .no-tasks-label {
 body {
   --work-view-scale: 1;
   --settings-view-scale: 0.95;
-  --schedule-view-scale: 0.9;
+  --schedule-view-scale: 0.85;
 }
 
 work-view .task-list-wrapper {
@@ -914,6 +909,9 @@ body,
 body.isDarkTheme {
   --schedule-time-size: 12.5px;
   --schedule-marker-size: 11.5px;
+  /* The size the week heading is to be *read* at, not the size it is set
+     at. See the rule below. */
+  --schedule-title-size: 18px;
 }
 
 schedule .grid-container > .time {
@@ -925,6 +923,18 @@ schedule .work-end,
 schedule .work-start > div,
 schedule .work-end > div {
   font-size: var(--schedule-marker-size) !important;
+}
+
+/* The week heading, held at a constant size while the view around it is
+   scaled. Dividing by the scale is what does it: the zoom multiplies every
+   length inside the view by that same figure, so a font-size stated as
+   size ÷ scale arrives back at size on the screen. Move the scale and the
+   heading stays exactly where it is, with no second number to remember.
+
+   The app's own page title — the word Schema in the header — is outside the
+   scaled element and never shrank with it, so it is not touched here. */
+schedule .title {
+  font-size: calc(var(--schedule-title-size) / var(--schedule-view-scale)) !important;
 }
 
 /* ============================================================
