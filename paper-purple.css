@@ -743,6 +743,23 @@ task .show-additional-info-btn mat-icon:not(.updated-icon)::after {
   line-height: 1;
 }
 
+/* With the Lucide Icons plugin installed the button goes altogether, and the
+   panel is opened by double-clicking the row instead — the plugin binds that,
+   since a stylesheet cannot. One less control on a line that already carries
+   play, add-to-today, attachments and the sub-task toggle.
+ *
+ * The update state stays. It is not a way in to the panel, it is the app
+ * reporting that the issue changed upstream, and hiding it would take that
+ * away with no replacement.
+ *
+ * Only the button is hidden, not the space it sits in: `visibility` rather
+ * than `display`, so the row's controls keep their positions and nothing
+ * shifts as the pointer moves along a list. */
+html[data-lucide-icons] task .show-additional-info-btn:not(:has(.updated-icon)) {
+  visibility: hidden;
+  pointer-events: none;
+}
+
 /* ============================================================
  * LUCIDE ICONS PLUGIN
  * ============================================================
