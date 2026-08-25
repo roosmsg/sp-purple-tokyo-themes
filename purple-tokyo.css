@@ -1466,17 +1466,24 @@ magic-side-nav .g-multi-btn-wrapper {
  * The margin is cleared and the row's own gap carries the whole distance, which
  * leaves one number to change instead of two that add up. Both selectors repeat
  * a class to clear the app's own, which Angular compiles with content
- * attributes. */
+ * attributes.
+ *
+ * A plugin row is left out of both. Its icon is a `plugin-icon` rather than a
+ * `mat-icon` and is drawn differently — for Dashboard, by a rule further up
+ * this file — so it sits differently in the row and reads better at the spacing
+ * the app gives it. Excluding it rather than restating that spacing means the
+ * app's own figures stand, and there is nothing here to keep in step with
+ * them. */
 body,
 body.isDarkTheme {
   --side-nav-icon-gap: 12px;
 }
 
-magic-side-nav .nav-link.nav-link {
+magic-side-nav .nav-link.nav-link:not(:has(plugin-icon)) {
   gap: var(--side-nav-icon-gap);
 }
 
-magic-side-nav .nav-link .nav-icon.nav-icon {
+magic-side-nav .nav-link .nav-icon.nav-icon:not(plugin-icon) {
   margin-right: 0;
 }
 
