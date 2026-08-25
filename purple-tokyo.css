@@ -1448,17 +1448,24 @@ task .title-and-tags-wrapper .tags-container {
   margin-left: 0 !important;
 }
 
-/* The task line, drawn after the reference: the title in the interface face,
-   at its size and at regular weight. Tag and project icons are left exactly
-   as the app draws them. */
+/* The task line, drawn after the reference: PWM sets the name in the interface
+   face at `text-sm` — 14px on a 20px line, regular weight, in the primary ink —
+   and those are the values here. Tag and project icons are left exactly as the
+   app draws them. */
 task .task-title,
 task .task-title .display-value,
 task .task-title textarea,
 task .task-title input {
   font-family: var(--font-body-stack) !important;
-  font-size: 15px;
+  font-size: 14px;
+  /* The title component states `line-height: 1.5` on the value, the edit
+     textarea and the hidden element that measures it, from a selector that
+     outranks this one on the last two; the flag lands PWM's 20px on all
+     three, so an open row and a row being edited keep the same leading. */
+  line-height: 20px !important;
   font-weight: 400;
   letter-spacing: normal;
+  color: var(--ink);
 }
 
 /* Row metrics, taken from PWM's task card: 12px above and below the line and
@@ -1538,6 +1545,15 @@ body.isDarkTheme {
   --task-is-done-dim-opacity: 0.22;
 }
 
+/* The ink a finished name takes. PWM uses its tertiary text colour, which on
+   two of these palettes falls short of AA; the muted ink is that colour with
+   the contrast correction this theme already applies to every other muted
+   label, so the done row stays legible and in step with the rest. */
+body,
+body.isDarkTheme {
+  --task-done-ink: var(--ink-muted);
+}
+
 /* ---------------------------------------------------------------------------
  * Accent, selection and the done row
  * ---------------------------------------------------------------------------
@@ -1555,10 +1571,24 @@ body.isDarkTheme {
  * is written on and leaves the page to the app. */
 
 /* The title is the app's own weight, which is the browser default; stating it
-   here keeps it there whatever a future component rule decides. */
+   here keeps it there whatever a future component rule decides. The edit
+   textarea and its measuring twin are set to Medium by the component, which
+   made the line thicken the moment it was clicked; they are named here so the
+   weight holds while editing as well. */
 task .task-title,
-task .task-title .display-value {
+task .task-title .display-value,
+task .task-title textarea,
+task .task-title .height-measure {
   font-weight: 400 !important;
+}
+
+/* The finished name in the muted ink, so it reads as done by colour as well as
+   by the strike-through and the fade. */
+task.isDone .task-title,
+task.isDone .task-title .display-value,
+task.isDone .task-title textarea,
+task.isDone .task-title input {
+  color: var(--task-done-ink);
 }
 
 /* A finished task steps out of the card treatment altogether: no border, no
