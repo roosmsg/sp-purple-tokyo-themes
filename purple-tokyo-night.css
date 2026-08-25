@@ -896,6 +896,64 @@ work-view .task-list-wrapper {
 }
 
 /* ============================================================
+ * SCHEMA TOP BAR
+ * ============================================================
+ * The bar above the calendar carries three things at the app's full sizes: the
+ * week and its date range, the day headers across the top, and the controls for
+ * moving between periods and switching between day, week and month. All of it
+ * is chrome around a grid, and it was reading louder than the grid it belongs
+ * to. Nothing below the bar is touched.
+ *
+ * Sizes rather than a scale on the bar as a whole: a zoom here would take the
+ * bar's height with it and pull the grid up, where naming the two type sizes
+ * and the button geometry leaves the layout to the app. */
+body,
+body.isDarkTheme {
+  /* The day headers across the top, and the week with its date range. */
+  --schedule-header-date-size: 15px;
+  --schedule-header-title-size: 15px;
+  /* The round controls in that bar: the box, and the icon inside it. */
+  --schedule-header-btn-size: 32px;
+  --schedule-header-btn-icon-size: 19px;
+}
+
+schedule .day,
+schedule .day-num,
+schedule .day-day {
+  font-size: var(--schedule-header-date-size);
+}
+
+/* The flag is needed here and not on the day headers above: the app states this
+   one from a selector Angular compiles with a content attribute on top of the
+   class, which outranks a theme's plain selector. Measured, not guessed — the
+   headers moved on the first attempt and the title did not. */
+schedule .title {
+  font-size: var(--schedule-header-title-size) !important;
+}
+
+/* Both the period arrows and the day/week/month group. The class is repeated to
+   clear the app's own sizing, which Angular compiles with a content attribute
+   on top of the same class. `--mdc-icon-button-state-layer-size` is the token
+   Material sizes the circle from, so the hover ring follows the button rather
+   than staying at the 40px it was built for. */
+schedule .schedule-nav-controls .mat-mdc-icon-button.mat-mdc-icon-button,
+schedule .time-view-btn.time-view-btn {
+  width: var(--schedule-header-btn-size);
+  height: var(--schedule-header-btn-size);
+  padding: 0;
+  --mdc-icon-button-state-layer-size: var(--schedule-header-btn-size);
+  --mdc-icon-button-icon-size: var(--schedule-header-btn-icon-size);
+}
+
+schedule .schedule-nav-controls .mat-mdc-icon-button .mat-icon,
+schedule .time-view-btn .mat-icon {
+  font-size: var(--schedule-header-btn-icon-size);
+  width: var(--schedule-header-btn-icon-size);
+  height: var(--schedule-header-btn-icon-size);
+  line-height: var(--schedule-header-btn-icon-size);
+}
+
+/* ============================================================
  * CHROME SCALE — navigation smaller than the content
  * ============================================================
  * The window zoom (Ctrl + scroll) scales everything at once. This puts the
