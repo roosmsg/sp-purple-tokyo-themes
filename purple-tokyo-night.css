@@ -964,6 +964,10 @@ body,
 body.isDarkTheme {
   --break-reset-scale: 0.75;
   --break-reset-opacity: 0.55;
+  /* What it turns when the pointer is on it. The accent, the same one the play
+     control takes, because this is the other button on this screen that starts
+     a clock over. */
+  --break-reset-hover-ink: var(--palette-primary-500);
 }
 
 work-view .status-bar .item:hover .take-a-break-reset-btn.take-a-break-reset-btn {
@@ -976,6 +980,17 @@ work-view
   .item:hover
   .take-a-break-reset-btn.take-a-break-reset-btn:hover {
   opacity: 1;
+}
+
+/* And it takes the accent, so the pointer being on it is legible from the
+   colour and not only from the fade. `--mdc-fab-icon-color` is the token
+   Material's mini-fab reads for its glyph; `color` alone would be overruled by
+   it, so both are stated. */
+work-view .status-bar .take-a-break-reset-btn:hover .mat-icon,
+work-view .status-bar .take-a-break-reset-btn:hover button {
+  color: var(--break-reset-hover-ink);
+  --mdc-fab-icon-color: var(--break-reset-hover-ink);
+  --mat-fab-foreground-color: var(--break-reset-hover-ink);
 }
 
 /* The dot, at the head of every reading after the first — so it falls between
