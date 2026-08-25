@@ -847,6 +847,79 @@ html[data-lucide-icons] mat-icon[data-lucide-icon]::after {
 }
 
 /* ============================================================
+ * WORK VIEW STATUS BAR
+ * ============================================================
+ * The line above the task list reads "Resterende schatting: ~2h ⧖  Vandaag
+ * werken: 1h ⧖  Zonder pauze: 20m ⧖" — three readings of the same thing, each
+ * with a clock-ish glyph of its own after it. Three icons saying "this is a
+ * duration" next to three durations is the icon doing no work.
+ *
+ * One clock at the head of the line instead, and a dot between the readings.
+ * The dot is a character rather than an icon: it costs nothing, it scales with
+ * the text, and the app already writes its date ranges that way.
+ *
+ * `.item` is given a flex display so the pseudo-elements below become items in
+ * it, which is what puts the clock before the label rather than inside the
+ * text. The app leaves it as a block; nothing else depends on that.
+ *
+ * The reset button on the third reading is untouched. It is hidden until that
+ * row is hovered and it is a control, not decoration — the icons being removed
+ * here are the ones inside `.no-wrap`, which is where the three glyphs live. */
+work-view .status-bar .item {
+  display: flex;
+  align-items: center;
+}
+
+work-view .status-bar .item .no-wrap mat-icon {
+  display: none;
+}
+
+/* The clock. Written as the Material ligature, which is what the icon font
+   build needs; with the Lucide plugin installed the rule below draws the same
+   clock from Lucide instead, because a pseudo-element on a div is not a
+   mat-icon and the plugin has nothing to translate. */
+work-view .status-bar .item:first-child::before {
+  content: 'schedule';
+  font-family: 'Material Symbols Outlined', sans-serif;
+  font-size: 17px;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  margin-right: 6px;
+  color: var(--ink-muted);
+}
+
+html[data-lucide-icons] work-view .status-bar .item:first-child::before {
+  content: '';
+  width: 16px;
+  height: 16px;
+  background-color: var(--ink-muted);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2210%22%20%2F%3E%20%3Cpath%20d%3D%22M12%206v6l4%202%22%20%2F%3E%20%3C%2Fsvg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23000%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%20%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2210%22%20%2F%3E%20%3Cpath%20d%3D%22M12%206v6l4%202%22%20%2F%3E%20%3C%2Fsvg%3E");
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+}
+
+/* The dot, at the head of every reading after the first — so it falls between
+   them. The app already spaces the items with a margin; this sits inside that
+   space rather than adding to it. */
+work-view .status-bar .item + .item::before {
+  content: '·';
+  color: var(--ink-muted);
+  margin-right: calc(1.5 * var(--s, 8px));
+  margin-left: calc(-0.75 * var(--s, 8px));
+}
+
+/* ============================================================
  * EMPTY STATE
  * ============================================================
  * "Geen geplande taken" ships with a horizon drawing (a moon in dark mode).

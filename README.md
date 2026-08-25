@@ -39,6 +39,7 @@ Each section in the file stands on its own and can be deleted without touching t
 | Today icon | Replaces the sun with a bolt on the today affordances. |
 | Planner icon | Uses the built-in Material Symbols `next_week` glyph for Planner in the left navigation. |
 | Schedule icons | Uses the built-in Material Symbols `calendar_clock` glyph for Schema in the left navigation and `pending_actions` on its right-panel button in desktop and mobile layouts. |
+| Work view status bar | Replaces the three duration glyphs on the "Resterende schatting / Vandaag werken / Zonder pauze" line with a single clock at the head of it, and separates the three readings with a dot. With the Lucide plugin installed the clock is drawn from Lucide rather than the icon font. |
 | Empty state | Hides the horizon drawing under "no tasks planned", adds `48px`-equivalent breathing room above the heading and keeps an explicit `32px`-equivalent gap before the add-more button. |
 | Content scale | Keeps task lists, empty states and the finish-day action at their existing `1.1` scale while zooming the desktop Settings page out to `0.9`. |
 | Dashboard icon | Gives the Dashboard plugin entry in the left menu the built-in Material Symbols `avg_pace` glyph in the same muted colour as Schema; no SVG asset is added. |
