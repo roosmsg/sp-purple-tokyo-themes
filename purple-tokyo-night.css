@@ -964,10 +964,13 @@ body,
 body.isDarkTheme {
   --break-reset-scale: 0.75;
   --break-reset-opacity: 0.55;
-  /* What it turns when the pointer is on it. The accent, the same one the play
-     control takes, because this is the other button on this screen that starts
-     a clock over. */
-  --break-reset-hover-ink: var(--palette-primary-500);
+  /* What it turns when the pointer is on it. No hue at all: the icon rests in
+     the muted ink like the clock beside it, and under the pointer it comes up
+     to the full ink. The change is one of weight rather than colour, which is
+     enough to read as "this one" on a control that is already the only thing
+     moving — and it keeps a reset button from announcing itself in the accent
+     or in a warning red, neither of which it deserves. */
+  --break-reset-hover-ink: var(--ink);
 }
 
 work-view .status-bar .item:hover .take-a-break-reset-btn.take-a-break-reset-btn {
@@ -982,8 +985,8 @@ work-view
   opacity: 1;
 }
 
-/* And it takes the accent, so the pointer being on it is legible from the
-   colour and not only from the fade. `--mdc-fab-icon-color` is the token
+/* And it comes up to the full ink, so the pointer being on it is legible from
+   the contrast and not only from the fade. `--mdc-fab-icon-color` is the token
    Material's mini-fab reads for its glyph; `color` alone would be overruled by
    it, so both are stated. */
 work-view .status-bar .take-a-break-reset-btn:hover .mat-icon,
