@@ -315,9 +315,15 @@ body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen)::after {
   }
 }
 
-/* The task detail panel opens against the top right of the window, which is
-   where Electron draws minimise, maximise and close. Its first row ran under
-   them. This starts the panel's contents below that strip.
+/* The right panel opens against the top right of the window, which is where
+   Electron draws minimise, maximise and close, so its first row ran under them.
+   This starts its contents below that strip.
+
+   Named per pane rather than on the panel itself, because the panel is a shell
+   the app fills with one of five components and only some of them start at the
+   very top. The task detail panel and the project notes are the two that do;
+   `issue-panel`, `schedule-day-panel` and `plugin-panel-container` take the
+   same rule by adding their name here if they ever need it.
 
    The height is the same `--window-controls-height` the strip above is drawn
    at, so the two cannot drift: it reads Electron's own title-bar safe area and
@@ -334,7 +340,8 @@ body {
 }
 
 @media screen and (min-width: 600px) {
-  body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen) task-detail-panel {
+  body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen) task-detail-panel,
+  body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen) notes {
     padding-top: var(--detail-panel-top-gap);
   }
 }
