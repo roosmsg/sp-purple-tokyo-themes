@@ -1,5 +1,5 @@
 /**
- * Tokyo — a light/dark pair for Super Productivity
+ * Minimal Tokyo — a light/dark pair for Super Productivity
  *
  *   Light — Tokyo Light: cool blue-grey surfaces and ink-blue text.
  *   Dark  — Tokyo Night: the near-black blue surfaces of that editor theme and
@@ -332,9 +332,33 @@ body {
   --window-controls-width: 138px;
   --window-controls-height: env(titlebar-area-height, var(--wco-height, 24px));
   --window-controls-bg: var(--surface-0);
+  /* The radius on the strip's bottom left corner. Its own figure rather than
+     the rail's: the two curves sit in the same corner of the window but on
+     shapes of different weight, and the band reads better a little tighter
+     than the joint below it. */
+  --strip-corner-radius: 7px;
   --vertical-action-bar-play-padding-top: calc(
     var(--s, 8px) + var(--s-half, 4px)
   );
+}
+
+/* In dark mode the two columns and the strip behind the window buttons carry
+   one surface. The rail states it as `--sidenav-bg`; the strip is pointed at
+   the same value, and the right panel — which the app leaves transparent, so
+   the page shows through it — is filled with it as well. Three edges of the
+   window in one colour, with the content between them.
+
+   That costs something on the buttons: Chromium paints their hover as a
+   translucent wash in the symbol colour, white here, and the darker the
+   surface under it the further that wash reads. `--window-controls-bg` is the
+   whole lever — point it at something closer to black to make the hover louder
+   at the price of a strip that no longer matches the rail. */
+body.isDarkTheme {
+  --window-controls-bg: var(--sidenav-bg);
+}
+
+body.isDarkTheme right-panel .side {
+  background: var(--sidenav-bg);
 }
 
 body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen)::after {
@@ -349,6 +373,23 @@ body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen)::after {
   height: var(--window-controls-height);
   background: var(--window-controls-bg);
   pointer-events: none;
+  /* The strip rounds off where it leaves the buttons: a bottom left corner, so
+     the band reads as a shape sitting in the corner of the window rather than
+     as a rectangle cut out of it. `--strip-corner-radius` is its figure, stated
+     apart from the joint below so the two can be tuned against each other. */
+  border-bottom-left-radius: var(--strip-corner-radius, 7px);
+}
+
+/* Below the layout's own breakpoint the strip goes. That is the width at which
+   the app puts the left menu into its mobile shape — `XS_BREAKPOINT` in the
+   layout service, watched as `(max-width: 599px)` — and a narrow window has
+   little enough chrome that a separate band behind the buttons reads as a
+   patch rather than as part of the header. Same number as the app's, so the
+   two change at the same moment. */
+@media screen and (max-width: 599px) {
+  body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen)::after {
+    background: transparent;
+  }
 }
 
 /* Start the rail directly below the native controls. Move the former
@@ -747,6 +788,36 @@ body.hasBgImage .nav-sidenav {
   backdrop-filter: none !important;
   box-shadow: none !important;
 }
+/* The "Add to Today" button under an overdue list stands on the picture with
+   nothing behind it — an outline and a label straight on the photo. It takes
+   a frosted panel instead: the picture blurred hard beneath it, a neutral
+   tint over that with no colour of its own so the photo's hue is what shows
+   through, and neither rim nor shadow: the blur and the tint are the whole of
+   it.
+   `--glass-blur` and `--glass-tint` are the two figures; the tint is a black
+   share in dark mode and a white one in light. */
+body.hasBgImage {
+  --glass-blur: 28px;
+  --glass-tint: 0.55;
+}
+
+body.hasBgImage work-view .overdue-btn-wrapper .mat-mdc-outlined-button {
+  background: rgba(255, 255, 255, var(--glass-tint));
+  backdrop-filter: blur(var(--glass-blur)) saturate(85%);
+  border-color: transparent;
+}
+
+body.isDarkTheme.hasBgImage {
+  --glass-tint: 0.34;
+}
+
+body.isDarkTheme.hasBgImage work-view .overdue-btn-wrapper .mat-mdc-outlined-button {
+  background: rgba(8, 9, 12, var(--glass-tint));
+  backdrop-filter: blur(var(--glass-blur)) saturate(85%);
+  border-color: transparent;
+}
+
+
 
 /* The line under the tabs on the Settings page: how wide it runs, and what it
    is drawn in.
@@ -804,8 +875,11 @@ body.hasBgImage .nav-sidenav {
    the 2px the header reserves stays and the heading does not shift when a
    section opens. */
 body collapsible.isExpanded .collapsible-header.collapsible-header {
-  border-color: transparent;
-  border-bottom-color: transparent;
+  /* `!important` because the work view states the same border at the same
+     weight — three classes apiece — and which of the two stylesheets the app
+     loads last is not something a theme can rely on. */
+  border-color: transparent !important;
+  border-bottom-color: transparent !important;
 }
 
 /* ============================================================
@@ -1501,9 +1575,54 @@ magic-side-nav .nav-list > hr.nav-separator[style*='auto'] ~ li {
    off by the edge rather than spilling over the content. Hence the max(): the
    column is as wide as the largest thing standing in it. */
 body {
-  --vertical-action-bar-width: max(
-    calc(48px * var(--action-bar-scale)),
-    calc(var(--play-button-size) + 4px)
+  /* `--rail-inset` narrows the column by a few pixels so its edge does not run
+     flush into the strip above it; the hollow corner below needs a joint to
+     sit in. Set it to `0` and the rail is back at the width the buttons ask
+     for. */
+  --rail-inset: 6px;
+  --vertical-action-bar-width: calc(
+    max(calc(48px * var(--action-bar-scale)), calc(var(--play-button-size) + 4px)) -
+      var(--rail-inset)
+  );
+}
+
+/* The shoulder where the rail meets the strip above it. `--rail-corner-radius`
+   is the size of the curve; `0` removes it. It pairs with `--rail-inset` above:
+   the column is narrowed a little first, so the joint has somewhere to sit
+   instead of running flush into the strip. */
+body {
+  --rail-corner-radius: 9px;
+}
+
+/* The same quarter turned the other way round, which is what makes it read as
+   a join rather than as a bite. The rail keeps its square corner; a square of
+   rail colour is placed against its top left, and the disc is taken out of the
+   bottom left of *that* square. What is left is the fillet: the strip's edge
+   runs left, curves down and meets the rail, the way a tab meets its bar.
+
+   It sits outside the column, which the strip allows — the app keeps
+   `overflow: visible` there so badges and the play button can stand past the
+   rail. `pointer-events: none`, since it is decoration and must not eat clicks
+   meant for the content beside it. */
+body.isVerticalActionBar
+  > nav.action-nav-right.action-nav-right--teleported::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: calc(-1 * var(--rail-corner-radius));
+  width: var(--rail-corner-radius);
+  height: var(--rail-corner-radius);
+  background: var(--window-controls-bg);
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(
+    circle var(--rail-corner-radius) at bottom left,
+    transparent 0 var(--rail-corner-radius),
+    #000 calc(var(--rail-corner-radius) + 0.5px)
+  );
+  mask-image: radial-gradient(
+    circle var(--rail-corner-radius) at bottom left,
+    transparent 0 var(--rail-corner-radius),
+    #000 calc(var(--rail-corner-radius) + 0.5px)
   );
 }
 
@@ -1625,6 +1744,25 @@ body.isDarkTheme nav.action-nav-right button.tour-addBtn.tour-addBtn {
   --mat-icon-button-ripple-color: rgba(255, 255, 255, 0.1);
 }
 
+/* Play straddles the rail's edge. The column was narrowed by `--rail-inset`,
+   and the button is wider than what is left, so rather than let it sit clipped
+   in a column it no longer fits, it is pulled out over the joint on purpose:
+   the one control you reach for while working stands proud of the strip it
+   belongs to.
+
+   `--play-button-overlap` is how far it leans out; `0` centres it in the
+   column again. A transform rather than a margin, so the strip's own layout —
+   and the position of every button under it — is untouched. The wrapper moves
+   rather than the button, which keeps the pulse ring and the progress circle
+   with it, and leaves the hover scale on the button free to do its own thing. */
+body {
+  --play-button-overlap: 6px;
+}
+
+body.isVerticalActionBar > nav.action-nav-right .play-btn-wrapper {
+  transform: translateX(calc(-1 * var(--play-button-overlap)));
+}
+
 /* The ring that pulses behind the button while time runs is drawn at a fixed
    42px, sized for the button the app ships. Keep it just inside the circle, and
    paint it from the theme rather than from the accent, which is the work
@@ -1711,78 +1849,171 @@ magic-side-nav nav-item plugin-icon.nav-icon::after {
 }
 
 /* Keep Play and Add task fully visible. Every other action sits at 25% opacity
-   and they come up together — but only once the pointer is on one of them, not
-   merely somewhere in the strip.
+   and comes up on its own, one at a time: the button under the pointer, and
+   nothing else in the strip.
  *
- * That distinction is the whole rule. The strip used to light whenever the
- * pointer entered it, so crossing it on the way somewhere else lit everything,
- * and Play and Add task had to be carved out because they sit where the pointer
- * lands most. Keying the lift to the dimmed buttons themselves says what was
- * meant the first time: they are one group, and reaching for the group is what
- * raises it. Play and Add task are excluded from the trigger rather than from a
- * behaviour, so the exception disappears with the problem.
+ * It used to raise them as a group, on the reasoning that they are one set of
+ * secondary actions. In use that is a lot of movement for one target — six
+ * buttons brightening because you reached for one — and it makes the strip
+ * restless in the corner of the eye. One button answering is enough to say the
+ * strip is live.
  *
- * The :has() reads the hover from a button back up to the nav, which is the only
- * way a stylesheet can raise an element's siblings. Keyboard focus lifts the
- * group too: someone tabbing through cannot point at anything and needs to see
- * where they are going.
+ * `:focus-visible` rather than `:focus`, so the same single lift happens for
+ * someone tabbing through and not for a button that merely holds focus after a
+ * click.
  *
- * The same rule follows the nav whether it is the horizontal header row or the
- * experimental teleported vertical rail; mobile controls are unaffected. */
+ * Vertical rail only. The horizontal row is governed by the block further
+ * down, which hides, dims and lifts in one ladder; a second dim on the same
+ * buttons from here would compound with it. Mobile controls are unaffected. */
 @media screen and (min-width: 600px) {
-  nav.action-nav-right button:not(:where(.play-btn, .tour-addBtn)) {
+  body.isVerticalActionBar nav.action-nav-right button:not(:where(.play-btn, .tour-addBtn)) {
     opacity: var(--action-bar-idle-opacity);
     transition: opacity var(--transition-duration-s) var(--ani-standard-timing);
   }
 
-  nav.action-nav-right:has(button:not(:where(.play-btn, .tour-addBtn)):hover)
-    button:not(:where(.play-btn, .tour-addBtn)),
-  nav.action-nav-right:focus-within button:not(:where(.play-btn, .tour-addBtn)) {
+  body.isVerticalActionBar nav.action-nav-right button:not(:where(.play-btn, .tour-addBtn)):hover,
+  body.isVerticalActionBar nav.action-nav-right button:not(:where(.play-btn, .tour-addBtn)):focus-visible {
     opacity: 1;
   }
 }
 
-/* ---------------------------------------------------------------------------
- * Compact context menus
- * ---------------------------------------------------------------------------
- * Material sizes menus for touch: 48px rows, a 14px label and a 24px glyph.
- * On a pointer-driven desktop the task context menu and its submenus come out
- * taller than the task list they belong to. Everything here scales that down.
- *
- * Two of the app's own stylesheets fight this, both compiled by Angular with
- * `[_ngcontent]` attributes that add specificity: the context menu's own SCSS
- * sizes and rounds the quick-access strip, and `select-option-row` lays out
- * the tag, project and estimate rows. Where a plain selector loses to those,
- * the class is repeated, `!important` is used, or — cleanest — the custom
- * property their rule reads is redefined on the element itself. */
+/* With the vertical rail switched off, the row of actions at the top of the
+   window waits out of sight until it is reached for. `--action-bar-hidden-opacity`
+   is what the controls sit at — `0` by default — so the header reads as a title
+   and nothing else. A pointer anywhere in the row brings them back, and so
+   does tabbing into it. The play button never hides, running or not.
 
-/* Menu rows. `!important` because Material's own 48px min-height is set with
-   the same specificity and wins on source order otherwise. The `:not()` spares
-   the invisible focus-catcher the menu opens with — it is a menu item too,
-   carrying `height: 0` inline, and an `!important` height would inflate it
-   into an empty band above the icon strip. */
-.mat-mdc-menu-panel .mat-mdc-menu-item:not([style*='height: 0']) {
-  min-height: 40px !important;
-  height: auto !important;
-  padding-left: 12px;
-  padding-right: 12px;
-  font-size: 12.5px;
+   Buttons, and only buttons, which is what makes every one of them fade the
+   same way. Some of the row's controls sit inside a component of their own —
+   the plugin strips, the panel buttons — and those components are
+   `display: contents`: no box, so an opacity on them does nothing and their
+   buttons stay in full view. Targeting the wrapper was the mistake that left
+   half the row visible; the button is the only thing there that has a box.
+
+   Three levels, each stated with enough weight to reach past the one before,
+   and in the order they take effect: hidden while the row is untouched; back
+   to the strip's idle dim once the row is reached for; full strength on the
+   control under the pointer. The row's own reveal is withheld while the
+   pointer is on the play button — that button is always there, and reaching
+   for it is not reaching for the row.
+
+   The fade is uneven on purpose. `--action-bar-fade-in` (140ms) with no delay
+   on the way in, and `--action-bar-fade-delay` (300ms) before
+   `--action-bar-fade-out` (500ms) on the way out, so crossing the row on the
+   way somewhere else does not make it flicker.
+
+   Settings is left out altogether (`:not(:has(.page-settings))`): that page is
+   a place you go to change things rather than one you work in, and a row of
+   controls that has to be found first is wrong there. From the 600px
+   breakpoint up only; the mobile layout puts its controls somewhere else.
+
+   Note that the app can switch every transition in the interface off from one
+   place: `body.isDisableAnimations *` sets `transition: none !important`,
+   which is the "Disable all animations" checkbox in Settings. With that on,
+   the row still hides and returns — it simply does so instantly. */
+@media screen and (min-width: 600px) {
+  /* Hidden. The target is every button in the row except the play button —
+     and only buttons. The components around some of them (the plugin strips,
+     the panel buttons) are `display: contents`: they have no box of their
+     own, so an opacity set on them does nothing and their buttons stay in
+     full view. That was read straight off the running DOM — wrapper at
+     opacity 0, its buttons still showing. The button is the only thing there
+     with a box, so the button is the thing that hides. `:where()` keeps the
+     target weightless; the rule is its three guards and the nav, (0,3,2). */
+  body:not(.isVerticalActionBar):not(:has(.page-settings))
+    nav.action-nav-right
+    :where(button:not(:where(play-button button, .play-btn))) {
+    --action-bar-fade-in: 140ms;
+    --action-bar-fade-out: 500ms;
+    --action-bar-fade-delay: 300ms;
+    opacity: var(--action-bar-hidden-opacity, 0);
+    transition: opacity var(--action-bar-fade-out)
+      var(--ani-standard-timing, ease) var(--action-bar-fade-delay);
+  }
+
+  /* The play button never hides, running or not. The target above already
+     leaves it out; this states it outright and forces it, because a timer you
+     cannot see is the one failure this row cannot afford. */
+  body:not(.isVerticalActionBar) nav.action-nav-right play-button,
+  body:not(.isVerticalActionBar) nav.action-nav-right button.play-btn {
+    opacity: 1 !important;
+  }
+
+  /* Row reached for: back to the idle dim. The nav class is stated twice to
+     outweigh the rule that hides — (0,5,2) against (0,3,2). */
+  body:not(.isVerticalActionBar):not(:has(.page-settings))
+    nav.action-nav-right.action-nav-right:hover
+    :where(button:not(:where(play-button button, .play-btn))),
+  body:not(.isVerticalActionBar):not(:has(.page-settings))
+    nav.action-nav-right.action-nav-right:has(:focus-visible)
+    :where(button:not(:where(play-button button, .play-btn))) {
+    opacity: var(--action-bar-idle-opacity);
+    transition-duration: var(--action-bar-fade-in);
+    transition-delay: 0s;
+  }
+
+  /* The button under the pointer: one step heavier than the row's own lift
+     and later, so it wins for that one button and nothing else. */
+  body:not(.isVerticalActionBar):not(:has(.page-settings))
+    nav.action-nav-right.action-nav-right
+    :where(button:not(:where(play-button button, .play-btn))):is(:hover, :focus-visible) {
+    opacity: 1;
+  }
+
+  /* Pointer on the play button: the row stays down. `:has(play-button:hover)`
+     weighs (0,1,1), which lifts this past the row's reveal above; the guard on
+     `:focus-visible` keeps a keyboard user's focused button up regardless.
+     The play button and the other buttons are never nested in each other, so
+     this and the per-button lift above can never both apply. Going down takes
+     the slow half of the fade, as it does everywhere else. */
+  body:not(.isVerticalActionBar):not(:has(.page-settings))
+    nav.action-nav-right.action-nav-right:has(play-button:hover):not(:has(:focus-visible))
+    :where(button:not(:where(play-button button, .play-btn))) {
+    opacity: var(--action-bar-hidden-opacity, 0);
+    transition-duration: var(--action-bar-fade-out);
+    transition-delay: var(--action-bar-fade-delay);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body:not(.isVerticalActionBar) nav.action-nav-right button {
+      transition: none;
+    }
+  }
 }
 
-.mat-mdc-menu-item .mat-icon,
-.mat-mdc-menu-item .material-icons,
-.mat-mdc-menu-item .material-symbols-outlined {
-  width: 17px;
-  height: 17px;
-  font-size: 17px;
-  line-height: 17px;
-  margin-right: 12px;
-}
+/* Two things that made the row read as several kinds of button rather than
+   one set.
 
-/* The submenu chevron sits in the trailing slot and follows the same scale. */
-.mat-mdc-menu-item .mat-mdc-menu-submenu-icon {
-  height: 8px;
-  width: 8px;
+   The colour. The app gives Add task body ink and the secondary actions the
+   muted ink, so at the same 25% the secondary ones came out fainter and the
+   lift to full strength looked like a different fade on each. In the
+   horizontal row every button now carries body ink, which the app already
+   moves them to on hover; the opacity ladder above is then the only thing
+   that changes between states, and it changes the same way for all of them.
+   Stated at the weight the app uses for the muted ink, which is five classes
+   with the attribute selectors Angular compiles in. */
+@media screen and (min-width: 600px) {
+  body:not(.isVerticalActionBar):not(:has(.page-settings))
+    nav.action-nav-right.action-nav-right.action-nav-right
+    :where(button:not(:where(play-button button, .play-btn))) {
+    color: var(--text-color);
+    --mat-icon-button-icon-color: var(--text-color);
+    --mdc-icon-button-icon-color: var(--text-color);
+  }
+
+  /* The title buttons. The app lifts the menu and filter buttons beside the
+     page title to body ink whenever the header is hovered at all, and the
+     action row is part of the header, so reaching for the row lit the title
+     buttons with it. They answer the title now: the lift stands only while
+     the pointer or focus is on the title or on the buttons themselves, and a
+     pointer on the row leaves them at rest. */
+  main-header
+    .wrapper.wrapper:is(:hover, :focus-within):not(
+      :has(.page-title:hover, .page-title-actions:hover, .page-title-actions:focus-within)
+    )
+    :is(.project-settings-btn, .task-filter-btn:not(.isCustomized)) {
+    color: var(--text-color-muted);
+  }
 }
 
 /* `.key-i` is the app's own shortcut chip. It is secondary information and
@@ -2658,6 +2889,26 @@ task.isDone .box.box {
 work-view collapsible .collapsible-header {
   justify-content: center;
   gap: var(--s-half);
+}
+
+/* The line under a section heading, kept but cut short. The app draws it as a
+   border across the whole header — "Overdue", "Voltooide taken" and the rest —
+   which is more rule than a heading of two or three words needs; that border
+   is cleared further up this file and this paints a short one in its place.
+
+   A background image rather than a border, because a border always takes the
+   width of the element it sits on and this one must not: the line is drawn at
+   `--section-rule-length` wide and `--section-rule-weight` thick, sitting on
+   the bottom edge of the header. Nothing in the layout moves — a background
+   occupies no space — and the two figures are the only things to change if it
+   wants to be longer or heavier. */
+work-view collapsible.isExpanded .collapsible-header {
+  --section-rule-length: 110px;
+  --section-rule-weight: 3px;
+  background-image: linear-gradient(var(--separator), var(--separator));
+  background-repeat: no-repeat;
+  background-position: bottom left;
+  background-size: var(--section-rule-length) var(--section-rule-weight);
 }
 
 work-view collapsible .collapsible-header .mat-icon,

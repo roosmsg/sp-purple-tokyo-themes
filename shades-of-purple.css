@@ -313,6 +313,10 @@ body {
   --window-controls-width: 138px;
   --window-controls-height: env(titlebar-area-height, var(--wco-height, 24px));
   --window-controls-bg: var(--surface-0);
+  /* The radius on the strip's bottom left corner, so the band reads as a
+     shape sitting in the corner of the window rather than as a rectangle cut
+     out of it. */
+  --strip-corner-radius: 7px;
   --vertical-action-bar-play-padding-top: calc(
     var(--s, 8px) + var(--s-half, 4px)
   );
@@ -330,6 +334,21 @@ body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen)::after {
   height: var(--window-controls-height);
   background: var(--window-controls-bg);
   pointer-events: none;
+  border-bottom-left-radius: var(--strip-corner-radius, 7px);
+}
+
+/* Below the layout's own breakpoint the strip goes. That is the width at which
+   the app puts the left menu into its mobile shape — `XS_BREAKPOINT` in the
+   layout service, watched as `(max-width: 599px)` — and a narrow window has
+   little enough chrome that a separate band behind the buttons reads as a
+   patch rather than as part of the header. Same number as the app's, so the
+   two change at the same moment. It follows the rule above rather than
+   preceding it: a media query adds no specificity, so between two rules of
+   equal weight the later one is the one that stands. */
+@media screen and (max-width: 599px) {
+  body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen)::after {
+    background: transparent;
+  }
 }
 
 /* Start the purple rail directly below the native controls. Move the former
@@ -377,6 +396,23 @@ body {
 body.isDarkTheme {
   --sidenav-bg: #131327;
   --sidenav-bg-mobile: #131327;
+}
+
+/* With a picture behind the app the rail keeps its own surface. The app turns
+   it into a pane of milk glass in that case — `background: var(--c-dark-50)`
+   with a 20px blur — and leaves the right panel out of it, so one side of the
+   window is frosted and the other is not. The colour blocks above already say
+   what this column is; the picture stays behind the content, where it belongs.
+   The shadow goes with the glass: over a photo it reads as a smudge along the
+   join. The rail is named three ways because the element is `nav.nav-sidenav`
+   inside `magic-side-nav` on this build, and a build that renames one of the
+   two still matches one of the other forms. */
+body.hasBgImage magic-side-nav .nav-sidenav,
+body.hasBgImage magic-side-nav > nav,
+body.hasBgImage .nav-sidenav {
+  background: var(--sidenav-bg) !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
 }
 
 /* The gutter behind the app (overscroll, iOS safe areas) is pinned to a neutral
@@ -1496,21 +1532,18 @@ magic-side-nav nav-item plugin-icon.nav-icon::after {
 }
 
 /* Keep Play and Add task fully visible. Every other action sits at 25% opacity
-   and they come up together — but only once the pointer is on one of them, not
-   merely somewhere in the strip.
+   and comes up on its own, one at a time: the button under the pointer, and
+   nothing else in the strip.
  *
- * That distinction is the whole rule. The strip used to light whenever the
- * pointer entered it, so crossing it on the way somewhere else lit everything,
- * and Play and Add task had to be carved out because they sit where the pointer
- * lands most. Keying the lift to the dimmed buttons themselves says what was
- * meant the first time: they are one group, and reaching for the group is what
- * raises it. Play and Add task are excluded from the trigger rather than from a
- * behaviour, so the exception disappears with the problem.
+ * It used to raise them as a group, on the reasoning that they are one set of
+ * secondary actions. In use that is a lot of movement for one target — six
+ * buttons brightening because you reached for one — and it makes the strip
+ * restless in the corner of the eye. One button answering is enough to say the
+ * strip is live.
  *
- * The :has() reads the hover from a button back up to the nav, which is the only
- * way a stylesheet can raise an element's siblings. Keyboard focus lifts the
- * group too: someone tabbing through cannot point at anything and needs to see
- * where they are going.
+ * `:focus-visible` rather than `:focus`, so the same single lift happens for
+ * someone tabbing through and not for a button that merely holds focus after a
+ * click.
  *
  * The same rule follows the nav whether it is the horizontal header row or the
  * experimental teleported vertical rail; mobile controls are unaffected. */
@@ -1520,9 +1553,8 @@ magic-side-nav nav-item plugin-icon.nav-icon::after {
     transition: opacity var(--transition-duration-s) var(--ani-standard-timing);
   }
 
-  nav.action-nav-right:has(button:not(:where(.play-btn, .tour-addBtn)):hover)
-    button:not(:where(.play-btn, .tour-addBtn)),
-  nav.action-nav-right:focus-within button:not(:where(.play-btn, .tour-addBtn)) {
+  nav.action-nav-right button:not(:where(.play-btn, .tour-addBtn)):hover,
+  nav.action-nav-right button:not(:where(.play-btn, .tour-addBtn)):focus-visible {
     opacity: 1;
   }
 }
