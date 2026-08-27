@@ -462,78 +462,69 @@ body.isDarkTheme .bg-image::after {
 
 /* The "Add to Today" button under an overdue list, and "Add more" under an
    empty one, stand on the picture with nothing behind them — an outline and
-   a label straight on the photo. It takes
-   a frosted panel instead: the picture blurred hard beneath it, a neutral
-   tint over that with no colour of its own so the photo's hue is what shows
-   through, and neither rim nor shadow: the blur and the tint are the whole of
-   it. `--glass-blur` and `--glass-tint` are the two figures. The dark tint is
-   not black but the theme's own deep purple, so the panel reads as a piece
-   of this palette laid over the photo rather than as smoked glass — in both slots, since both of this theme's
-   halves are purple. */
-body.hasBgImage {
-  --glass-blur: 28px;
-  --glass-tint: 0.45;
-}
-
-body.hasBgImage work-view .overdue-btn-wrapper .mat-mdc-outlined-button,
-body.hasBgImage work-view .add-more-or-finish .btn-wrapper .mat-mdc-outlined-button {
-  background: rgba(26, 18, 64, var(--glass-tint));
-  backdrop-filter: blur(var(--glass-blur)) saturate(110%);
-  /* No border at all rather than a transparent one. Material paints the hover
-     state layer inside the border, so a transparent 1px border left a ring of
-     bare glass around the fill the moment the pointer arrived — a border that
-     showed only on hover. The button is sized border-box, so nothing moves. */
-  border-width: 0 !important;
-  --mdc-outlined-button-outline-color: transparent;
-  box-shadow: none !important;
-}
-
-body.isDarkTheme.hasBgImage {
-  --glass-tint: 0.45;
-}
-
-body.isDarkTheme.hasBgImage work-view .overdue-btn-wrapper .mat-mdc-outlined-button,
-body.isDarkTheme.hasBgImage work-view .add-more-or-finish .btn-wrapper .mat-mdc-outlined-button {
-  background: rgba(26, 18, 64, var(--glass-tint));
-  backdrop-filter: blur(var(--glass-blur)) saturate(110%);
-  /* No border at all rather than a transparent one. Material paints the hover
-     state layer inside the border, so a transparent 1px border left a ring of
-     bare glass around the fill the moment the pointer arrived — a border that
-     showed only on hover. The button is sized border-box, so nothing moves. */
-  border-width: 0 !important;
-  --mdc-outlined-button-outline-color: transparent;
-  box-shadow: none !important;
-}
-
-/* The section headings take the same glass. "Overdue", "Completed tasks",
-   "Recurring tasks", "Later today", the date groups and the backlog sections
-   — every collapsible heading in the view, whatever wraps it — are a line of
-   text the app leaves bare on the picture; each is frosted as a pane of its own — the same blur
-   and tint as the panels above, the card radius — while the rows below it
-   keep their own surfaces on the photo. `background-color`, not the
-   shorthand, so the short rule the heading carries as a background image
-   stays. */
-body.hasBgImage work-view collapsible .collapsible-header.collapsible-header {
-  background-color: rgba(26, 18, 64, var(--glass-tint));
-  backdrop-filter: blur(calc(var(--glass-blur) / 2)) saturate(110%);
-  /* Glassier than the panels: a thinner tint, so more of the picture comes
-     through the blur. No edge lines — the blur and the tint are the whole of
-     it, as on the panels. */
-  --glass-tint: 0.3;
+   a label straight on the photo. Each takes a solid panel in the chrome
+   colour instead, `--sidenav-bg`, the surface the left menu and the rail
+   stand on — the same one the section headings take above the rows — so the
+   button reads as a piece of the chrome laid over the photo. No blur, no
+   tint, and neither rim nor shadow; the same radius and padding as those
+   headings, so the two are one kind of thing. In every mode, picture or
+   not — the token is set per mode. */
+work-view .overdue-btn-wrapper .mat-mdc-outlined-button,
+work-view .add-more-or-finish .btn-wrapper .mat-mdc-outlined-button {
+  background: var(--sidenav-bg);
   border-radius: 8px;
-  /* Over a picture the pane is the heading's own size — arrow, text and a
-     margin of glass around them — and lower than the app's row: a tag, not a
-     bar. The header is already shrunk to its content further down. */
+  padding: 8px 12px;
+  height: auto;
+  line-height: 1.2;
+  /* No border at all rather than a transparent one. Material paints the hover
+     state layer inside the border, so a transparent 1px border left a ring of
+     bare surface around the fill the moment the pointer arrived — a border
+     that showed only on hover. The button is sized border-box, so nothing
+     moves. */
+  border-width: 0 !important;
+  --mdc-outlined-button-outline-color: transparent;
+  box-shadow: none !important;
+}
+
+/* The section headings sit on a tag of the chrome colour. "Overdue",
+   "Completed tasks", "Recurring tasks", "Later today", the date groups and the
+   backlog sections — every collapsible heading in the view, whatever wraps
+   it — are a line of text the app leaves bare on the picture; each takes a
+   small solid label in `--sidenav-bg`, the surface the left menu and the
+   rail stand on, so the heading reads as a piece of the chrome laid over the
+   photo rather than as text floating on it. The chip is the chrome colour at
+   `--tag-opacity` with the picture blurred behind it by `--tag-blur`: a
+   solid-looking label that still lets a hint of the photo through.
+   `background-color`, not the shorthand, so the short rule the heading
+   carries as a background image stays. Both modes take the token, which is
+   already set per mode. */
+body.hasBgImage work-view collapsible .collapsible-header.collapsible-header {
+  --tag-opacity: 72%;
+  --tag-blur: 14px;
+  background-color: color-mix(in srgb, var(--sidenav-bg) var(--tag-opacity), transparent);
+  backdrop-filter: blur(var(--tag-blur));
+  border-radius: 8px;
+  /* The tag is the heading's own size — arrow, text and a margin around them
+     — and lower than the app's row. The header is already shrunk to its
+     content further down. */
   padding: 8px 2px 8px 12px;
   min-height: 0;
   line-height: 1.2;
   margin-bottom: 8px; /* room between the tag and the first row under it */
+  --section-rule-inset-left: calc(12px + 24px + var(--s-half, 4px));
+  --section-rule-inset-right: 2px;
 }
 
-body.isDarkTheme.hasBgImage work-view collapsible .collapsible-header.collapsible-header {
-  background-color: rgba(26, 18, 64, var(--glass-tint));
-  backdrop-filter: blur(calc(var(--glass-blur) / 2)) saturate(110%);
-  --glass-tint: 0.2;
+/* A backlog section's heading carries its menu button after the title, inside
+   the same header, so the closed line ran on under the button. The right
+   inset steps past it: the 40px button and the gap before it, on top of the
+   side padding. Restated for picture mode, whose padding differs. */
+work-view .section-container > collapsible .collapsible-header {
+  --section-rule-inset-right: calc(var(--s, 8px) + var(--s-half, 4px) + 40px);
+}
+
+body.hasBgImage work-view .section-container > collapsible .collapsible-header.collapsible-header {
+  --section-rule-inset-right: calc(2px + var(--s-half, 4px) + 40px);
 }
 
 /* The main sections get a bigger tag: "Overdue", "Completed tasks" and the
@@ -548,6 +539,7 @@ body.isDarkTheme.hasBgImage work-view collapsible .collapsible-header.collapsibl
 body.hasBgImage work-view .overdue-tasks > collapsible .collapsible-header.collapsible-header,
 body.hasBgImage work-view .collapsible-section > collapsible .collapsible-header.collapsible-header {
   padding: 8px 22px 8px 12px;
+  --section-rule-inset-right: 22px;
 }
 
 /* On a light page over a picture the muted ink is too little for a heading
@@ -1044,15 +1036,16 @@ body.isDarkTheme {
    says, so there is no honest selector for it. The Lucide plugin maps the sun
    to a bolt instead, which reaches the row by name rather than by guessing at
    its position; failing that, the icon can be changed on the Today tag inside
-   the app. Each of these sits in a container
-   where the sun is the only icon, so the swap cannot reach a neighbour by
-   accident. The second selector keys off the Dutch button title, so it follows
+   the app. Each of these sits in a container where the sun is the only
+   icon, so the swap cannot reach a neighbour by accident — the plan-tomorrow
+   one is pinned to its outlined button, because that tab also holds an
+   add-task bar whose icons the bare component selector swept up. The second selector keys off the Dutch button title, so it follows
    the interface language — with the app in another language that line needs
    the string from that language. */
 .overdue-btn-wrapper button mat-icon,
 [title^='Voeg toe aan Mijn Day'] mat-icon,
 .today-btn mat-icon,
-plan-tasks-tomorrow mat-icon,
+plan-tasks-tomorrow .mat-mdc-outlined-button mat-icon,
 .quick-access > button:first-of-type mat-icon {
   visibility: hidden !important;
   position: relative;
@@ -1065,7 +1058,7 @@ plan-tasks-tomorrow mat-icon,
 .overdue-btn-wrapper button mat-icon::after,
 [title^='Voeg toe aan Mijn Day'] mat-icon::after,
 .today-btn mat-icon::after,
-plan-tasks-tomorrow mat-icon::after,
+plan-tasks-tomorrow .mat-mdc-outlined-button mat-icon::after,
 .quick-access > button:first-of-type mat-icon::after {
   content: var(--today-icon);
   visibility: visible;
@@ -1490,6 +1483,14 @@ work-view .task-list-wrapper {
  * scrolls inside it are named. Delete this section to get the bar back. */
 right-panel .side-inner,
 right-panel .side-inner * {
+  scrollbar-width: none !important;
+}
+
+/* The summary page as well. Its scroller is the page component itself, and a
+   classic scrollbar takes a gutter of its own that nothing can be drawn
+   behind — the tab band stopped short of the window edge by exactly that
+   gutter. Without the bar the band reaches the edge; the page still scrolls. */
+daily-summary {
   scrollbar-width: none !important;
 }
 
@@ -3247,7 +3248,10 @@ work-view collapsible .collapsible-header {
   justify-content: center;
   gap: var(--s-half);
   width: fit-content;
+  interpolate-size: allow-keywords;
+  transition: width 320ms var(--ani-standard-timing, ease);
   margin-inline: 0; /* at the head of the list, where the app has it */
+  margin-bottom: 8px; /* room between the line and the first row, as over a picture */
 }
 
 /* The bar under a section heading goes, everywhere and in both modes:
@@ -3284,13 +3288,54 @@ body collapsible.isExpanded .collapsible-header.collapsible-header {
    moves; `--section-rule-weight` is the thickness and the only figure left.
    Open or collapsed alike: the line belongs to the heading, not to the list
    under it. */
-work-view collapsible .collapsible-title {
+work-view collapsible .collapsible-header {
   --section-rule-weight: 3px;
-  background-image: linear-gradient(var(--separator), var(--separator));
-  background-repeat: no-repeat;
-  background-position: bottom left;
-  background-size: 100% var(--section-rule-weight);
-  padding-bottom: 5px;
+  /* Where the line starts and stops, measured from the header's edges: past
+     the arrow and the gap on the left, short of the side padding on the
+     right. The picture-mode rules below restate these for their padding. */
+  --section-rule-inset-left: calc(var(--s, 8px) + 24px + var(--s-half, 4px));
+  --section-rule-inset-right: var(--s, 8px);
+  /* The line hangs from the text, not from the header's bottom edge: the
+     title is centred in the header, so the line sits at the header's middle
+     plus half the title's line box plus this gap — the same distance under
+     every heading whatever else the header holds (a backlog section's menu
+     button makes its header taller; the tag over a picture has more padding). */
+  --section-rule-gap: 4px;
+  position: relative;
+}
+
+work-view collapsible .collapsible-header::after {
+  content: '';
+  position: absolute;
+  left: var(--section-rule-inset-left);
+  top: calc(50% + 9px + var(--section-rule-gap));
+  height: var(--section-rule-weight);
+  width: calc(100% - var(--section-rule-inset-left) - var(--section-rule-inset-right));
+  background: var(--separator);
+  pointer-events: none;
+  transition: width 320ms var(--ani-standard-timing, ease);
+}
+
+/* Open, the line grows from under the text to the full width of the column.
+   The line is a share of its header, so it is the header that grows: closed
+   it is the width of its heading, open the width of the column, over 320ms
+   — `interpolate-size` lets Chromium animate between `fit-content` and a
+   length — and the line, always `100%` minus its insets, rides along. Without
+   a picture the header has no surface, so only the line is seen to move; over
+   one the tag grows with it. (A container query on the collapsible was the
+   first way, and it collapsed the header to nothing.) */
+work-view collapsible.isExpanded .collapsible-header {
+  width: 100%;
+}
+
+/* Open, every line ends at the same place. Closed, the right inset differs
+   per heading — past a menu button here, more glass there — but once the
+   line spans the column those differences would leave the ends ragged, so
+   the open state sets one inset for all, picture or not: the plain side
+   padding. Stacked classes to outrank the per-heading insets above,
+   including the picture-mode ones. */
+work-view collapsible.isExpanded .collapsible-header.collapsible-header.collapsible-header {
+  --section-rule-inset-right: var(--s2, 16px) !important;
 }
 
 work-view collapsible .collapsible-header .mat-icon,
@@ -3349,7 +3394,12 @@ done-toggle .done-check {
 
 /* "Eindig de dag" is a filled primary button, which makes the loudest element
    on the page a link to a summary. It keeps its place and its icon, but takes
-   an elevated surface with a hairline instead of the accent fill. */
+   an elevated surface with a hairline instead of the accent fill — and the
+   shape of the section tags: the same 8px radius, a little taller and
+   roomier than Material's default, the label a touch heavier with the icon
+   set off from it by a clear gap. The icon carries the primary at rest, so
+   the one accent on the button is the mark of what it does; the hover below
+   then brings the surface and the edge up to meet it. */
 .finish-day-button-wrapper .e2e-finish-day,
 .finish-day-button-wrapper .mat-mdc-unelevated-button.e2e-finish-day {
   --mdc-filled-button-container-color: var(--surface-3);
@@ -3357,10 +3407,226 @@ done-toggle .done-check {
   background-color: var(--surface-3);
   color: var(--ink);
   border: 1px solid var(--separator);
+  border-radius: 8px;
+  height: 42px;
+  padding: 0 20px 0 16px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  gap: 8px;
 }
 
 .finish-day-button-wrapper .e2e-finish-day .mat-icon {
-  color: var(--ink-muted);
+  color: var(--palette-primary-500);
+  margin: 0; /* the gap above spaces it */
+}
+
+/* Over a picture the button takes the tag treatment of the headings: the
+   chrome colour at the same opacity with the photo blurred behind it. */
+body.hasBgImage .finish-day-button-wrapper .e2e-finish-day,
+body.hasBgImage .finish-day-button-wrapper .mat-mdc-unelevated-button.e2e-finish-day {
+  background-color: color-mix(in srgb, var(--sidenav-bg) 72%, transparent);
+  backdrop-filter: blur(14px);
+  border-color: transparent;
+}
+
+/* "Finish the day" on the summary page keeps the app's primary fill — it is
+   the one button that ends the day, and the accent is right on it — but takes
+   the same shape as Finish Day above: 8px radius, taller and roomier, the
+   label a touch heavier, the sun set off from it by a clear gap. The hover
+   is not Material's white wash over the fill but a lift: the fill steps up
+   a shade, the button rises a pixel on a soft shadow of its own colour, and
+   the wash and ripple are switched off so that is the whole of the change. */
+daily-summary .bottom-buttons .mat-mdc-unelevated-button,
+daily-summary .bottom-buttons .mat-mdc-unelevated-button.mat-primary {
+  --mat-filled-button-hover-state-layer-opacity: 0;
+  --mat-filled-button-focus-state-layer-opacity: 0;
+  --mat-filled-button-pressed-state-layer-opacity: 0;
+  border-radius: 8px;
+  height: 44px;
+  padding: 0 22px 0 18px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  gap: 8px;
+  transition:
+    background-color 140ms var(--ani-standard-timing, ease),
+    box-shadow 140ms var(--ani-standard-timing, ease),
+    transform 140ms var(--ani-standard-timing, ease);
+}
+
+daily-summary .bottom-buttons .mat-mdc-unelevated-button .mat-icon {
+  margin: 0; /* the gap above spaces it */
+}
+
+daily-summary .bottom-buttons .mat-mdc-unelevated-button .mat-mdc-button-persistent-ripple,
+daily-summary .bottom-buttons .mat-mdc-unelevated-button .mat-ripple {
+  display: none;
+}
+
+daily-summary .bottom-buttons .mat-mdc-unelevated-button:hover,
+daily-summary .bottom-buttons .mat-mdc-unelevated-button:focus-visible {
+  background-color: var(--palette-primary-400) !important;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--palette-primary-500) 38%, transparent) !important;
+  transform: translateY(-1px);
+}
+
+daily-summary .bottom-buttons .mat-mdc-unelevated-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px color-mix(in srgb, var(--palette-primary-500) 30%, transparent) !important;
+}
+
+/* Two blocks on the summary page that stood on the bare page take a card:
+   "Time spent today by tag", and the day-end note. The same surface, edge
+   and radius the task rows and the Finish Day button use, so the page is
+   made of one kind of thing; over a picture the card takes the headings'
+   blurred chrome. The note block keeps its own 400px measure and left-set
+   text inside the card. */
+daily-summary tasks-by-tag,
+daily-summary .day-end-note inline-markdown {
+  background: var(--surface-2);
+  border: 1px solid var(--separator);
+  border-radius: 8px;
+  padding: var(--s2, 16px) var(--s3, 24px);
+  box-shadow: var(--card-shadow, none);
+}
+
+daily-summary tasks-by-tag {
+  width: fit-content;
+  margin-inline: auto;
+  border: 0; /* the by-tag card has no edge; the note keeps its hairline */
+}
+
+body.hasBgImage daily-summary tasks-by-tag,
+body.hasBgImage daily-summary .day-end-note inline-markdown {
+  background: color-mix(in srgb, var(--sidenav-bg) 72%, transparent);
+  backdrop-filter: blur(14px);
+  border-color: transparent;
+}
+
+/* The three controls on the note card — remove the note, add a checklist
+   item, open full screen — are 40px icon buttons on a card of small text;
+   they come down to 30px with an 18px glyph, and sit a little closer
+   together. The state layer follows the size through Material's own token. */
+daily-summary .day-end-note inline-markdown .mat-mdc-icon-button {
+  --mdc-icon-button-state-layer-size: 30px;
+  --mdc-icon-button-icon-size: 18px;
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+}
+
+daily-summary .day-end-note inline-markdown .mat-mdc-icon-button .mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+}
+
+/* "Add tasks from today" on the plan-tomorrow tab is a primary outline
+   button; it takes the Finish Day treatment instead — the quiet surface with
+   a hairline, the tag shape, the icon in the primary — and Finish Day's
+   hover, so the two buttons that move a day along look like one family. */
+daily-summary plan-tasks-tomorrow .mat-mdc-outlined-button,
+daily-summary plan-tasks-tomorrow .mat-mdc-outlined-button.mat-primary {
+  margin-bottom: var(--s2, 16px); /* room before the day columns under it */
+  margin-top: var(--s, 8px);
+  --mat-outlined-button-hover-state-layer-opacity: 0;
+  --mat-outlined-button-focus-state-layer-opacity: 0;
+  --mdc-outlined-button-label-text-color: var(--ink);
+  --mdc-outlined-button-outline-color: transparent;
+  background-color: var(--surface-2);
+  color: var(--ink);
+  border: 1px solid transparent; /* no edge at rest; the hover colours it in without moving anything */
+  border-radius: 8px;
+  height: 42px;
+  padding: 0 20px 0 16px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  gap: 8px;
+  transition:
+    background-color 140ms var(--ani-standard-timing, ease),
+    border-color 140ms var(--ani-standard-timing, ease);
+}
+
+daily-summary plan-tasks-tomorrow .mat-mdc-outlined-button .mat-icon {
+  color: var(--palette-primary-500);
+  margin: 0;
+}
+
+daily-summary plan-tasks-tomorrow .mat-mdc-outlined-button:hover,
+daily-summary plan-tasks-tomorrow .mat-mdc-outlined-button:focus-visible {
+  background-color: color-mix(in srgb, var(--palette-primary-500) 18%, var(--surface-3)) !important;
+  border-color: color-mix(in srgb, var(--palette-primary-500) 85%, var(--separator)) !important;
+}
+
+/* A day column on the plan-tomorrow tab and in the planner is a card. The app
+   draws it as a bare column with a hairline down its start edge; here it
+   takes the row surface, an edge all round and the 8px radius, with its
+   own inner padding kept and the start-edge line dropped, since the card's
+   edge now does that job. Over a picture, the headings' blurred chrome. */
+planner-day {
+  background: var(--surface-2);
+  border: 1px solid var(--separator) !important;
+  border-radius: 8px;
+  padding-inline: var(--s2, 16px) !important;
+  padding-top: var(--s-half, 4px);
+}
+
+body.hasBgImage planner-day {
+  background: color-mix(in srgb, var(--sidenav-bg) 72%, transparent);
+  backdrop-filter: blur(14px);
+  border-color: transparent !important;
+}
+
+/* On the summary page the day column carries 96px of bottom padding that the
+   app reserves for the planner's floating buttons — which the summary page
+   does not have — so the column stood a long way above "Finish the day".
+   Cut to the card's own inner room there; the planner keeps the full
+   reserve. `!important` against the host rule, compiled at attribute weight. */
+daily-summary planner-day {
+  padding-bottom: var(--s2, 16px) !important;
+  margin-bottom: var(--s, 8px) !important;
+}
+
+/* And the row of buttons under the tabs stood 30px off, with another 56px
+   of padding under the plan-tomorrow tab's list wrapper; both come down to
+   the same 8px as everything else on the page. The tab panel's own 8px
+   padding is left. `!important` against the app's rules, compiled at
+   attribute weight. */
+daily-summary .daily-summary-actions {
+  margin-top: var(--s, 8px) !important;
+}
+
+daily-summary plan-tasks-tomorrow .task-list-wrapper {
+  padding-bottom: var(--s, 8px) !important;
+}
+
+/* The tab strip on the summary page — Tasks, Evaluation, Plan tomorrow —
+   stands on the bare page, a row of labels with a line under the active one.
+   It takes a band in the row surface, edge to edge across the content, no
+   rim and no rounding, with a little inner room so the labels do not touch
+   the edge. Scoped to the summary page: the Settings tabs have a
+   treatment of their own further down. */
+daily-summary .mat-mdc-tab-header {
+  background: var(--surface-2);
+  border: 0;
+  border-radius: 0;
+  padding: 0 var(--s, 8px);
+  margin-bottom: var(--s, 8px);
+  /* Edge to edge: the page wrapper pads its content by 8px, 16px from 600px
+     up, and the strip is pulled out over that padding on both sides. */
+  width: auto;
+  margin-inline: calc(-1 * var(--s, 8px));
+}
+
+@media screen and (min-width: 600px) {
+  daily-summary .mat-mdc-tab-header {
+    margin-inline: calc(-1 * var(--s2, 16px));
+  }
+}
+
+body.hasBgImage daily-summary .mat-mdc-tab-header {
+  background: color-mix(in srgb, var(--sidenav-bg) 72%, transparent);
+  backdrop-filter: blur(14px);
 }
 
 /* Hover. The button rests as a quiet surface; under the pointer it takes
