@@ -415,6 +415,35 @@ body.hasBgImage .nav-sidenav {
   box-shadow: none !important;
 }
 
+/* The "Add to Today" button under an overdue list stands on the picture with
+   nothing behind it — an outline and a label straight on the photo. It takes
+   a frosted panel instead: the picture blurred hard beneath it, a neutral
+   tint over that with no colour of its own so the photo's hue is what shows
+   through, and neither rim nor shadow: the blur and the tint are the whole of
+   it.
+   `--glass-blur` and `--glass-tint` are the two figures; the tint is a black
+   share in dark mode and a white one in light. */
+body.hasBgImage {
+  --glass-blur: 28px;
+  --glass-tint: 0.55;
+}
+
+body.hasBgImage work-view .overdue-btn-wrapper .mat-mdc-outlined-button {
+  background: rgba(255, 255, 255, var(--glass-tint));
+  backdrop-filter: blur(var(--glass-blur)) saturate(85%);
+  border-color: transparent;
+}
+
+body.isDarkTheme.hasBgImage {
+  --glass-tint: 0.34;
+}
+
+body.isDarkTheme.hasBgImage work-view .overdue-btn-wrapper .mat-mdc-outlined-button {
+  background: rgba(8, 9, 12, var(--glass-tint));
+  backdrop-filter: blur(var(--glass-blur)) saturate(85%);
+  border-color: transparent;
+}
+
 /* The gutter behind the app (overscroll, iOS safe areas) is pinned to a neutral
    grey by the base; match it to the page instead. */
 html:has(body:not(.isDarkTheme)) {
@@ -1545,17 +1574,157 @@ magic-side-nav nav-item plugin-icon.nav-icon::after {
  * someone tabbing through and not for a button that merely holds focus after a
  * click.
  *
- * The same rule follows the nav whether it is the horizontal header row or the
- * experimental teleported vertical rail; mobile controls are unaffected. */
+ * Vertical rail only. The horizontal row is governed by the block further
+ * down, which hides, dims and lifts in one ladder; a second dim on the same
+ * buttons from here would compound with it. Mobile controls are unaffected. */
 @media screen and (min-width: 600px) {
-  nav.action-nav-right button:not(:where(.play-btn, .tour-addBtn)) {
+  body.isVerticalActionBar nav.action-nav-right button:not(:where(.play-btn, .tour-addBtn)) {
     opacity: var(--action-bar-idle-opacity);
     transition: opacity var(--transition-duration-s) var(--ani-standard-timing);
   }
 
-  nav.action-nav-right button:not(:where(.play-btn, .tour-addBtn)):hover,
-  nav.action-nav-right button:not(:where(.play-btn, .tour-addBtn)):focus-visible {
+  body.isVerticalActionBar nav.action-nav-right button:not(:where(.play-btn, .tour-addBtn)):hover,
+  body.isVerticalActionBar nav.action-nav-right button:not(:where(.play-btn, .tour-addBtn)):focus-visible {
     opacity: 1;
+  }
+}
+
+/* With the vertical rail switched off, the row of actions at the top of the
+   window waits out of sight until it is reached for. `--action-bar-hidden-opacity`
+   is what the controls sit at — `0` by default — so the header reads as a title
+   and nothing else. A pointer anywhere in the row brings them back, and so
+   does tabbing into it. The play button never hides, running or not.
+
+   Buttons, and only buttons, which is what makes every one of them fade the
+   same way. Some of the row's controls sit inside a component of their own —
+   the plugin strips, the panel buttons — and those components are
+   `display: contents`: no box, so an opacity on them does nothing and their
+   buttons stay in full view. Targeting the wrapper was the mistake that left
+   half the row visible; the button is the only thing there that has a box.
+
+   Three levels, each stated with enough weight to reach past the one before,
+   and in the order they take effect: hidden while the row is untouched; back
+   to the strip's idle dim once the row is reached for; full strength on the
+   control under the pointer. The row's own reveal is withheld while the
+   pointer is on the play button — that button is always there, and reaching
+   for it is not reaching for the row.
+
+   The fade is uneven on purpose. `--action-bar-fade-in` (140ms) with no delay
+   on the way in, and `--action-bar-fade-delay` (300ms) before
+   `--action-bar-fade-out` (500ms) on the way out, so crossing the row on the
+   way somewhere else does not make it flicker.
+
+   Settings is left out altogether (`:not(:has(.page-settings))`): that page is
+   a place you go to change things rather than one you work in, and a row of
+   controls that has to be found first is wrong there. From the 600px
+   breakpoint up only; the mobile layout puts its controls somewhere else.
+
+   Note that the app can switch every transition in the interface off from one
+   place: `body.isDisableAnimations *` sets `transition: none !important`,
+   which is the "Disable all animations" checkbox in Settings. With that on,
+   the row still hides and returns — it simply does so instantly. */
+@media screen and (min-width: 600px) {
+  /* Hidden. The target is every button in the row except the play button —
+     and only buttons. The components around some of them (the plugin strips,
+     the panel buttons) are `display: contents`: they have no box of their
+     own, so an opacity set on them does nothing and their buttons stay in
+     full view. That was read straight off the running DOM — wrapper at
+     opacity 0, its buttons still showing. The button is the only thing there
+     with a box, so the button is the thing that hides. `:where()` keeps the
+     target weightless; the rule is its three guards and the nav, (0,3,2). */
+  body:not(.isVerticalActionBar):not(:has(.page-settings))
+    nav.action-nav-right
+    :where(button:not(:where(play-button button, .play-btn))) {
+    --action-bar-fade-in: 140ms;
+    --action-bar-fade-out: 500ms;
+    --action-bar-fade-delay: 300ms;
+    opacity: var(--action-bar-hidden-opacity, 0);
+    transition: opacity var(--action-bar-fade-out)
+      var(--ani-standard-timing, ease) var(--action-bar-fade-delay);
+  }
+
+  /* The play button never hides, running or not. The target above already
+     leaves it out; this states it outright and forces it, because a timer you
+     cannot see is the one failure this row cannot afford. */
+  body:not(.isVerticalActionBar) nav.action-nav-right play-button,
+  body:not(.isVerticalActionBar) nav.action-nav-right button.play-btn {
+    opacity: 1 !important;
+  }
+
+  /* Row reached for: back to the idle dim. The nav class is stated twice to
+     outweigh the rule that hides — (0,5,2) against (0,3,2). */
+  body:not(.isVerticalActionBar):not(:has(.page-settings))
+    nav.action-nav-right.action-nav-right:hover
+    :where(button:not(:where(play-button button, .play-btn))),
+  body:not(.isVerticalActionBar):not(:has(.page-settings))
+    nav.action-nav-right.action-nav-right:has(:focus-visible)
+    :where(button:not(:where(play-button button, .play-btn))) {
+    opacity: var(--action-bar-idle-opacity);
+    transition-duration: var(--action-bar-fade-in);
+    transition-delay: 0s;
+  }
+
+  /* The button under the pointer: one step heavier than the row's own lift
+     and later, so it wins for that one button and nothing else. */
+  body:not(.isVerticalActionBar):not(:has(.page-settings))
+    nav.action-nav-right.action-nav-right
+    :where(button:not(:where(play-button button, .play-btn))):is(:hover, :focus-visible) {
+    opacity: 1;
+  }
+
+  /* Pointer on the play button: the row stays down. `:has(play-button:hover)`
+     weighs (0,1,1), which lifts this past the row's reveal above; the guard on
+     `:focus-visible` keeps a keyboard user's focused button up regardless.
+     The play button and the other buttons are never nested in each other, so
+     this and the per-button lift above can never both apply. Going down takes
+     the slow half of the fade, as it does everywhere else. */
+  body:not(.isVerticalActionBar):not(:has(.page-settings))
+    nav.action-nav-right.action-nav-right:has(play-button:hover):not(:has(:focus-visible))
+    :where(button:not(:where(play-button button, .play-btn))) {
+    opacity: var(--action-bar-hidden-opacity, 0);
+    transition-duration: var(--action-bar-fade-out);
+    transition-delay: var(--action-bar-fade-delay);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body:not(.isVerticalActionBar) nav.action-nav-right button {
+      transition: none;
+    }
+  }
+}
+
+/* Two things that made the row read as several kinds of button rather than
+   one set.
+
+   The colour. The app gives Add task body ink and the secondary actions the
+   muted ink, so at the same 25% the secondary ones came out fainter and the
+   lift to full strength looked like a different fade on each. In the
+   horizontal row every button now carries body ink, which the app already
+   moves them to on hover; the opacity ladder above is then the only thing
+   that changes between states, and it changes the same way for all of them.
+   Stated at the weight the app uses for the muted ink, which is five classes
+   with the attribute selectors Angular compiles in. */
+@media screen and (min-width: 600px) {
+  body:not(.isVerticalActionBar):not(:has(.page-settings))
+    nav.action-nav-right.action-nav-right.action-nav-right
+    :where(button:not(:where(play-button button, .play-btn))) {
+    color: var(--text-color);
+    --mat-icon-button-icon-color: var(--text-color);
+    --mdc-icon-button-icon-color: var(--text-color);
+  }
+
+  /* The title buttons. The app lifts the menu and filter buttons beside the
+     page title to body ink whenever the header is hovered at all, and the
+     action row is part of the header, so reaching for the row lit the title
+     buttons with it. They answer the title now: the lift stands only while
+     the pointer or focus is on the title or on the buttons themselves, and a
+     pointer on the row leaves them at rest. */
+  main-header
+    .wrapper.wrapper:is(:hover, :focus-within):not(
+      :has(.page-title:hover, .page-title-actions:hover, .page-title-actions:focus-within)
+    )
+    :is(.project-settings-btn, .task-filter-btn:not(.isCustomized)) {
+    color: var(--text-color-muted);
   }
 }
 
