@@ -788,8 +788,9 @@ body.hasBgImage .nav-sidenav {
   backdrop-filter: none !important;
   box-shadow: none !important;
 }
-/* The "Add to Today" button under an overdue list stands on the picture with
-   nothing behind it — an outline and a label straight on the photo. It takes
+/* The "Add to Today" button under an overdue list, and "Add more" under an
+   empty one, stand on the picture with nothing behind them — an outline and
+   a label straight on the photo. It takes
    a frosted panel instead: the picture blurred hard beneath it, a neutral
    tint over that with no colour of its own so the photo's hue is what shows
    through, and neither rim nor shadow: the blur and the tint are the whole of
@@ -801,21 +802,65 @@ body.hasBgImage {
   --glass-tint: 0.55;
 }
 
-body.hasBgImage work-view .overdue-btn-wrapper .mat-mdc-outlined-button {
+body.hasBgImage work-view .overdue-btn-wrapper .mat-mdc-outlined-button,
+body.hasBgImage work-view .add-more-or-finish .btn-wrapper .mat-mdc-outlined-button {
   background: rgba(255, 255, 255, var(--glass-tint));
   backdrop-filter: blur(var(--glass-blur)) saturate(85%);
-  border-color: transparent;
+  /* No border at all rather than a transparent one. Material paints the hover
+     state layer inside the border, so a transparent 1px border left a ring of
+     bare glass around the fill the moment the pointer arrived — a border that
+     showed only on hover. The button is sized border-box, so nothing moves. */
+  border-width: 0 !important;
+  --mdc-outlined-button-outline-color: transparent;
+  box-shadow: none !important;
 }
 
 body.isDarkTheme.hasBgImage {
   --glass-tint: 0.34;
 }
 
-body.isDarkTheme.hasBgImage work-view .overdue-btn-wrapper .mat-mdc-outlined-button {
+body.isDarkTheme.hasBgImage work-view .overdue-btn-wrapper .mat-mdc-outlined-button,
+body.isDarkTheme.hasBgImage work-view .add-more-or-finish .btn-wrapper .mat-mdc-outlined-button {
   background: rgba(8, 9, 12, var(--glass-tint));
   backdrop-filter: blur(var(--glass-blur)) saturate(85%);
-  border-color: transparent;
+  /* No border at all rather than a transparent one. Material paints the hover
+     state layer inside the border, so a transparent 1px border left a ring of
+     bare glass around the fill the moment the pointer arrived — a border that
+     showed only on hover. The button is sized border-box, so nothing moves. */
+  border-width: 0 !important;
+  --mdc-outlined-button-outline-color: transparent;
+  box-shadow: none !important;
 }
+/* And nothing on hover. Material answers the pointer on these buttons with a
+   state layer — a translucent wash over the whole face — and a ripple on the
+   click, and over frosted glass that wash reads as a faint glow around the
+   label. Both are switched off: the opacity tokens under the names Material
+   has used for them, and the layers themselves, which is the part that does
+   not depend on the token names. Outline and filter cleared with them, so
+   there is no second source of a rim. The button still darkens the text
+   under the pointer through its own colour rule, which is answer enough. */
+body.hasBgImage
+  work-view
+  :is(.overdue-btn-wrapper, .add-more-or-finish .btn-wrapper)
+  .mat-mdc-outlined-button {
+  --mat-button-outlined-hover-state-layer-opacity: 0;
+  --mat-button-outlined-focus-state-layer-opacity: 0;
+  --mat-button-outlined-pressed-state-layer-opacity: 0;
+  --mat-outlined-button-hover-state-layer-opacity: 0;
+  --mat-outlined-button-focus-state-layer-opacity: 0;
+  --mat-outlined-button-pressed-state-layer-opacity: 0;
+  outline: 0 !important;
+  filter: none !important;
+}
+
+body.hasBgImage
+  work-view
+  :is(.overdue-btn-wrapper, .add-more-or-finish .btn-wrapper)
+  .mat-mdc-outlined-button
+  :is(.mat-mdc-button-persistent-ripple, .mat-ripple, .mdc-button__ripple) {
+  display: none !important;
+}
+
 
 
 
@@ -1358,6 +1403,34 @@ work-view .no-tasks-illu-wrapper .no-tasks-label {
   transform: none !important;
   margin: 0 !important;
 }
+/* The heading itself: the interface face at its regular weight, and a glow
+   behind it. The app sets it a step heavier in dark mode with a tight black
+   shadow, which reads as bold text with an outline; this is the same weight
+   as the rest of the page with a wide, soft halo instead — dark in dark
+   mode, light in light — so the line stays legible over a photo without
+   changing character. The glow is for the photo and appears only with one;
+   on a plain page the heading carries no shadow at all, the app's own dark-
+   mode shadow included. `--no-tasks-glow` is the whole of it; forced, because
+   the app states both from a component rule of its own. */
+work-view .no-tasks-illu-wrapper .no-tasks-label {
+  --no-tasks-glow:
+    0 1px 2px rgba(255, 255, 255, 0.6),
+    0 0 16px rgba(255, 255, 255, 0.85);
+  font-family: var(--font-body-stack) !important;
+  font-weight: var(--body-font-weight, 400) !important;
+  text-shadow: none !important;
+}
+
+body.hasBgImage work-view .no-tasks-illu-wrapper .no-tasks-label {
+  text-shadow: var(--no-tasks-glow) !important;
+}
+
+body.isDarkTheme work-view .no-tasks-illu-wrapper .no-tasks-label {
+  --no-tasks-glow:
+    0 1px 2px rgba(0, 0, 0, 0.7),
+    0 0 18px rgba(0, 0, 0, 0.55);
+}
+
 
 /* ============================================================
  * ADD TASK POP-UP — further down the page
@@ -1533,7 +1606,7 @@ body {
   /* Right action strip. */
   --action-bar-scale: 0.85;
   /* Non-primary actions stay visible but recede until the rail is used. */
-  --action-bar-idle-opacity: 0.25;
+  --action-bar-idle-opacity: 0.2;
   /* The colour those dimmed buttons come out at: the app's muted ink at the
      opacity above, flattened onto the chrome surface they stand on. The play
      button borrows it while it is disabled, so a control that cannot even be
@@ -1548,6 +1621,13 @@ body {
      app draws it at 40px. */
   --play-button-size: 46px;
 }
+/* A shade less dim on a light page. Ink at 20% over a pale surface loses more
+   of itself than the same 20% over a dark one, so the light half steps the
+   idle figure up a little to land at the same felt weight. */
+body:not(.isDarkTheme) {
+  --action-bar-idle-opacity: 0.3;
+}
+
 
 /* The left rail carries its widths, paddings and icon sizes in a dozen places,
    so it is scaled as a whole. `zoom` is a layout property: the rail really
@@ -1612,7 +1692,27 @@ body.isVerticalActionBar
   left: calc(-1 * var(--rail-corner-radius));
   width: var(--rail-corner-radius);
   height: var(--rail-corner-radius);
-  background: var(--window-controls-bg);
+  /* Two layers. The radial one is the fill: transparent across the disc and
+     the seam band, the rail colour beyond. Under it, a conic gradient centred
+     on the same corner supplies what shows through the band — and a conic
+     runs *along* the arc, which a radial cannot: clear for the first
+     `--rail-curve-clear` of the turn, then rising to `--rail-joint-color` at
+     the point where the curve becomes the rail. That is the only place the
+     two meet, so the rail's own seam picks up from that colour below. */
+  --rail-curve-clear: 19deg; /* about 3px along the arc at a 9px radius */
+  background:
+    radial-gradient(
+      circle var(--rail-corner-radius) at bottom left,
+      transparent 0 calc(var(--rail-corner-radius) + var(--rail-corner-seam)),
+      var(--window-controls-bg)
+        calc(var(--rail-corner-radius) + var(--rail-corner-seam) + 0.5px)
+    ),
+    conic-gradient(
+      from 0deg at 0% 100%,
+      transparent 0deg var(--rail-curve-clear),
+      var(--rail-joint-color) 90deg
+    );
+
   pointer-events: none;
   -webkit-mask-image: radial-gradient(
     circle var(--rail-corner-radius) at bottom left,
@@ -1625,6 +1725,61 @@ body.isVerticalActionBar
     #000 calc(var(--rail-corner-radius) + 0.5px)
   );
 }
+/* And down the rail from there. The same hairline carries on along the rail's
+   left edge the whole way down, in `--rail-seam-color` — the hairline the
+   left menu draws its own edge in — and over its top `--rail-seam-length`
+   eases to `--rail-joint-color`, the strength the curve arrives at — 30% of
+   the hairline — so the one line runs from the foot of the rail up, through
+   the joint, and out along the curve to nothing. The seam starts at the
+   radius, which is exactly where the curve ends; the two never overlap and
+   never leave a gap. The curve is
+   drawn in `--rail-joint-color`, the colour the rail's seam starts in just
+   below it, so the two are one line. It is a
+   background image over the rail's own colour — one pixel wide, anchored top
+   left — so nothing in the layout moves and the line sits inside the rail
+   rather than beside it. `--rail-seam-length` is how far it reaches before it
+   is gone; `0` removes it. */
+body.isVerticalActionBar > nav.action-nav-right.action-nav-right--teleported {
+  --rail-corner-seam: 1px;
+  /* Transparent in this theme, in both modes: the rail carries no seam here,
+     and the joint and the curve follow, since both are derived from it. The
+     purple files draw it in the hairline. */
+  --rail-seam-color: transparent;
+  --rail-joint-color: color-mix(in srgb, var(--rail-seam-color) 30%, transparent);
+  --rail-seam-length: 100px;
+  /* The seam starts `--rail-seam-offset` below the top edge: the curve owns
+     everything above that, and at the radius its arc meets the rail's edge
+     at exactly this point. */
+  --rail-seam-offset: calc(var(--rail-corner-radius) - 4px);
+  /* The rail's own seam — the app draws it as a border down the left edge —
+     is replaced by this one, so there is one line rather than a fading line
+     beside a solid one. Forced: the rule that colours the rail, further up,
+     weighs six classes and sets `background` as a shorthand, which would
+     otherwise wipe this image out. */
+  border-left-width: 0 !important;
+  background-image: linear-gradient(
+      to top,
+      var(--rail-seam-color) calc(100% - var(--rail-seam-length)),
+      var(--rail-joint-color)
+    )
+    !important;
+  background-repeat: no-repeat !important;
+  background-origin: border-box !important;
+  background-position: left var(--rail-seam-offset) !important;
+  background-size: var(--rail-corner-seam) calc(100% - var(--rail-seam-offset)) !important;
+}
+/* On a light page the hairline is a pale grey a step off the surface — the
+   same on the rail as on the left menu — and the seam, its gradient and its
+   curve all vanish into it. The light half gives the seam a share of ink so
+   the three phases read there the way they do on a dark one; the joint and
+   the curve follow, since both are derived from the seam colour. Dark mode is
+   untouched. */
+body:not(.isDarkTheme).isVerticalActionBar
+  > nav.action-nav-right.action-nav-right--teleported {
+  --rail-seam-color: transparent;
+}
+
+
 
 body > nav.action-nav-right {
   --header-button-size: calc(40px * var(--action-bar-scale));
@@ -1881,7 +2036,8 @@ magic-side-nav nav-item plugin-icon.nav-icon::after {
    window waits out of sight until it is reached for. `--action-bar-hidden-opacity`
    is what the controls sit at — `0` by default — so the header reads as a title
    and nothing else. A pointer anywhere in the row brings them back, and so
-   does tabbing into it. The play button never hides, running or not.
+   does tabbing into it. The play button hides with them only when there is
+   nothing it could start; ready or running, it stays put.
 
    Buttons, and only buttons, which is what makes every one of them fade the
    same way. Some of the row's controls sit inside a component of their own —
@@ -1910,7 +2066,13 @@ magic-side-nav nav-item plugin-icon.nav-icon::after {
    Note that the app can switch every transition in the interface off from one
    place: `body.isDisableAnimations *` sets `transition: none !important`,
    which is the "Disable all animations" checkbox in Settings. With that on,
-   the row still hides and returns — it simply does so instantly. */
+   the row still hides and returns — it simply does so instantly.
+
+   Every transition below is forced. Material marks some of these buttons
+   `_mat-animation-noopable` — the sync button and a plugin's header button
+   on this build — and gives that class `transition: none !important`, which
+   beat the fade and made those two snap where the rest eased. An important
+   of a higher weight is the only thing that reaches past an important. */
 @media screen and (min-width: 600px) {
   /* Hidden. The target is every button in the row except the play button —
      and only buttons. The components around some of them (the plugin strips,
@@ -1928,15 +2090,51 @@ magic-side-nav nav-item plugin-icon.nav-icon::after {
     --action-bar-fade-delay: 300ms;
     opacity: var(--action-bar-hidden-opacity, 0);
     transition: opacity var(--action-bar-fade-out)
-      var(--ani-standard-timing, ease) var(--action-bar-fade-delay);
+      var(--ani-standard-timing, ease) var(--action-bar-fade-delay) !important;
   }
 
-  /* The play button never hides, running or not. The target above already
-     leaves it out; this states it outright and forces it, because a timer you
-     cannot see is the one failure this row cannot afford. */
-  body:not(.isVerticalActionBar) nav.action-nav-right play-button,
-  body:not(.isVerticalActionBar) nav.action-nav-right button.play-btn {
+  /* The play button has three states, and only one of them hides. Running:
+     a task is being tracked. Ready: nothing runs, but there is a task to
+     start. Nothing to track: the app disables the button. The first two stay
+     in view — a control you could press at any moment, or a timer that is
+     going, is not something to look for. Only the disabled one hides with
+     the rest of the row, and it is read off the state the app sets on the
+     button itself, under both names Material has used for it. The target
+     above leaves the play button out; these two rules take it from there,
+     and the visible one is forced, because a timer you cannot see is the one
+     failure this row cannot afford. */
+  body:not(.isVerticalActionBar):not(:has(.page-settings))
+    nav.action-nav-right
+    play-button
+    button.play-btn:is(:disabled, .mat-mdc-button-disabled) {
+    --action-bar-fade-in: 140ms;
+    --action-bar-fade-out: 500ms;
+    --action-bar-fade-delay: 300ms;
+    opacity: var(--action-bar-hidden-opacity, 0);
+    transition: opacity var(--action-bar-fade-out)
+      var(--ani-standard-timing, ease) var(--action-bar-fade-delay) !important;
+  }
+
+  body:not(.isVerticalActionBar)
+    nav.action-nav-right
+    play-button
+    button.play-btn:not(:disabled):not(.mat-mdc-button-disabled) {
     opacity: 1 !important;
+  }
+
+  /* Row reached for: the disabled play button comes back in full — it is
+     never dimmed — one step heavier than the rule that hides it. */
+  body:not(.isVerticalActionBar):not(:has(.page-settings))
+    nav.action-nav-right.action-nav-right:hover
+    play-button
+    button.play-btn,
+  body:not(.isVerticalActionBar):not(:has(.page-settings))
+    nav.action-nav-right.action-nav-right:has(:focus-visible)
+    play-button
+    button.play-btn {
+    opacity: 1;
+    transition-duration: var(--action-bar-fade-in) !important;
+    transition-delay: 0s !important;
   }
 
   /* Row reached for: back to the idle dim. The nav class is stated twice to
@@ -1948,8 +2146,8 @@ magic-side-nav nav-item plugin-icon.nav-icon::after {
     nav.action-nav-right.action-nav-right:has(:focus-visible)
     :where(button:not(:where(play-button button, .play-btn))) {
     opacity: var(--action-bar-idle-opacity);
-    transition-duration: var(--action-bar-fade-in);
-    transition-delay: 0s;
+    transition-duration: var(--action-bar-fade-in) !important;
+    transition-delay: 0s !important;
   }
 
   /* The button under the pointer: one step heavier than the row's own lift
@@ -1960,23 +2158,26 @@ magic-side-nav nav-item plugin-icon.nav-icon::after {
     opacity: 1;
   }
 
-  /* Pointer on the play button: the row stays down. `:has(play-button:hover)`
-     weighs (0,1,1), which lifts this past the row's reveal above; the guard on
+  /* Pointer on the play button: the row stays down. The button itself, not
+     the component around it — that also holds the name of the running task,
+     and a pointer on that name is meant to bring the row up, not hold it
+     down. `:has(button.play-btn:hover)` weighs (0,2,1), which lifts this past
+     the row's reveal above; the guard on
      `:focus-visible` keeps a keyboard user's focused button up regardless.
      The play button and the other buttons are never nested in each other, so
      this and the per-button lift above can never both apply. Going down takes
      the slow half of the fade, as it does everywhere else. */
   body:not(.isVerticalActionBar):not(:has(.page-settings))
-    nav.action-nav-right.action-nav-right:has(play-button:hover):not(:has(:focus-visible))
+    nav.action-nav-right.action-nav-right:has(button.play-btn:hover):not(:has(:focus-visible))
     :where(button:not(:where(play-button button, .play-btn))) {
     opacity: var(--action-bar-hidden-opacity, 0);
-    transition-duration: var(--action-bar-fade-out);
-    transition-delay: var(--action-bar-fade-delay);
+    transition-duration: var(--action-bar-fade-out) !important;
+    transition-delay: var(--action-bar-fade-delay) !important;
   }
 
   @media (prefers-reduced-motion: reduce) {
     body:not(.isVerticalActionBar) nav.action-nav-right button {
-      transition: none;
+      transition: none !important;
     }
   }
 }
@@ -2014,6 +2215,100 @@ magic-side-nav nav-item plugin-icon.nav-icon::after {
     :is(.project-settings-btn, .task-filter-btn:not(.isCustomized)) {
     color: var(--text-color-muted);
   }
+}
+
+/* ============================================================
+ * PLAY AT THE END OF THE ROW - the horizontal header only
+ * ============================================================
+ * Delete this section to put the play button back at the head of the row.
+ *
+ * The app leads the action row with play and Add task, which puts the one
+ * button that is always visible in the middle of the header, beside the
+ * pill, with a gap of hidden controls to its right. Moved to the far end it
+ * stands in the corner of the window instead, where a persistent control
+ * reads as belonging.
+ *
+ * The button sits inside a group with Add task, and flex order only sorts
+ * siblings, so the group is dissolved first: `display: contents` makes its
+ * two children items of the row itself, next to the sync button and the
+ * plugin buttons, whose own wrappers are already contents. The play
+ * component is contents as well, so the order goes on the box it does draw,
+ * `.play-btn-wrapper`; that lands last, and Add task keeps order 0 and
+ * stays where the group was. The group carried an end margin that made the visual break
+ * after Add task, so that margin moves onto Add task itself. Both spacings
+ * are the app's own tokens. Vertical rail off only, from 600px up. */
+@media screen and (min-width: 600px) {
+  body:not(.isVerticalActionBar) nav.action-nav-right .primary-action-group {
+    display: contents;
+  }
+
+  body:not(.isVerticalActionBar) nav.action-nav-right play-button .play-btn-wrapper {
+    order: 100;
+    margin-inline-start: calc(
+      var(--header-action-group-gap, 16px) - var(--header-nav-button-gap, 8px)
+    );
+  }
+
+  body:not(.isVerticalActionBar) nav.action-nav-right button.tour-addBtn {
+    margin-inline-end: calc(
+      var(--header-action-group-gap, 16px) - var(--header-nav-button-gap, 8px)
+    );
+  }
+  /* The tracked-task pill. On this build the play component draws the name
+     of the running task beside its own button, out of flow, and with the
+     button at the end of the row that name has nowhere to go but back across
+     the buttons to its left. It is anchored to the left of the button, which
+     is where the row's controls are — and they are hidden while the row is
+     untouched, so nothing visible sits under it. It steps aside as soon as the
+     pointer is anywhere in the header — the whole bar, title and all, not
+     just the row of buttons — and a pointer on the pill itself counts as
+     that: the name fades, the buttons under it come up, and the pointer lands
+     on them. Only the play button proper keeps the name in view. Both
+     the logical and the physical inset are stated, because which pair the
+     build uses is not something a theme can see. */
+  body:not(.isVerticalActionBar) nav.action-nav-right play-button .current-task-title {
+    inset-inline-start: auto;
+    inset-inline-end: 100%;
+    left: auto;
+    right: 100%;
+    margin-inline-end: var(--s, 8px);
+    /* Quick to go, slow to come back: the name fades out the moment the row
+       is reached for, and waits `--pill-return-delay` before fading back in
+       once the pointer has left — so a pass across the bar does not make it
+       flicker. The delay sits on the resting state, which is the one in
+       force when the pointer leaves. */
+    --pill-fade: 140ms;
+    --pill-return-delay: 350ms;
+    transition: opacity var(--pill-fade) var(--ani-standard-timing, ease)
+      var(--pill-return-delay) !important;
+  }
+
+  body:not(.isVerticalActionBar)
+    main-header:hover:not(:has(button.play-btn:hover))
+    nav.action-nav-right
+    play-button
+    .current-task-title {
+    opacity: 0;
+    pointer-events: none;
+    transition-delay: 0s !important;
+  }
+  /* The gaps between the buttons. With the Obsidian-style header the bar is a
+     drag region for the window, and the app carves only the controls out of
+     it — the space between them still belongs to the window frame, and a
+     pointer there raises no hover on anything in the page. That is where the
+     name came back: not because a rule brought it, but because nothing was
+     hovered. The row is taken out of the drag region as a whole, so the
+     pointer is seen anywhere in it; the header to its left still drags the
+     window. The header shows a grab hand to say it can be dragged, and that
+     cursor is inherited, so the row would still offer a hand it can no longer
+     honour — it takes the plain arrow instead, and the buttons keep the
+     pointer Material gives them. */
+  body:not(.isVerticalActionBar) nav.action-nav-right {
+    -webkit-app-region: no-drag;
+    cursor: default;
+  }
+
+
 }
 
 /* `.key-i` is the app's own shortcut chip. It is secondary information and
@@ -2881,6 +3176,7 @@ task.isDone .box.box {
   border-color: transparent;
   background: transparent;
 }
+
 
 /* The done-tasks divider sits centred under the list in PWM, with a small
    caret rather than the app's oversized one. Scoped to the work view: the
