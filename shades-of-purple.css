@@ -50,7 +50,7 @@ body:not(.isDarkTheme) {
   --separator: #3e3a72; /* PWM --color-border-tertiary */
   --divider: #34305f; /* PWM --color-border-secondary */
   --scrim: rgba(15, 15, 31, 0.7);
-  --bg-overlay: rgba(45, 43, 85, 0.85);
+  --bg-overlay: rgba(255, 255, 255, 0.8); /* the app's own light veil */
   --system-surface: #1e1e3f; /* Android system bars; must stay opaque */
 
   /* Primary — Claude salmon (PWM --color-accent-*) */
@@ -161,7 +161,7 @@ body.isDarkTheme {
   --separator: #2c2a52; /* PWM --color-border-tertiary */
   --divider: #232144; /* PWM --color-border-secondary */
   --scrim: rgba(9, 9, 20, 0.7);
-  --bg-overlay: rgba(19, 19, 39, 0.85);
+  --bg-overlay: rgba(14, 11, 36, 0.85); /* the veil proper: a deep purple pulled a third of the way to black, at nearly the app's alpha; the wallpaper floor below does the rest of the darkening */
   --system-surface: #131327;
 
   /* Primary — Claude salmon (PWM --color-accent-*) */
@@ -295,6 +295,15 @@ body:not(.isDarkTheme)::before {
   display: none !important;
 }
 
+/* And on the Settings, Search and Upcoming pages in every mode. The glow
+   is a page backdrop for the task views; behind a page of forms or a plain
+   list it reads as a stain in the corner. `.page-settings` is the wrapper the
+   config page renders; the other two are the page components themselves. */
+body:has(.page-settings, search-page, scheduled-list-page)::before {
+  display: none !important;
+  opacity: 0 !important;
+}
+
 /* ============================================================
  * CHROME
  * ============================================================
@@ -398,6 +407,21 @@ body.isDarkTheme {
   --sidenav-bg-mobile: #131327;
 }
 
+/* The task detail panel takes the same surface as the rail. The app leaves
+   it transparent — `.side` states `--right-panel-bg` and then overrides it
+   with `transparent` on the next line — so the page, and over a picture the
+   picture, showed straight through the panel and its text sat on the task
+   list behind it. Now the two side columns are one colour with the content
+   between them, in both modes and with or without a background image. The
+   hairline the app draws down the panel's edge goes with it: the change of
+   surface already says where the panel starts. Both sides are named because
+   a narrow window moves the edge to the other side. */
+right-panel .side.side {
+  background: var(--sidenav-bg);
+  border-left-width: 0 !important;
+  border-right-width: 0 !important;
+}
+
 /* With a picture behind the app the rail keeps its own surface. The app turns
    it into a pane of milk glass in that case — `background: var(--c-dark-50)`
    with a 20px blur — and leaves the right panel out of it, so one side of the
@@ -413,6 +437,27 @@ body.hasBgImage .nav-sidenav {
   background: var(--sidenav-bg) !important;
   backdrop-filter: none !important;
   box-shadow: none !important;
+}
+
+/* The picture has a floor. The app's veil is one layer whose strength is the
+   "Darken/lighten background image" slider, and with a purple veil the slider
+   had to sit high before the photo was quiet enough, at which point it was
+   more purple than picture. So the darkening is split: a fixed black layer
+   over the picture itself — `--wallpaper-floor`, the same whatever the slider
+   says — and the slider's veil on top of it, which is now free to be
+   properly purple. Painted as a pseudo-element on the picture's own box so
+   the app's inline blur filter is left alone. Dark mode only; the light
+   veil is the page colour and needs no floor. */
+body.isDarkTheme {
+  --wallpaper-floor: 0.35;
+}
+
+body.isDarkTheme .bg-image::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, var(--wallpaper-floor));
+  pointer-events: none;
 }
 
 /* The "Add to Today" button under an overdue list, and "Add more" under an
@@ -458,6 +503,26 @@ body.isDarkTheme.hasBgImage work-view .add-more-or-finish .btn-wrapper .mat-mdc-
   border-width: 0 !important;
   --mdc-outlined-button-outline-color: transparent;
   box-shadow: none !important;
+}
+
+/* The sections take the same glass. "Overdue", "Completed tasks", "Recurring
+   tasks" and the rest each sit in a collapsible — heading and list together —
+   which the app leaves bare on the picture, so the rows stood on the photo
+   with nothing to group them. The collapsible is the box that holds both, and
+   it is frosted as one pane: the same blur and tint as the panels above, the
+   card radius, and a little room at the foot so the last row does not touch
+   the edge. The rows keep their own surfaces inside it. */
+body.hasBgImage work-view .collapsible-section > collapsible {
+  display: block;
+  background: rgba(26, 18, 64, var(--glass-tint));
+  backdrop-filter: blur(var(--glass-blur)) saturate(110%);
+  border-radius: var(--card-border-radius, 8px);
+  padding-bottom: var(--s-half, 4px);
+}
+
+body.isDarkTheme.hasBgImage work-view .collapsible-section > collapsible {
+  background: rgba(26, 18, 64, var(--glass-tint));
+  backdrop-filter: blur(var(--glass-blur)) saturate(110%);
 }
 /* And nothing on hover. Material answers the pointer on these buttons with a
    state layer — a translucent wash over the whole face — and a ripple on the
@@ -748,11 +813,11 @@ body.isDarkTheme {
    which draws an inset border in a grey of its own, so the class-less selector
    catches them and no other.
 
-   The separator in the left menu fades at both ends, and those two figures are
-   stated by the side they act on: a short lead-in at the rail's edge
-   (`--menu-rule-fade-left`) and a longer trail at the far end
-   (`--menu-rule-fade-right`), so the line reads as belonging to the column
-   rather than as one drawn across it. It takes the gradient as a background
+   The separator in the left menu fades at both ends, turned round from the
+   plain rule: it is drawn to the left, so `--menu-rule-fade-left` is the
+   end at the far right and `--menu-rule-fade-right` the end at the rail's
+   edge on the left. Both are small: the line is flat over nearly all of its
+   length and only its ends soften. It takes the gradient as a background
    because the app draws that separator as a filled 1px block.
 
    The line under the tabs on the Settings page is deliberately not in this
@@ -761,8 +826,9 @@ body.isDarkTheme {
    app's own flat border stands there. */
 body {
   --rule-fade: 60%;
-  --menu-rule-fade-left: 8%;
-  --menu-rule-fade-right: 20%;
+  --menu-rule-fade-left: 5%;
+  --menu-rule-fade-right: 4%;
+  --menu-rule-color: var(--separator);
   --rule-gradient: linear-gradient(
     to left,
     transparent 0%,
@@ -770,12 +836,28 @@ body {
     var(--separator) 100%
   );
   --rule-gradient-from-left: linear-gradient(
-    to right,
+    to left,
     transparent 0%,
-    var(--separator) var(--menu-rule-fade-left),
-    var(--separator) calc(100% - var(--menu-rule-fade-right)),
+    var(--menu-rule-color) var(--menu-rule-fade-left),
+    var(--menu-rule-color) calc(100% - var(--menu-rule-fade-right)),
     transparent 100%
   );
+}
+
+/* In light mode the line fades at its right end only. The plain `--separator` on
+   this page is a contrast of about 1.2:1, and a line that faint, one pixel
+   high and drawn through the menu's zoom onto a fraction of a device pixel,
+   came out of Chromium with ends that looked like a fade even when the
+   gradient was flat — measured, not guessed: a solid colour on the same
+   element showed the same soft ends. So the left end, against the rail, is
+   hard, the right end takes a short fade of its own, and the height is
+   divided by the zoom so the line lands on one whole device pixel. The colour
+   is the hairline the menu's own edge is drawn in, with a touch of ink so it
+   carries as a line; `--menu-rule-color` is the knob. */
+body:not(.isDarkTheme) {
+  --menu-rule-fade-left: 20%;
+  --menu-rule-fade-right: 0%;
+  --menu-rule-color: color-mix(in srgb, var(--separator) 90%, var(--ink));
 }
 
 hr:not([class]) {
@@ -787,6 +869,7 @@ hr:not([class]) {
 magic-side-nav hr.nav-separator.nav-separator {
   background: var(--rule-gradient-from-left);
   border: 0;
+  height: calc(1px / var(--side-nav-scale, 1));
 }
 
 /* ============================================================
@@ -1320,7 +1403,63 @@ body {
   body:not(.isTouchPrimary) add-task-bar.global {
     top: var(--add-task-bar-top) !important;
     margin-top: 0 !important;
+    /* Centred on the task column, not on the window. The app centres the bar
+       on the viewport, and with the left menu open the middle of the window
+       is well to the left of the middle of the list. The column is named as
+       an anchor below and the bar takes its centre from it, so it follows
+       the menu collapsing, resizing, the detail panel opening, all of it.
+       Where there is no column (Settings, the schedule) the fallback is the
+       app's own 50%. The app's translateX(-50%) stays and does the other
+       half of the centring.
+
+       Absolute rather than the app's fixed. The app positions `body` itself
+       (`position: absolute; inset: 0`, for an old Android web view), and
+       Chromium will not let a fixed element — whose containing block is the
+       viewport — anchor to something inside that positioned body: the
+       anchor is rejected and the fallback is all that shows. Made absolute,
+       the bar's containing block is the body, the same one the column lives
+       in, and the anchor holds. The body fills the window and does not
+       scroll, so nothing else changes. Measured in the app's own Chromium. */
+    position: absolute !important;
+    position-anchor: --task-column;
+    left: anchor(--task-column center, 50%) !important;
+    /* And as wide as the column, so the bar's edges line up with the rows
+       under it rather than sitting at a width of its own inside them. Same
+       fallback logic: without a column, the app's 90% and 720px cap. */
+    width: anchor-size(--task-column width, 90%) !important;
+    max-width: none !important;
   }
+}
+
+/* The column itself is the anchor; the `work-view` host has no width of its
+   own (its wrapper is absolutely positioned), so it cannot be. */
+work-view .task-list-wrapper {
+  anchor-name: --task-column;
+}
+
+/* ============================================================
+ * SCROLLBARS
+ * ============================================================
+ * No scrollbar in the task detail panel. The panel scrolls as before — wheel,
+ * trackpad, keys, drag — only the bar is gone; a bar down a narrow column
+ * beside the list is one more edge in a place that already has two. The rest
+ * of the app keeps the app's thin bars. `scrollbar-width: none` is the
+ * standard property and the one Chromium honours once the app has set it on
+ * `html`; it is inherited, so the panel's scroller and everything that
+ * scrolls inside it are named. Delete this section to get the bar back. */
+right-panel .side-inner,
+right-panel .side-inner * {
+  scrollbar-width: none !important;
+}
+
+/* The status bar at the head of the work view ends its first figure — the
+   estimate remaining — with an hourglass glyph, which sits right after a
+   number that already says "time" and is the only figure in that row to get
+   one that reads as a clock. The glyph goes; the label and the number carry
+   the item. Named by position, since the item has no class of its own. */
+work-view .status-bar .item:first-child mat-icon,
+work-view .status-bar .item:first-child .mat-icon {
+  display: none;
 }
 
 /* ============================================================
@@ -2029,6 +2168,30 @@ body.isDarkTheme nav.action-nav-right button.tour-addBtn.tour-addBtn {
 }
 
 
+/* The title buttons rest dimmed, like the action row. The project menu and
+   the filter toggle sit beside the page title at the muted ink, which still
+   reads as two controls waiting to be used; they take the row's idle opacity
+   instead and lift to full when the title or the buttons themselves are
+   hovered or focused, with the row's own timings — quick in, a pause and a
+   slow fade out. A customised filter, which the app colours in the accent to
+   say so, and an open menu are left at full strength. `!important` on the
+   transition because the filter button carries a `transition: all` of its
+   own. */
+main-header .page-title-actions .project-settings-btn,
+main-header .page-title-actions .task-filter-btn:not(.isCustomized) {
+  opacity: var(--action-bar-idle-opacity);
+  transition: opacity 500ms var(--ani-standard-timing, ease) 300ms !important;
+}
+
+main-header
+  page-title:has(.page-title:hover, .page-title-actions:hover, .page-title-actions:focus-within)
+  .page-title-actions
+  :is(.project-settings-btn, .task-filter-btn),
+main-header .page-title-actions .project-settings-btn[aria-expanded='true'] {
+  opacity: 1;
+  transition: opacity 140ms var(--ani-standard-timing, ease) 0ms !important;
+}
+
 /* ============================================================
  * PLAY AT THE END OF THE ROW - the horizontal header only
  * ============================================================
@@ -2203,6 +2366,18 @@ body.isDarkTheme nav.action-nav-right button.tour-addBtn.tour-addBtn {
 
 .mat-mdc-menu-item .custom-option-layout .folder-subtitle {
   font-size: 10px;
+}
+
+/* The app underlines the title at the head of the task detail panel with a
+   2px rule in the primary colour, `!important`, on a box it also rounds with
+   `--card-border-radius` — so the line bent upward at each end and read as
+   the bottom of a pill. The title is already the heaviest text in the panel;
+   it does not need a bar under it as well. The line goes, and the rounding
+   with it so nothing else in the box picks the corners up. Both `!important`,
+   because the app's own rule is. */
+task-detail-panel .task-title-wrapper.task-title-wrapper {
+  border-bottom-width: 0 !important;
+  border-radius: 0 !important;
 }
 
 /* The icon strip at the head of the menu. The app rounds each button with
@@ -2994,10 +3169,12 @@ task.isDone .task-title input {
   color: var(--task-done-ink);
 }
 
-/* A finished task steps out of the card treatment altogether: no border, no
-   fill, just the dimmed line. */
-task.isDone .box.box {
-  border-color: transparent;
+/* A finished task keeps its edge: the same hairline the open rows have, with
+   the dimmed line inside it. In light mode it keeps the app's own fill for a
+   done row (`--task-c-bg-done`, the row surface) as well; in dark mode the
+   fill goes and the row sits flat on the page, which on these deep surfaces
+   is what sets a finished row apart from an open one. */
+body.isDarkTheme task.isDone .box.box {
   background: transparent;
 }
 
@@ -3009,6 +3186,46 @@ task.isDone .box.box {
 work-view collapsible .collapsible-header {
   justify-content: center;
   gap: var(--s-half);
+}
+
+/* The bar under a section heading goes, everywhere and in both modes:
+   "Overdue" and the rest in the work view, and the section headings on the
+   Settings page with it. A heading that already reads as a heading does not
+   need a rule under it as well, and these run the full width of the column,
+   which is more line than anything else on the page carries.
+
+   Every view that draws one states the border itself, at three classes
+   apiece: the work view as `border-bottom` on an expanded header, Settings as
+   `border-color` on the same. The class is stated twice and anchored on
+   `body` to outrank both, and both properties are cleared. Colour only, so
+   the 2px the header reserves stays and the heading does not shift when a
+   section opens. */
+body collapsible.isExpanded .collapsible-header.collapsible-header {
+  /* `!important` because the work view states the same border at the same
+     weight — three classes apiece — and which of the two stylesheets the app
+     loads last is not something a theme can rely on. */
+  border-color: transparent !important;
+  border-bottom-color: transparent !important;
+}
+
+/* The line under a section heading, kept but cut short. The app draws it as a
+   border across the whole header — "Overdue", "Voltooide taken" and the rest —
+   which is more rule than a heading of two or three words needs; that border
+   is cleared just above and this paints a short one in its place.
+
+   A background image rather than a border, because a border always takes the
+   width of the element it sits on and this one must not: the line is drawn at
+   `--section-rule-length` wide and `--section-rule-weight` thick, sitting on
+   the bottom edge of the header. Nothing in the layout moves — a background
+   occupies no space — and the two figures are the only things to change if it
+   wants to be longer or heavier. */
+work-view collapsible.isExpanded .collapsible-header {
+  --section-rule-length: 180px;
+  --section-rule-weight: 3px;
+  background-image: linear-gradient(var(--separator), var(--separator));
+  background-repeat: no-repeat;
+  background-position: bottom left;
+  background-size: var(--section-rule-length) var(--section-rule-weight);
 }
 
 work-view collapsible .collapsible-header .mat-icon,
@@ -3064,6 +3281,41 @@ done-toggle .done-check {
   color: var(--ink-muted);
 }
 
+/* Hover. The button rests as a quiet surface; under the pointer it takes
+   the salmon: the surface takes a clear wash of it and the
+   hairline turns to it almost fully, so the button answers in the accent
+   the rest of the theme reserves for the things that matter. Material's own hover
+   layer is switched off so the mix above is the whole of the change, and the
+   three properties ease over the same 140ms the header row uses. The
+   stroked variant — the one shown before anything is done — takes the same
+   treatment through the same class. */
+.finish-day-button-wrapper .e2e-finish-day,
+.finish-day-button-wrapper .mat-mdc-unelevated-button.e2e-finish-day {
+  --mat-filled-button-hover-state-layer-opacity: 0;
+  --mat-outlined-button-hover-state-layer-opacity: 0;
+  --mat-filled-button-focus-state-layer-opacity: 0;
+  --mat-outlined-button-focus-state-layer-opacity: 0;
+  transition:
+    background-color 140ms var(--ani-standard-timing, ease),
+    border-color 140ms var(--ani-standard-timing, ease),
+    color 140ms var(--ani-standard-timing, ease);
+}
+
+.finish-day-button-wrapper .e2e-finish-day:hover,
+.finish-day-button-wrapper .e2e-finish-day:focus-visible,
+.finish-day-button-wrapper .mat-mdc-unelevated-button.e2e-finish-day:hover,
+.finish-day-button-wrapper .mat-mdc-unelevated-button.e2e-finish-day:focus-visible {
+  background-color: color-mix(in srgb, var(--palette-primary-500) 18%, var(--surface-3)) !important;
+  border-color: color-mix(in srgb, var(--palette-primary-500) 85%, var(--separator)) !important;
+  color: var(--ink) !important;
+}
+
+.finish-day-button-wrapper .e2e-finish-day:hover .mat-icon,
+.finish-day-button-wrapper .e2e-finish-day:focus-visible .mat-icon {
+  color: var(--palette-primary-500);
+  transition: color 140ms var(--ani-standard-timing, ease);
+}
+
 /* ---------------------------------------------------------------------------
  * Task row states
  * ---------------------------------------------------------------------------
@@ -3084,7 +3336,7 @@ body.isDarkTheme {
    same collapsible carries the section headers in Settings, which are meant to
    read as headings and keep the app's own 14px/700. */
 work-view collapsible .collapsible-title {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 400;
   color: var(--ink-muted);
   letter-spacing: 0.02em;
@@ -3143,6 +3395,42 @@ task.isCurrent .box.box {
 task:hover .box.box,
 task:hover .inner-wrapper > .box {
   border-color: color-mix(in srgb, var(--ink-muted) 45%, transparent) !important;
+}
+
+/* In dark mode every row hovers at the finished rows' share: on these deep
+   surfaces 45% of the muted ink is a bright frame, and the quieter edge marks
+   the row just as well. */
+body.isDarkTheme task:hover .box.box,
+body.isDarkTheme task:hover .inner-wrapper > .box {
+  border-color: color-mix(in srgb, var(--ink-muted) 28%, transparent) !important;
+}
+
+/* A finished row hovers dimmer than an open one. The row is already faded,
+   and a full-strength edge around faded text pulls the eye to the wrong
+   thing; the same mix at a share of it marks the row without lifting it. */
+task.isDone:hover .box.box,
+task.isDone:hover .inner-wrapper > .box {
+  border-color: color-mix(in srgb, var(--ink-muted) 28%, transparent) !important;
+}
+
+/* On a light page the same share is too little to see against the row's own
+   hairline, so light mode takes a larger one — still under the open rows'
+   45%. */
+body:not(.isDarkTheme) task.isDone:hover .box.box,
+body:not(.isDarkTheme) task.isDone:hover .inner-wrapper > .box {
+  border-color: color-mix(in srgb, var(--ink-muted) 35%, transparent) !important;
+}
+
+/* A sub-task does not answer hover with its edge at all — neither its own
+   hover nor its parent's. The hover rules above reach every `.box` under a
+   hovered `task`, and a parent's descendants include its children's boxes,
+   so hovering the parent lit up the whole family. Any box inside a nested
+   task is pinned to the resting hairline instead, hover or not. The classes
+   are stacked to outrank every hover rule above, done and light-mode
+   overrides included. */
+task task .box.box.box.box,
+task task .inner-wrapper > .box.box.box {
+  border-color: var(--task-border-color) !important;
 }
 
 /* ---------------------------------------------------------------------------
