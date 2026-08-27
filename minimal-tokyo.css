@@ -289,6 +289,35 @@ body:has(.page-settings, search-page, scheduled-list-page)::before {
   opacity: 0 !important;
 }
 
+/* And no wallpaper on the Settings, Schedule, Upcoming, Search and plugin
+   pages, ever. The
+   app draws the global wallpaper on every route outside a work context; a
+   page of forms or a dense timeline over a photo is neither readable nor
+   calm. The picture and the veil over it are both removed while one of
+   those pages is on screen, and it stands on the flat page colour. The
+   settings page is known by its wrapper, the others by their component; a
+   plugin page by `plugin-index` standing directly in the route wrapper, so a
+   plugin embedded inside a task view does not count. */
+body:has(.page-settings, schedule, scheduled-list-page, search-page, .route-wrapper > plugin-index) .bg-image,
+body:has(.page-settings, schedule, scheduled-list-page, search-page, .route-wrapper > plugin-index) .bg-overlay {
+  display: none !important;
+}
+
+/* A placeholder image means "no wallpaper here". The app falls back to the
+   global wallpaper on any project or tag that has no picture of its own, and
+   there is no way to say "none" for one context. So a context that should
+   stand bare is given a placeholder for a picture — `https://`, `localhost`
+   or `null` — and the theme reads that: the picture, the veil over it and the
+   floor beneath are hidden, and every rule in this file that keys on the
+   app's `hasBgImage` class is guarded with the same test, so the view is
+   styled as it would be without a picture. The attribute match is on the
+   serialised URL with its closing quote, so a real address that merely begins
+   with `https://` is not caught. */
+body:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")']) .bg-image,
+body:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")']) .bg-overlay {
+  display: none !important;
+}
+
 /* ============================================================
  * DISABLE COLOURED BACKGROUND TINT
  * ============================================================
@@ -792,9 +821,9 @@ body > nav.action-nav-right.action-nav-right--teleported {
    and the picture stays where it belongs, behind the content. The rail's
    shadow goes with the glass — over a photo it reads as a smudge along the
    join — while in the modes without one the app's own shadow stands. */
-body.hasBgImage magic-side-nav .nav-sidenav,
-body.hasBgImage magic-side-nav > nav,
-body.hasBgImage .nav-sidenav {
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) magic-side-nav .nav-sidenav,
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) magic-side-nav > nav,
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) .nav-sidenav {
   background: var(--sidenav-bg) !important;
   backdrop-filter: none !important;
   box-shadow: none !important;
@@ -858,7 +887,7 @@ work-view .add-more-or-finish .btn-wrapper .mat-mdc-outlined-button {
    `background-color`, not the shorthand, so the short rule the heading
    carries as a background image stays. Both modes take the token, which is
    already set per mode. */
-body.hasBgImage work-view collapsible .collapsible-header.collapsible-header {
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view collapsible .collapsible-header.collapsible-header {
   --tag-opacity: 72%;
   --tag-blur: 14px;
   background-color: color-mix(in srgb, var(--sidenav-bg) var(--tag-opacity), transparent);
@@ -883,7 +912,7 @@ work-view .section-container > collapsible .collapsible-header {
   --section-rule-inset-right: calc(var(--s, 8px) + var(--s-half, 4px) + 40px);
 }
 
-body.hasBgImage work-view .section-container > collapsible .collapsible-header.collapsible-header {
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view .section-container > collapsible .collapsible-header.collapsible-header {
   --section-rule-inset-right: calc(2px + var(--s-half, 4px) + 40px);
 }
 
@@ -896,16 +925,16 @@ body.hasBgImage work-view .section-container > collapsible .collapsible-header.c
    makes the set Overdue and every `.collapsible-section` — Completed tasks,
    Recurring tasks, Later today, the claim pool; the date groups and backlog
    sections, which have no wrapper, keep the small tag. */
-body.hasBgImage work-view .overdue-tasks > collapsible .collapsible-header.collapsible-header,
-body.hasBgImage work-view .collapsible-section > collapsible .collapsible-header.collapsible-header {
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view .overdue-tasks > collapsible .collapsible-header.collapsible-header,
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view .collapsible-section > collapsible .collapsible-header.collapsible-header {
   padding: 8px 22px 8px 12px;
   --section-rule-inset-right: 22px;
 }
 
 /* On a light page over a picture the muted ink is too little for a heading
    on glass; the title and its arrow take the full ink there. */
-body:not(.isDarkTheme).hasBgImage work-view collapsible .collapsible-title,
-body:not(.isDarkTheme).hasBgImage work-view collapsible .collapsible-header .mat-icon {
+body:not(.isDarkTheme).hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view collapsible .collapsible-title,
+body:not(.isDarkTheme).hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view collapsible .collapsible-header .mat-icon {
   color: var(--ink);
 }
 /* And nothing on hover. Material answers the pointer on these buttons with a
@@ -916,7 +945,7 @@ body:not(.isDarkTheme).hasBgImage work-view collapsible .collapsible-header .mat
    not depend on the token names. Outline and filter cleared with them, so
    there is no second source of a rim. The button still darkens the text
    under the pointer through its own colour rule, which is answer enough. */
-body.hasBgImage
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")']))
   work-view
   :is(.overdue-btn-wrapper, .add-more-or-finish .btn-wrapper)
   .mat-mdc-outlined-button {
@@ -930,7 +959,7 @@ body.hasBgImage
   filter: none !important;
 }
 
-body.hasBgImage
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")']))
   work-view
   :is(.overdue-btn-wrapper, .add-more-or-finish .btn-wrapper)
   .mat-mdc-outlined-button
@@ -1508,7 +1537,7 @@ work-view .no-tasks-illu-wrapper .no-tasks-label {
   text-shadow: none !important;
 }
 
-body.hasBgImage work-view .no-tasks-illu-wrapper .no-tasks-label {
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view .no-tasks-illu-wrapper .no-tasks-label {
   text-shadow: var(--no-tasks-glow) !important;
 }
 
@@ -2533,14 +2562,14 @@ main-header .page-title-actions .project-settings-btn[aria-expanded='true'] {
    nothing. Over a background image only; without one the app's own
    reveal-on-hover stands. `!important` throughout, against the app's own
    opacity ladder, which is stated on the same element. */
-body.hasBgImage work-view .section-container > collapsible > .collapsible-header > button[mat-icon-button] {
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view .section-container > collapsible > .collapsible-header > button[mat-icon-button] {
   opacity: var(--action-bar-idle-opacity) !important;
   transition: opacity 140ms var(--ani-standard-timing, ease) !important;
 }
 
-body.hasBgImage work-view .section-container > collapsible > .collapsible-header > button[mat-icon-button]:hover,
-body.hasBgImage work-view .section-container > collapsible > .collapsible-header > button[mat-icon-button]:focus-visible,
-body.hasBgImage work-view .section-container > collapsible > .collapsible-header > button[mat-icon-button][aria-expanded='true'] {
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view .section-container > collapsible > .collapsible-header > button[mat-icon-button]:hover,
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view .section-container > collapsible > .collapsible-header > button[mat-icon-button]:focus-visible,
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view .section-container > collapsible > .collapsible-header > button[mat-icon-button][aria-expanded='true'] {
   opacity: 1 !important;
 }
 
@@ -3548,8 +3577,8 @@ done-toggle .done-check {
 
 /* Over a picture the button takes the tag treatment of the headings: the
    chrome colour at the same opacity with the photo blurred behind it. */
-body.hasBgImage .finish-day-button-wrapper .e2e-finish-day,
-body.hasBgImage .finish-day-button-wrapper .mat-mdc-unelevated-button.e2e-finish-day {
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) .finish-day-button-wrapper .e2e-finish-day,
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) .finish-day-button-wrapper .mat-mdc-unelevated-button.e2e-finish-day {
   background-color: color-mix(in srgb, var(--sidenav-bg) 72%, transparent);
   backdrop-filter: blur(14px);
   border-color: transparent;
@@ -3621,8 +3650,8 @@ daily-summary tasks-by-tag {
   border: 0; /* the by-tag card has no edge; the note keeps its hairline */
 }
 
-body.hasBgImage daily-summary tasks-by-tag,
-body.hasBgImage daily-summary .day-end-note inline-markdown {
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) daily-summary tasks-by-tag,
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) daily-summary .day-end-note inline-markdown {
   background: color-mix(in srgb, var(--sidenav-bg) 72%, transparent);
   backdrop-filter: blur(14px);
   border-color: transparent;
@@ -3697,7 +3726,7 @@ planner-day {
   padding-top: var(--s-half, 4px);
 }
 
-body.hasBgImage planner-day {
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) planner-day {
   background: color-mix(in srgb, var(--sidenav-bg) 72%, transparent);
   backdrop-filter: blur(14px);
   border-color: transparent !important;
@@ -3750,7 +3779,7 @@ daily-summary .mat-mdc-tab-header {
   }
 }
 
-body.hasBgImage daily-summary .mat-mdc-tab-header {
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) daily-summary .mat-mdc-tab-header {
   background: color-mix(in srgb, var(--sidenav-bg) 72%, transparent);
   backdrop-filter: blur(14px);
 }
