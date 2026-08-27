@@ -879,13 +879,14 @@ body.hasBgImage work-view collapsible .collapsible-header.collapsible-header {
      through the blur. No edge lines — the blur and the tint are the whole of
      it, as on the panels. */
   --glass-tint: 0.3;
-  border-radius: 4px;
+  border-radius: 8px;
   /* Over a picture the pane is the heading's own size — arrow, text and a
      margin of glass around them — and lower than the app's row: a tag, not a
      bar. The header is already shrunk to its content further down. */
-  padding: 13px 12px;
+  padding: 8px 2px 8px 12px;
   min-height: 0;
   line-height: 1.2;
+  margin-bottom: 8px; /* room between the tag and the first row under it */
 }
 
 body.isDarkTheme.hasBgImage work-view collapsible .collapsible-header.collapsible-header {
@@ -894,13 +895,18 @@ body.isDarkTheme.hasBgImage work-view collapsible .collapsible-header.collapsibl
   --glass-tint: 0.2;
 }
 
-/* Two of the tags get more glass: "Overdue" and "Completed tasks" end in a
-   count in brackets, and at the same margins as the plain headings the
-   bracket looked crowded against the edge and the tag sat low. More on the
-   right and above and below. */
-body.hasBgImage work-view .overdue-tasks collapsible .collapsible-header.collapsible-header,
-body.hasBgImage work-view collapsible:has(task-list.tour-doneList) .collapsible-header.collapsible-header {
-  padding: 16px 22px 16px 12px;
+/* The main sections get a bigger tag: "Overdue", "Completed tasks" and the
+   others that end in a count in brackets — at the same margins as the plain
+   group headings the bracket looked crowded against the edge and the tag sat
+   low. More on the right and above and below. Named by their wrappers, which
+   stand whether the section is open or closed: the app removes a closed
+   section's content from the DOM, so nothing inside it can be the hook. That
+   makes the set Overdue and every `.collapsible-section` — Completed tasks,
+   Recurring tasks, Later today, the claim pool; the date groups and backlog
+   sections, which have no wrapper, keep the small tag. */
+body.hasBgImage work-view .overdue-tasks > collapsible .collapsible-header.collapsible-header,
+body.hasBgImage work-view .collapsible-section > collapsible .collapsible-header.collapsible-header {
+  padding: 8px 22px 8px 12px;
 }
 
 /* On a light page over a picture the muted ink is too little for a heading
@@ -2515,6 +2521,25 @@ main-header .page-title-actions .project-settings-btn[aria-expanded='true'] {
 
 .mat-mdc-menu-item .custom-option-layout .folder-subtitle {
   font-size: 10px;
+}
+
+/* The menu button on a section heading — the three dots after a backlog
+   section's name — is hidden by the app until the section is hovered, and a
+   control that is not there until you find it is not much of a control. It
+   stays, dimmed to the action row's idle opacity, and comes to full strength
+   under the pointer or on focus; hovering the section around it changes
+   nothing. Over a background image only; without one the app's own
+   reveal-on-hover stands. `!important` throughout, against the app's own
+   opacity ladder, which is stated on the same element. */
+body.hasBgImage work-view .section-container > collapsible > .collapsible-header > button[mat-icon-button] {
+  opacity: var(--action-bar-idle-opacity) !important;
+  transition: opacity 140ms var(--ani-standard-timing, ease) !important;
+}
+
+body.hasBgImage work-view .section-container > collapsible > .collapsible-header > button[mat-icon-button]:hover,
+body.hasBgImage work-view .section-container > collapsible > .collapsible-header > button[mat-icon-button]:focus-visible,
+body.hasBgImage work-view .section-container > collapsible > .collapsible-header > button[mat-icon-button][aria-expanded='true'] {
+  opacity: 1 !important;
 }
 
 /* The app underlines the title at the head of the task detail panel with a
