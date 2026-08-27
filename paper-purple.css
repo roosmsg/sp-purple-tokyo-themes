@@ -165,7 +165,7 @@ body.isDarkTheme {
   --separator: #2c2a52; /* PWM --color-border-tertiary */
   --divider: #232144; /* PWM --color-border-secondary */
   --scrim: rgba(9, 9, 20, 0.7);
-  --bg-overlay: rgba(14, 11, 36, 0.85); /* the veil proper: a deep purple pulled a third of the way to black, at nearly the app's alpha; the wallpaper floor below does the rest of the darkening */
+  --bg-overlay: rgba(19, 19, 39, 0.85); /* the veil proper: the left menu's surface (#131327) at nearly the app's alpha; the wallpaper floor below does the rest of the darkening */
   --system-surface: #131327;
 
   /* Primary — Claude salmon (PWM --color-accent-*) */
@@ -509,24 +509,50 @@ body.isDarkTheme.hasBgImage work-view .add-more-or-finish .btn-wrapper .mat-mdc-
   box-shadow: none !important;
 }
 
-/* The sections take the same glass. "Overdue", "Completed tasks", "Recurring
-   tasks" and the rest each sit in a collapsible — heading and list together —
-   which the app leaves bare on the picture, so the rows stood on the photo
-   with nothing to group them. The collapsible is the box that holds both, and
-   it is frosted as one pane: the same blur and tint as the panels above, the
-   card radius, and a little room at the foot so the last row does not touch
-   the edge. The rows keep their own surfaces inside it. */
-body.hasBgImage work-view .collapsible-section > collapsible {
-  display: block;
-  background: rgba(255, 255, 255, var(--glass-tint));
-  backdrop-filter: blur(var(--glass-blur)) saturate(85%);
-  border-radius: var(--card-border-radius, 8px);
-  padding-bottom: var(--s-half, 4px);
+/* The section headings take the same glass. "Overdue", "Completed tasks",
+   "Recurring tasks", "Later today", the date groups and the backlog sections
+   — every collapsible heading in the view, whatever wraps it — are a line of
+   text the app leaves bare on the picture; each is frosted as a pane of its own — the same blur
+   and tint as the panels above, the card radius — while the rows below it
+   keep their own surfaces on the photo. `background-color`, not the
+   shorthand, so the short rule the heading carries as a background image
+   stays. */
+body.hasBgImage work-view collapsible .collapsible-header.collapsible-header {
+  background-color: rgba(255, 255, 255, var(--glass-tint));
+  backdrop-filter: blur(calc(var(--glass-blur) / 2)) saturate(85%);
+  /* Glassier than the panels: a thinner tint, so more of the picture comes
+     through the blur. No edge lines — the blur and the tint are the whole of
+     it, as on the panels. */
+  --glass-tint: 0.3;
+  border-radius: 4px;
+  /* Over a picture the pane is the heading's own size — arrow, text and a
+     margin of glass around them — and lower than the app's row: a tag, not a
+     bar. The header is already shrunk to its content further down. */
+  padding: 13px 12px;
+  min-height: 0;
+  line-height: 1.2;
 }
 
-body.isDarkTheme.hasBgImage work-view .collapsible-section > collapsible {
-  background: rgba(26, 18, 64, var(--glass-tint));
-  backdrop-filter: blur(var(--glass-blur)) saturate(110%);
+body.isDarkTheme.hasBgImage work-view collapsible .collapsible-header.collapsible-header {
+  background-color: rgba(26, 18, 64, var(--glass-tint));
+  backdrop-filter: blur(calc(var(--glass-blur) / 2)) saturate(110%);
+  --glass-tint: 0.2;
+}
+
+/* Two of the tags get more glass: "Overdue" and "Completed tasks" end in a
+   count in brackets, and at the same margins as the plain headings the
+   bracket looked crowded against the edge and the tag sat low. More on the
+   right and above and below. */
+body.hasBgImage work-view .overdue-tasks collapsible .collapsible-header.collapsible-header,
+body.hasBgImage work-view collapsible:has(task-list.tour-doneList) .collapsible-header.collapsible-header {
+  padding: 16px 22px 16px 12px;
+}
+
+/* On a light page over a picture the muted ink is too little for a heading
+   on glass; the title and its arrow take the full ink there. */
+body:not(.isDarkTheme).hasBgImage work-view collapsible .collapsible-title,
+body:not(.isDarkTheme).hasBgImage work-view collapsible .collapsible-header .mat-icon {
+  color: var(--ink);
 }
 /* And nothing on hover. Material answers the pointer on these buttons with a
    state layer — a translucent wash over the whole face — and a ripple on the
@@ -1287,13 +1313,11 @@ body,
 body.isDarkTheme {
   --break-reset-scale: 0.75;
   --break-reset-opacity: 0.55;
-  /* What it turns when the pointer is on it. No hue at all: the icon rests in
-     the muted ink like the clock beside it, and under the pointer it comes up
-     to the full ink. The change is one of weight rather than colour, which is
-     enough to read as "this one" on a control that is already the only thing
-     moving — and it keeps a reset button from announcing itself in the accent
-     or in a warning red, neither of which it deserves. */
-  --break-reset-hover-ink: var(--ink);
+  /* What it turns when the pointer is on it: the same answer Finish Day gives
+     — the salmon, the accent the theme reserves for the things that matter — in the glyph,
+     with a wash of it on the button's surface. */
+  --break-reset-hover-ink: var(--palette-primary-500);
+  --break-reset-hover-wash: 18%;
 }
 
 work-view .status-bar .item:hover .take-a-break-reset-btn.take-a-break-reset-btn {
@@ -1317,6 +1341,17 @@ work-view .status-bar .take-a-break-reset-btn:hover button {
   color: var(--break-reset-hover-ink);
   --mdc-fab-icon-color: var(--break-reset-hover-ink);
   --mat-fab-foreground-color: var(--break-reset-hover-ink);
+}
+
+/* And the surface takes the wash, as Finish Day's does. Stated directly with
+   `!important` because the mini-fab paints its container from a token of its
+   own; the transition matches the header row's 140ms. */
+work-view .status-bar .take-a-break-reset-btn button {
+  transition: background-color 140ms var(--ani-standard-timing, ease), color 140ms var(--ani-standard-timing, ease);
+}
+
+work-view .status-bar .take-a-break-reset-btn:hover button {
+  background-color: color-mix(in srgb, var(--palette-primary-500) var(--break-reset-hover-wash), var(--surface-3)) !important;
 }
 
 /* The dot, at the head of every reading after the first — so it falls between
@@ -3189,6 +3224,8 @@ body.isDarkTheme task.isDone .box.box {
 work-view collapsible .collapsible-header {
   justify-content: center;
   gap: var(--s-half);
+  width: fit-content;
+  margin-inline: 0; /* at the head of the list, where the app has it */
 }
 
 /* The bar under a section heading goes, everywhere and in both modes:
@@ -3216,28 +3253,48 @@ body collapsible.isExpanded .collapsible-header.collapsible-header {
    which is more rule than a heading of two or three words needs; that border
    is cleared just above and this paints a short one in its place.
 
-   A background image rather than a border, because a border always takes the
-   width of the element it sits on and this one must not: the line is drawn at
-   `--section-rule-length` wide and `--section-rule-weight` thick, sitting on
-   the bottom edge of the header. Nothing in the layout moves — a background
-   occupies no space — and the two figures are the only things to change if it
-   wants to be longer or heavier. */
-work-view collapsible.isExpanded .collapsible-header {
-  --section-rule-length: 180px;
+   The line is as wide as the heading's text and sits under the text alone;
+   the arrow beside it stays bare. The header is shrunk to its content
+   (`width: fit-content`, kept at the left where the app has it) instead of
+   spanning the column, and the title inside it is kept from growing, so the
+   title's own box is the text's width; the line is a background across that
+   box. A background image rather than a border, so nothing in the layout
+   moves; `--section-rule-weight` is the thickness and the only figure left.
+   Open or collapsed alike: the line belongs to the heading, not to the list
+   under it. */
+work-view collapsible .collapsible-title {
   --section-rule-weight: 3px;
   background-image: linear-gradient(var(--separator), var(--separator));
   background-repeat: no-repeat;
   background-position: bottom left;
-  background-size: var(--section-rule-length) var(--section-rule-weight);
+  background-size: 100% var(--section-rule-weight);
+  padding-bottom: 5px;
 }
 
 work-view collapsible .collapsible-header .mat-icon,
 work-view collapsible .collapsible-header mat-icon {
-  font-size: 16px;
-  width: 16px;
-  height: 16px;
-  line-height: 16px;
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
   color: var(--ink-muted);
+}
+
+/* The arrow carries an 8px end margin of its own in the app, on top of the
+   header's gap; at this size that reads as a hole between arrow and text.
+   The margin goes and the gap alone spaces them. */
+work-view collapsible .collapsible-header .collapsible-expand-icon {
+  margin-right: 0;
+  margin-inline-end: 0;
+  /* The app's chevron points down when a section is closed and up when it
+     is open. Turned a quarter: right when closed, down when open — the
+     convention of every file tree. `!important` against the app's expanded
+     state, which Angular compiles at a host-and-content weight. */
+  transform: rotate(-90deg) !important;
+}
+
+work-view collapsible.isExpanded .collapsible-header .collapsible-expand-icon {
+  transform: rotate(0deg) !important;
 }
 
 /* The rect is drawn at x=2.5 y=2.5 inside a 24-unit viewBox, sized to fill it.
@@ -3340,6 +3397,7 @@ body.isDarkTheme {
    read as headings and keep the app's own 14px/700. */
 work-view collapsible .collapsible-title {
   font-size: 14px;
+  flex-grow: 0 !important; /* the app lets the title fill the header */
   font-weight: 400;
   color: var(--ink-muted);
   letter-spacing: 0.02em;
