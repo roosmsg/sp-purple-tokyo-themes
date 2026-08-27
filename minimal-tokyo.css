@@ -2585,6 +2585,26 @@ task-detail-panel .task-title-wrapper.task-title-wrapper {
   border-radius: 0 !important;
 }
 
+/* The notes and the checklist in the detail panel — and every other
+   inline-markdown field — carry Material's `mat-body-2` class, which sets
+   the text at weight 500. In Inter that reads as bold, on both the editor
+   half and the rendered half. Body weight instead; the markdown's own bold
+   and headings keep theirs through the rules further down. */
+inline-markdown .markdown-unparsed,
+inline-markdown .markdown-parsed {
+  font-weight: var(--body-font-weight, 400);
+}
+
+/* And no bold inside a note at all. The app's default notes template writes
+   its three prompts — "What do I want?" and the rest — as `**bold**`, and
+   even at the Medium cut the file otherwise gives emphasis they stood out
+   as headings in a box of small text. Emphasis in a note is body weight and
+   nothing else; if a note needs a heading, `#` still gives one. */
+inline-markdown .markdown-parsed strong,
+inline-markdown .markdown-parsed b {
+  font-weight: var(--body-font-weight, 400) !important;
+}
+
 /* The icon strip at the head of the menu. The app rounds each button with
    `--card-border-radius` through an `!important` rule of its own; redefining
    that variable on the row squares the buttons through the app's own rule,
