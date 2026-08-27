@@ -1,11 +1,14 @@
 /**
- * Paper Purple — a light/dark pair for Super Productivity
+ * Tokyo — a light/dark pair for Super Productivity
  *
- *   Light — Licht: Personal Work Manager's neutral light, white and near-white
- *           surfaces on a zinc ink ramp, with Claude salmon as the accent —
- *           the accent the dark half carries, so it survives a mode switch.
- *   Dark  — Shades of Purple (Super Dark): deep indigo surfaces, white text,
- *           a muted violet for supporting text, Claude salmon as the accent.
+ *   Light — Tokyo Light: cool blue-grey surfaces and ink-blue text.
+ *   Dark  — Tokyo Night: the near-black blue surfaces of that editor theme and
+ *           its pale blue foreground.
+ *
+ * Neither half names an accent. The primary palette is left to Super
+ * Productivity, which writes it from the colour of the project or tag you are
+ * in, so the play button, Add task, links and the rest of the primary-coloured
+ * interface take that colour and change with it.
  *
  * Both halves are the palettes used in Personal Work Manager, remapped onto
  * Super Productivity's token contract (docs/theming-contract.md): the surface
@@ -29,233 +32,211 @@
  */
 
 /* ============================================================
- * LIGHT — Licht
+ * LIGHT — Tokyo Light
  * ============================================================ */
 body:not(.isDarkTheme) {
   /* Surface ladder: chrome → page → cards → elevated → highest */
-  --surface-0: #f5f5f5; /* deepest: toolbars, side nav (PWM --color-bg-background) */
-  --surface-1: #ffffff; /* app background (PWM --color-bg-primary) */
-  --surface-2: #fcfcfc; /* cards, tasks, dialogs (PWM --color-bg-secondary) */
-  --surface-3: #eeeeef; /* elevated: current task, drag-drop targets */
-  --surface-4: #e1e1e3; /* highest: banner, mobile bottom panel */
+  --surface-0: #d6d8df; /* deepest: toolbars, side nav (--bg-darker) */
+  --surface-1: #e6e7ed; /* app background (PWM --color-bg-primary) */
+  --surface-2: #e1e2e8; /* cards, tasks, dialogs (PWM --color-bg-secondary) */
+  --surface-3: #dcdee3; /* elevated: current task, drag-drop targets */
+  --surface-4: #cdced1; /* highest: banner, mobile bottom panel */
 
   /* Ink */
-  --ink-strong: #09090b;
-  --ink: #18181b; /* PWM --color-text-primary */
-  /* PWM's tertiary text (#57575c) clears AA on white; kept as is. */
-  --ink-muted: #57575c;
-  --ink-on-channel: 24, 24, 27; /* #18181b — overlays read zinc, not pure black */
+  --ink-strong: #262b3a;
+  --ink: #363c4d; /* PWM --color-text-primary */
+  /* PWM's tertiary text (#707280) lands at 3.9:1 on this page colour; nudged
+     darker so muted labels clear WCAG AA for normal text. */
+  --ink-muted: #5c6478;
+  --ink-on-channel: 54, 60, 77; /* #363c4d — overlays read blue-grey, not black */
 
   /* Separators, scrim, overlays */
-  --separator: #dfdfdf; /* PWM --color-border-tertiary */
-  --divider: #e5e5e5; /* PWM --color-border-secondary */
-  --scrim: rgba(9, 9, 11, 0.45);
-  --bg-overlay: rgba(255, 255, 255, 0.85);
-  --system-surface: #f5f5f5; /* Android system bars; must stay opaque */
+  --separator: #c9cbd2; /* PWM --color-border-tertiary */
+  --divider: #d0d2d9; /* PWM --color-border-secondary */
+  --scrim: rgba(38, 43, 58, 0.45);
+  --bg-overlay: rgba(230, 231, 237, 0.85);
+  --system-surface: #d6d8df; /* Android system bars; must stay opaque */
 
-  /* Primary — Claude salmon, the same ladder the dark half carries, so the
-     accent holds its hue across a mode switch. PWM's neutral light theme puts
-     sky blue here; salmon at 500 sits at 3.1:1 on the white page, a step
-     stronger than that blue's 2.6:1 and past the 3:1 a control or a glyph
-     needs. Text is a different threshold, which --link-color below answers. */
-  --palette-primary-50: #fdf2ee;
-  --palette-primary-100: #f7e4dc;
-  --palette-primary-200: #f2cdbf;
-  --palette-primary-300: #e9a991;
-  --palette-primary-400: #e08e70;
-  --palette-primary-500: #d97757;
-  --palette-primary-600: #c96442;
-  --palette-primary-700: #a85336;
-  --palette-primary-800: #85422b;
-  --palette-primary-900: #6b3623;
-  /* Salmon stays light enough to carry the zinc ink through 600 (4.5:1);
-     white takes over at 700, where the ink falls to 3.3:1 and white is 5.3:1. */
-  --palette-primary-contrast-50: #18181b;
-  --palette-primary-contrast-100: #18181b;
-  --palette-primary-contrast-200: #18181b;
-  --palette-primary-contrast-300: #18181b;
-  --palette-primary-contrast-400: #18181b;
-  --palette-primary-contrast-500: #18181b;
-  --palette-primary-contrast-600: #18181b;
-  --palette-primary-contrast-700: #ffffff;
-  --palette-primary-contrast-800: #ffffff;
-  --palette-primary-contrast-900: #ffffff;
+  /* Primary — left to Super Productivity. The app writes the primary palette
+     from the colour of the project or tag you are in, so the play button, the
+     Add task button, links and every other primary-coloured control follow it.
+     Give this block a --palette-primary-* ladder to pin one hue instead. */
 
-  /* Warn — red, at the strength a white page needs */
-  --palette-warn-300: #fca5a5;
-  --palette-warn-400: #f87171;
-  --palette-warn-500: #dc2626;
-  --palette-warn-600: #b91c1c;
-  --palette-warn-700: #991b1b;
-  --palette-warn-contrast-300: #18181b;
-  --palette-warn-contrast-400: #18181b;
+  /* The triangle inside the play button in the right action bar, which
+     Material would fill with the contrast ink of whatever colour the circle
+     carries. It takes the colour of the labels in the left menu instead, so
+     the two read as one interface rather than as a control in the project's
+     palette. Light mode only, and `--sidenav-text` rather than a stated
+     colour, so it keeps following those labels. */
+  --play-icon-ink: var(--sidenav-text);
+
+  /* The disc under that triangle. It never takes the colour of the project,
+     tag, My Day or Inbox you happen to be in — those tint the primary palette,
+     and a control at the head of the strip that changes hue with the view
+     reads as a status light rather than as a button. A quiet ink wash on the
+     page instead, dark enough to carry the glyph above. */
+  --play-button-bg: color-mix(in srgb, var(--ink) 22%, var(--surface-1));
+
+  /* Warn — Tokyo Night Light red */
+  --palette-warn-300: #c07281;
+  --palette-warn-400: #a65a6a;
+  --palette-warn-500: #8c4351;
+  --palette-warn-600: #7a3a47;
+  --palette-warn-700: #66303b;
+  --palette-warn-contrast-300: #262b3a;
+  --palette-warn-contrast-400: #ffffff;
   --palette-warn-contrast-500: #ffffff;
   --palette-warn-contrast-600: #ffffff;
   --palette-warn-contrast-700: #ffffff;
 
-  /* Status — readable on white */
-  --color-success: #15803d;
-  --color-warning: #b45309;
-  --color-danger: #b91c1c;
-  --c-success: #15803d;
-  --c-warning: #b45309;
-  --c-error: #b91c1c;
-  --c-info: #0369a1;
-  --sun-yellow: #b45309;
-
-  /* Links carry the accent instead of the base's ink mix, at the 700 stop:
-     salmon 500 is a fill colour here and reaches only 3.1:1 on the page, where
-     a run of text needs 4.5:1. The 700 clears it at 5.3:1. */
-  --link-color: #a85336;
-
-  /* The play button in the action bar carries a white glyph rather than the
-     ink the rest of the salmon fills take: it is a 23px mark on a 46px circle,
-     read as a symbol rather than as a label, and white at 3.1:1 on the salmon
-     clears the 3:1 that size of graphic needs. Light mode only — the dark half
-     keeps the ink the app puts there. */
-  --play-icon-ink: #ffffff;
+  /* Status — Tokyo Night Light */
+  --color-success: #385f0d;
+  --color-warning: #8f5e15;
+  --color-danger: #8c4351;
+  --c-success: #385f0d;
+  --c-warning: #8f5e15;
+  --c-error: #8c4351;
+  --c-info: #0f4b6e;
+  --sun-yellow: #8f5e15;
 
   /* --- Category B: tokens the base hardcodes to white or neutral grey --- */
-  --bg-drag-col: #eeeeef;
-  --bg-super-light: #fafafa;
-  --right-panel-bg-mobile: #fcfcfc;
-  --bottom-panel-bg: #fcfcfc;
-  --selected-task-bg-color: #eeeeef;
-  --task-c-selected-bg: #eeeeef;
-  --extra-border-color: #e5e5e5;
-  --standard-note-bg: #fafafa; /* notes lift off the page like paper */
-  --standard-note-bg-hovered: #f2f2f3;
+  --bg-drag-col: #dcdee3;
+  --bg-super-light: #eef0f4;
+  --right-panel-bg-mobile: #e1e2e8;
+  --bottom-panel-bg: #e1e2e8;
+  --selected-task-bg-color: #dcdee3;
+  --task-c-selected-bg: #dcdee3;
+  --extra-border-color: #d0d2d9;
+  --standard-note-bg: #eceef2; /* notes lift off the page like paper */
+  --standard-note-bg-hovered: #e6e7ed;
   --standard-note-fg: var(--ink);
-  --task-detail-bg: #fcfcfc;
-  --task-detail-bg-hover: #eeeeef;
-  --schedule-event-bg: #fafafa;
-  --sidenav-hover-bg: rgba(24, 24, 27, 0.06);
-  --scrollbar-thumb: rgba(24, 24, 27, 0.25);
-  --scrollbar-thumb-hover: rgba(24, 24, 27, 0.45);
+  --task-detail-bg: #e1e2e8;
+  --task-detail-bg-hover: #dcdee3;
+  --schedule-event-bg: #eceef2;
+  --sidenav-hover-bg: rgba(54, 60, 77, 0.07);
+  --scrollbar-thumb: rgba(54, 60, 77, 0.25);
+  --scrollbar-thumb-hover: rgba(54, 60, 77, 0.45);
   --scrollbar-track: transparent;
-  --grid-color: #e7e7e7;
-  --chip-outline-color: rgba(24, 24, 27, 0.22);
-  --progress-bg: rgba(24, 24, 27, 0.1);
+  --grid-color: #cfd1d8;
+  --chip-outline-color: rgba(54, 60, 77, 0.24);
+  --progress-bg: rgba(54, 60, 77, 0.12);
   --improvement-text: var(--ink);
   --improvement-button-text: var(--ink);
-  --improvement-border: rgba(24, 24, 27, 0.22);
+  --improvement-border: rgba(54, 60, 77, 0.25);
 
   /* Text selection */
-  --theme-selection-bg: rgba(217, 119, 87, 0.2);
+  --theme-selection-bg: color-mix(in srgb, var(--brand) 18%, transparent);
 }
 
 /* ============================================================
- * DARK — Shades of Purple (Super Dark)
+ * DARK — Tokyo Night
  * ============================================================ */
 body.isDarkTheme {
   /* Surface ladder */
-  --surface-0: #131327; /* deepest: toolbars, side nav (PWM --color-bg-background) */
-  --surface-1: #191830; /* app background (PWM --color-bg-primary) */
-  --surface-2: #15152b; /* cards, tasks, dialogs (PWM --color-bg-secondary) */
-  --surface-3: #232144; /* elevated: current task, drag-drop targets */
-  --surface-4: #2f2c5c; /* highest: banner, mobile bottom panel */
+  --surface-0: #16161e; /* deepest: toolbars, side nav (PWM --color-bg-background) */
+  --surface-1: #1a1b26; /* app background (PWM --color-bg-primary) */
+  --surface-2: #16161e; /* cards, tasks, dialogs (PWM --color-bg-secondary) */
+  --surface-3: #1e202e; /* elevated: current task, drag-drop targets */
+  --surface-4: #292e42; /* highest: banner, mobile bottom panel */
 
-  /* Ink — white body text, violet for supporting text, as in the editor theme */
-  --ink-strong: #ffffff;
-  --ink: #ffffff;
-  --ink-muted: #a599e9; /* PWM --color-text-secondary */
-  --ink-on-channel: 255, 255, 255;
+  /* Ink — the theme's pale blue foreground, its UI grey for supporting text */
+  --ink-strong: #d5dcf7;
+  --ink: #c0caf5; /* PWM --color-text-primary */
+  --ink-muted: #9aa2c4; /* PWM's #787c99, lifted to clear AA on the page */
+  --ink-on-channel: 192, 202, 245;
 
-  /* Separators, scrim, overlays */
-  --separator: #2c2a52; /* PWM --color-border-tertiary */
-  --divider: #232144; /* PWM --color-border-secondary */
-  --scrim: rgba(9, 9, 20, 0.7);
-  --bg-overlay: rgba(19, 19, 39, 0.85);
-  --system-surface: #131327;
+  /* Separators, scrim, overlays. The hairlines are stated as a share of body
+     ink mixed into the page rather than as PWM's own border colours, which sit
+     high on surfaces this dark: --hairline-ink is the separator that edges
+     cards, rows and panels, --hairline-ink-soft the quieter divider. Lower
+     either to fade those lines further; 0% removes them altogether. */
+  --hairline-ink: 6%;
+  --hairline-ink-soft: 3%;
+  --separator: color-mix(in srgb, var(--ink) var(--hairline-ink), var(--surface-1));
+  --divider: color-mix(in srgb, var(--ink) var(--hairline-ink-soft), var(--surface-1));
+  --scrim: rgba(9, 10, 17, 0.7);
+  --bg-overlay: rgba(26, 27, 38, 0.85);
+  --system-surface: #16161e;
 
-  /* Primary — Claude salmon (PWM --color-accent-*) */
-  --palette-primary-50: #fdf2ee;
-  --palette-primary-100: #f7e4dc;
-  --palette-primary-200: #f2cdbf;
-  --palette-primary-300: #e9a991;
-  --palette-primary-400: #e08e70;
-  --palette-primary-500: #d97757;
-  --palette-primary-600: #c96442;
-  --palette-primary-700: #a85336;
-  --palette-primary-800: #85422b;
-  --palette-primary-900: #6b3623;
-  /* Salmon stays light enough to carry dark text through 600. */
-  --palette-primary-contrast-50: #1b1a33;
-  --palette-primary-contrast-100: #1b1a33;
-  --palette-primary-contrast-200: #1b1a33;
-  --palette-primary-contrast-300: #1b1a33;
-  --palette-primary-contrast-400: #1b1a33;
-  --palette-primary-contrast-500: #1b1a33;
-  --palette-primary-contrast-600: #1b1a33;
-  --palette-primary-contrast-700: #ffffff;
-  --palette-primary-contrast-800: #ffffff;
-  --palette-primary-contrast-900: #ffffff;
+  /* Primary — left to Super Productivity, as in the light half above. */
 
-  /* Warn — Shades of Purple pink */
-  --palette-warn-300: #ffa3ba;
-  --palette-warn-400: #ff83a3;
-  --palette-warn-500: #ff628c;
-  --palette-warn-600: #e04d76;
-  --palette-warn-700: #b93b5e;
-  --palette-warn-contrast-300: #1b1a33;
-  --palette-warn-contrast-400: #1b1a33;
-  --palette-warn-contrast-500: #1b1a33;
-  --palette-warn-contrast-600: #ffffff;
+  /* The triangle inside the play button, as in the light half above — but the
+     colour the dimmed buttons beside it come out at rather than the labels of
+     the left menu, which are a pale blue here and would light up the middle of
+     the circle. `--play-icon-ink-idle` is that colour, stated once further
+     down and read by both halves; here it also covers the live button, so the
+     glyph is the same in every state. */
+  --play-icon-ink: var(--play-icon-ink-idle);
+
+  /* The disc, as in the light half: never the work context's colour. Pale
+     here, because the glyph on it is the dark ink of the dimmed buttons. */
+  --play-button-bg: var(--ink-muted);
+
+  /* Warn — Tokyo Night red */
+  --palette-warn-300: #fbb4c0;
+  --palette-warn-400: #f9939f;
+  --palette-warn-500: #f7768e;
+  --palette-warn-600: #db5f78;
+  --palette-warn-700: #b54b60;
+  --palette-warn-contrast-300: #1a1b26;
+  --palette-warn-contrast-400: #1a1b26;
+  --palette-warn-contrast-500: #1a1b26;
+  --palette-warn-contrast-600: #1a1b26;
   --palette-warn-contrast-700: #ffffff;
 
-  /* Status — Shades of Purple */
-  --color-success: #3ad900;
-  --color-warning: #fad000;
-  --color-danger: #ff628c;
-  --c-success: #3ad900;
-  --c-warning: #fad000;
-  --c-error: #ff628c;
-  --c-info: #9effff;
-  --sun-yellow: #fad000;
-
-  --link-color: #e08e70;
+  /* Status — Tokyo Night */
+  --color-success: #9ece6a;
+  --color-warning: #e0af68;
+  --color-danger: #f7768e;
+  --c-success: #9ece6a;
+  --c-warning: #e0af68;
+  --c-error: #f7768e;
+  --c-info: #7dcfff;
+  --sun-yellow: #e0af68;
 
   /* --- Category B: the base maps these to a neutral grey ramp --- */
-  --bg-slightly-lighter: #1e1d3a;
-  --bg-super-light: #3a3768;
-  --text-color-less-intense: rgba(255, 255, 255, 0.82);
-  --text-color-more-intense: #ffffff;
-  --selected-task-bg-color: #232144;
-  --task-c-selected-bg: #232144;
-  --sub-task-c-bg: #1a1934; /* nested rows lift off the card */
-  --sub-task-c-bg-in-selected: #232144;
-  --sub-task-c-bg-done: #131327;
-  --task-c-bg-done: #131327;
-  --extra-border-color: #2c2a52;
-  --standard-note-bg: #1b1a35;
-  --standard-note-bg-hovered: #232144;
-  --standard-note-fg: #ffffff;
-  --task-detail-bg: #1b1a35;
-  --task-detail-bg-hover: #232144;
-  --bottom-panel-bg: #131327;
-  --schedule-event-bg: #1e1d3a;
-  --schedule-event-bg-in-side-panel: #232144;
-  --sidenav-hover-bg: rgba(165, 153, 233, 0.09);
-  --sidenav-item-active-bg: rgba(217, 119, 87, 0.2);
-  --mat-sidenav-scrim-color: rgba(9, 9, 20, 0.75);
-  --scrollbar-thumb: rgba(165, 153, 233, 0.22);
-  --scrollbar-thumb-hover: rgba(165, 153, 233, 0.45);
+  --bg-slightly-lighter: #1e202e;
+  --bg-super-light: #292e42;
+  --text-color-less-intense: rgba(192, 202, 245, 0.82);
+  --text-color-more-intense: #d5dcf7;
+  --selected-task-bg-color: #1e202e;
+  --task-c-selected-bg: #1e202e;
+  --sub-task-c-bg: #1b1c28; /* nested rows lift off the card */
+  --sub-task-c-bg-in-selected: #1e202e;
+  --sub-task-c-bg-done: #16161e;
+  --task-c-bg-done: #16161e;
+  --extra-border-color: var(--separator);
+  --standard-note-bg: #1b1c28;
+  --standard-note-bg-hovered: #1e202e;
+  --standard-note-fg: #c0caf5;
+  --task-detail-bg: #1b1c28;
+  --task-detail-bg-hover: #1e202e;
+  --bottom-panel-bg: #16161e;
+  --schedule-event-bg: #1e202e;
+  --schedule-event-bg-in-side-panel: #292e42;
+  --sidenav-hover-bg: rgba(192, 202, 245, 0.08);
+  --mat-sidenav-scrim-color: rgba(9, 10, 17, 0.75);
+  --scrollbar-thumb: rgba(192, 202, 245, 0.2);
+  --scrollbar-thumb-hover: rgba(192, 202, 245, 0.4);
   --scrollbar-track: transparent;
-  --grid-color: rgba(165, 153, 233, 0.1);
-  --chip-outline-color: rgba(165, 153, 233, 0.3);
-  --progress-bg: rgba(165, 153, 233, 0.16);
-  --improvement-text: #ffffff;
-  --improvement-button-text: #ffffff;
-  --improvement-border: rgba(165, 153, 233, 0.3);
+  --grid-color: rgba(192, 202, 245, 0.09);
+  --chip-outline-color: color-mix(in srgb, var(--ink) 14%, transparent);
+  --progress-bg: rgba(192, 202, 245, 0.14);
+  --improvement-text: #c0caf5;
+  --improvement-button-text: #c0caf5;
+  --improvement-border: rgba(192, 202, 245, 0.28);
 
-  --theme-selection-bg: rgba(217, 119, 87, 0.28);
+  --theme-selection-bg: color-mix(in srgb, var(--brand) 26%, transparent);
 }
 
 /* ============================================================
  * ONE ACCENT PER MODE
  * ============================================================
  * PWM works with a single accent colour, so Super Productivity's accent role
- * mirrors the primary ladder above rather than introducing a second hue.
+ * mirrors the primary rather than introducing a second hue. With no ladder of
+ * its own in the blocks above, that primary is the one the app writes for the
+ * project or tag you are in, so accent-coloured controls — the play button
+ * while a task runs, among them — take the project's colour as well.
  * Delete this block to hand the accent role back to the app default. */
 body,
 body.isDarkTheme {
@@ -300,14 +281,48 @@ body:not(.isDarkTheme)::before {
 }
 
 /* ============================================================
+ * DISABLE COLOURED BACKGROUND TINT
+ * ============================================================
+ * Super Productivity carries a "Disable background tint" checkbox in each
+ * project's and tag's theme settings, and puts `isDisableBackgroundTint` on
+ * the body while such a context is open. The app reads it for one thing: the
+ * glow behind the page. Everything else it fills from the work context's own
+ * colour stays filled — the active row in the left menu, the hover fill in the
+ * date picker, the info panels in Settings and the sync dialogs, the text
+ * selection. With the checkbox ticked those take body ink at the same weight,
+ * so a project or tag view holds no colour behind anything.
+ *
+ * Backgrounds only. Text, icons, outlines and the play button keep the work
+ * context's colour: the checkbox speaks of background tint, and those are what
+ * still marks the view as that project's or that tag's.
+ *
+ * The pseudo-element is restated as well. The app hides its own glow on this
+ * class and the light half of this theme hides it in every context; naming it
+ * here keeps it gone in dark mode too wherever the box is ticked. */
+body.isDisableBackgroundTint {
+  --sidenav-item-active-bg: color-mix(in srgb, var(--ink) 12%, transparent);
+  --calendar-hover-bg: color-mix(in srgb, var(--ink) 16%, transparent);
+  --theme-selection-bg: color-mix(in srgb, var(--ink) 20%, transparent);
+}
+
+body.isDisableBackgroundTint::before {
+  display: none !important;
+  opacity: 0 !important;
+}
+
+body.isDisableBackgroundTint .info-panel {
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+}
+
+/* ============================================================
  * CHROME
  * ============================================================
  * PWM keeps the side bar a step darker than the page. The base leaves the side
  * nav transparent so a wallpaper can show through; delete these two rules to
  * get that behaviour back. */
 body:not(.isDarkTheme) {
-  --sidenav-bg: #f5f5f5;
-  --sidenav-bg-mobile: #f5f5f5;
+  --sidenav-bg: #d6d8df;
+  --sidenav-bg-mobile: #d6d8df;
 }
 
 /* Electron draws the functional minimise, maximise and close controls itself.
@@ -336,7 +351,7 @@ body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen)::after {
   pointer-events: none;
 }
 
-/* Start the purple rail directly below the native controls. Move the former
+/* Start the rail directly below the native controls. Move the former
    external gap inside as top padding, so Play keeps its original position. */
 @media screen and (min-width: 600px) {
   body.isElectron.isNoMac.isObsidianStyleHeader.isVerticalActionBar
@@ -379,18 +394,18 @@ body {
 }
 
 body.isDarkTheme {
-  --sidenav-bg: #131327;
-  --sidenav-bg-mobile: #131327;
+  --sidenav-bg: #16161e;
+  --sidenav-bg-mobile: #16161e;
 }
 
 /* The gutter behind the app (overscroll, iOS safe areas) is pinned to a neutral
    grey by the base; match it to the page instead. */
 html:has(body:not(.isDarkTheme)) {
-  background: #ffffff;
+  background: #e6e7ed;
 }
 
 html:has(body.isDarkTheme) {
-  background: #191830;
+  background: #1a1b26;
 }
 
 ::selection {
@@ -630,44 +645,35 @@ body.isDarkTheme {
   --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
-/* A horizontal rule fades rather than stopping dead, and the two places it
-   appears fade differently. The colour is the hairline the rest of the
-   interface uses. Both modes.
+/* A horizontal rule fades rather than stopping dead. The colour is the
+   hairline the rest of the interface uses, so in dark mode it follows
+   `--hairline-ink` in the colour block above. Both modes.
 
    A plain `<hr>` in a note, a task description or a plugin panel comes in from
    the left: full strength against the left edge and gone by `--rule-fade` in
-   from the right. Every figure in these gradients is measured from the right
-   edge, which is where they start. The app leaves those rules to the browser,
-   which draws an inset border in a grey of its own, so the class-less selector
-   catches them and no other.
+   from the right, which is where the figure is measured from. The app leaves
+   those rules to the browser, which draws an inset border in a grey of its
+   own, so the class-less selector catches them and no other.
 
-   The separator in the left menu fades at both ends, and those two figures are
-   stated by the side they act on: a short lead-in at the rail's edge
-   (`--menu-rule-fade-left`) and a longer trail at the far end
-   (`--menu-rule-fade-right`), so the line reads as belonging to the column
-   rather than as one drawn across it. It takes the gradient as a background
-   because the app draws that separator as a filled 1px block.
+   The separator in the left menu is not one of them here: the rail sets out
+   its groups by spacing, and a line across a column that narrow is one mark
+   more than it needs. It is drawn as a filled 1px block by the app, so the
+   fill is cleared rather than the element hidden — one of these separators
+   carries `margin-top: auto` and is what pushes the search, timeline and
+   settings group to the foot of the rail. The other two themes keep their
+   gradient there.
 
-   The line under the tabs on the Settings page is deliberately not in this
-   list. It sits under a row of tabs and reads as their baseline, where a line
-   that trails off would look like a rendering fault rather than a choice; the
-   app's own flat border stands there. */
+   The line under the tabs on the Settings page is not in this list either. It
+   sits under a row of tabs and reads as their baseline, where a line that
+   trails off would look like a rendering fault rather than a choice; that one
+   is stated further down. */
 body {
   --rule-fade: 60%;
-  --menu-rule-fade-left: 8%;
-  --menu-rule-fade-right: 20%;
   --rule-gradient: linear-gradient(
     to left,
     transparent 0%,
     var(--separator) var(--rule-fade),
     var(--separator) 100%
-  );
-  --rule-gradient-from-left: linear-gradient(
-    to right,
-    transparent 0%,
-    var(--separator) var(--menu-rule-fade-left),
-    var(--separator) calc(100% - var(--menu-rule-fade-right)),
-    transparent 100%
   );
 }
 
@@ -678,8 +684,128 @@ hr:not([class]) {
 }
 
 magic-side-nav hr.nav-separator.nav-separator {
-  background: var(--rule-gradient-from-left);
+  background: none;
   border: 0;
+}
+/* ============================================================
+ * PANEL SEAMS — the lines where the side panels meet the page
+ * ============================================================
+ * Delete this section, or set `--panel-seam-width` to `1px`, to hand the lines
+ * back to the app.
+ *
+ * The rail draws an edge down its right side, the right panel one down its
+ * left, and the experimental vertical action bar a third against the content
+ * on the far right — three full-height lines in a window that already
+ * separates those columns by surface colour. The surfaces do that work; the
+ * lines only add weight to it. Every mode, with or without a background image.
+ *
+ * The width is a variable rather than `border: 0`, so one number brings them
+ * all back: it is the width the app states, and `0px` is this theme's answer.
+ * Only the widths are touched, so each line keeps the colour its own component
+ * gives it if you turn them on again.
+ *
+ * `!important` throughout, and the rail named three ways: each of these is
+ * stated in a component stylesheet of its own, and which sheet loads last is
+ * not something a theme can rely on. Both sides of the rail and of the panel
+ * are named because a narrow window moves those edges to the other side. */
+body {
+  --panel-seam-width: 0px;
+}
+
+magic-side-nav .nav-sidenav,
+magic-side-nav > nav,
+.nav-sidenav {
+  border-right-width: var(--panel-seam-width) !important;
+  border-left-width: var(--panel-seam-width) !important;
+}
+
+right-panel .side,
+right-panel .side-inner,
+right-panel .right-panel {
+  border-left-width: var(--panel-seam-width) !important;
+  border-right-width: var(--panel-seam-width) !important;
+}
+
+body > nav.action-nav-right,
+body > nav.action-nav-right.action-nav-right--teleported {
+  border-left-width: var(--panel-seam-width) !important;
+}
+
+/* What a background image changes on top of that. The app turns the rail into
+   a pane of milk glass when a picture is behind the app — `background:
+   var(--c-dark-50)` with a 20px blur — and leaves the right panel out of it
+   entirely. One panel frosted and the other not is the inconsistency; this
+   theme settles it the plain way, by taking the glass off the rail rather than
+   putting it on the panel. Both keep the surfaces the colour blocks give them,
+   and the picture stays where it belongs, behind the content. The rail's
+   shadow goes with the glass — over a photo it reads as a smudge along the
+   join — while in the modes without one the app's own shadow stands. */
+body.hasBgImage magic-side-nav .nav-sidenav,
+body.hasBgImage magic-side-nav > nav,
+body.hasBgImage .nav-sidenav {
+  background: var(--sidenav-bg) !important;
+  backdrop-filter: none !important;
+  box-shadow: none !important;
+}
+
+/* The line under the tabs on the Settings page: how wide it runs, and what it
+   is drawn in.
+
+   The width first. The page pads itself by `--s`, and by `--s2` from the 600px
+   breakpoint up, so the tab header — and the line under it — stops short of the
+   content on both sides. The header is pulled back out by exactly that padding
+   and given it back as its own, so the tabs stay where they were and only the
+   rule grows to the full width of the view. Both modes.
+
+   The colour and the weight follow in both modes: the hairline the rest of the
+   interface uses, the one the section bars carried, at several times a
+   hairline's weight (`--settings-rule-weight`). `--divider`, which the page
+   states here, is deliberately close to the page colour — right between rows,
+   too quiet for the only rule on a page of settings. The extra weight comes
+   out of the header's own bottom margin, so what sits below it barely moves. */
+.page-settings .settings-tabs .mat-mdc-tab-header.mat-mdc-tab-header {
+  margin-left: calc(-1 * var(--s));
+  margin-right: calc(-1 * var(--s));
+  padding-left: var(--s);
+  padding-right: var(--s);
+}
+
+@media screen and (min-width: 600px) {
+  .page-settings .settings-tabs .mat-mdc-tab-header.mat-mdc-tab-header {
+    margin-left: calc(-1 * var(--s2));
+    margin-right: calc(-1 * var(--s2));
+    padding-left: var(--s2);
+    padding-right: var(--s2);
+  }
+}
+
+.page-settings .settings-tabs .mat-mdc-tab-header.mat-mdc-tab-header {
+  --settings-rule-weight: 3px;
+  /* Style as well as width and colour, and `!important` on all three. The page
+     states this border inside a `::ng-deep` selector, which a browser drops as
+     an unknown pseudo-element; where that happens the element has no border
+     style at all, and a width on its own then draws nothing. Stating the style
+     here means the line is this theme's either way. */
+  border-bottom-style: solid !important;
+  border-bottom-width: var(--settings-rule-weight) !important;
+  border-bottom-color: var(--separator) !important;
+}
+
+/* The bar under a section heading goes, everywhere and in both modes:
+   "Overdue" and the rest in the work view, and the section headings on the
+   Settings page with it. A heading that already reads as a heading does not
+   need a rule under it as well, and these run the full width of the column,
+   which is more line than anything else on the page carries.
+
+   Every view that draws one states the border itself, at three classes
+   apiece: the work view as `border-bottom` on an expanded header, Settings as
+   `border-color` on the same. The class is stated twice and anchored on
+   `body` to outrank both, and both properties are cleared. Colour only, so
+   the 2px the header reserves stays and the heading does not shift when a
+   section opens. */
+body collapsible.isExpanded .collapsible-header.collapsible-header {
+  border-color: transparent;
+  border-bottom-color: transparent;
 }
 
 /* ============================================================
@@ -728,21 +854,21 @@ body.isDarkTheme {
 }
 
 /* A tooltip is the one panel that should not match the page: it reads as a
-   label on top of the interface. Zinc ink in light mode, a lifted purple in
+   label on top of the interface. Dark ink in light mode, a lifted blue-grey in
    dark mode — themed either way, never grey. */
 body:not(.isDarkTheme) {
-  --panel-shadow: 0 4px 16px rgba(9, 9, 11, 0.12);
-  --mat-tooltip-container-color: #18181b;
+  --panel-shadow: 0 4px 16px rgba(38, 43, 58, 0.14);
+  --mat-tooltip-container-color: #262b3a;
   --mat-tooltip-supporting-text-color: #ffffff;
-  --mdc-plain-tooltip-container-color: #18181b;
+  --mdc-plain-tooltip-container-color: #262b3a;
   --mdc-plain-tooltip-supporting-text-color: #ffffff;
 }
 
 body.isDarkTheme {
   --panel-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-  --mat-tooltip-container-color: #2f2c5c;
+  --mat-tooltip-container-color: #292e42;
   --mat-tooltip-supporting-text-color: #ffffff;
-  --mdc-plain-tooltip-container-color: #2f2c5c;
+  --mdc-plain-tooltip-container-color: #292e42;
   --mdc-plain-tooltip-supporting-text-color: #ffffff;
 }
 
@@ -1334,6 +1460,15 @@ body {
   --action-bar-scale: 0.85;
   /* Non-primary actions stay visible but recede until the rail is used. */
   --action-bar-idle-opacity: 0.25;
+  /* The colour those dimmed buttons come out at: the app's muted ink at the
+     opacity above, flattened onto the chrome surface they stand on. The play
+     button borrows it while it is disabled, so a control that cannot even be
+     hovered reads as quiet as the ones beside it. */
+  --play-icon-ink-idle: color-mix(
+    in srgb,
+    var(--ink-muted) calc(var(--action-bar-idle-opacity) * 100%),
+    var(--surface-0)
+  );
   /* The time-tracking button is the one control in that strip you reach for
      while working, so it carries a size of its own rather than a scale. The
      app draws it at 40px. */
@@ -1403,25 +1538,102 @@ body > nav.action-nav-right .play-btn mat-icon {
 }
 
 /* The glyph inside the play button. Material fills a fab's icon with the
-   primary palette's contrast colour, which is the ink these themes put on a
-   salmon or blue fill; `--play-icon-ink` lets a palette name a different one
-   without touching the contrast token, which every other filled button reads
-   too. Unset by default, so the app's own choice stands.
+   primary palette's contrast colour, which the app computes from whatever
+   project colour fills it; `--play-icon-ink` lets a palette name a different
+   one without touching the contrast token, which every other filled button
+   reads too. Each half names its own: the labels of the left menu in light
+   mode, and in dark the colour the dimmed buttons along the strip come out at.
+
+   While the button is idle — no current task, so the app disables it — the
+   glyph takes `--play-icon-ink-idle`, the colour the dimmed buttons along the
+   strip come out at, and the circle under it is cleared away in the rule
+   below. What is left reads as one of those buttons, which is what a control
+   you cannot press or even hover has become.
 
    No `body >` prefix, unlike the sizing above: that prefix matches only the
    experimental vertical rail, which the app teleports to the end of body. The
    colour is worth having in the horizontal header as well, where the same nav
    sits inside a wrapper. */
-nav.action-nav-right button.play-btn .mat-icon {
+nav.action-nav-right
+  button.play-btn:not(:disabled):not(.mat-mdc-button-disabled)
+  .mat-icon {
   color: var(--play-icon-ink, inherit);
 }
 
+nav.action-nav-right
+  button.play-btn:is(:disabled, .mat-mdc-button-disabled)
+  .mat-icon {
+  color: var(--play-icon-ink-idle);
+}
+
+/* The disc, and the ring that pulses on it while the clock runs. Both are
+   painted from `--play-button-bg` rather than from the palette, so neither
+   follows the project, tag, My Day or Inbox you are in. Material states the
+   container under two names across versions and the app fills the element as
+   well, so all three are named. */
+nav.action-nav-right button.play-btn {
+  --mat-fab-small-container-color: var(--play-button-bg);
+  --mdc-fab-small-container-color: var(--play-button-bg);
+  background-color: var(--play-button-bg);
+}
+
+
+/* Add task the same way: the app gives it `color="primary"`, which Material
+   draws in the work context's colour. Body ink instead, in every state. */
+nav.action-nav-right button.tour-addBtn {
+  color: var(--text-color);
+  --mat-icon-button-icon-color: var(--text-color);
+  --mdc-icon-button-icon-color: var(--text-color);
+}
+
+/* And the circle under it goes. With no task to start the button cannot be
+   pressed or even hovered, so the filled disc is a target that is not there;
+   what is left is a glyph in the same ink as the dimmed buttons along the
+   strip, which is what the control has become. Material's disabled container
+   colour, the fill it paints underneath and the elevation the app puts on the
+   button are all cleared — a shadow around nothing reads worse than the disc
+   did. The button keeps its size, so nothing in the strip moves. */
+nav.action-nav-right button.play-btn:is(:disabled, .mat-mdc-button-disabled) {
+  --mat-fab-small-disabled-state-container-color: transparent;
+  --mdc-fab-small-container-color: transparent;
+  --mat-fab-small-container-color: transparent;
+  background-color: transparent;
+  box-shadow: none;
+}
+
+/* Its hover, in any state. The app gives Add task `color="primary"`, so
+   Material draws both the glyph and the state layer of a coloured icon button
+   in the work context's colour. The buttons further along the strip are
+   uncoloured and get Material's own neutral wash; Add task is given the same
+   two values, stated per mode because that is how Material states them — near
+   black on a light page, white on a dark one.
+
+   Specificity is the whole point of the shape of these selectors. The dark
+   half of the app's own rule is `.isDarkTheme .mat-mdc-icon-button.mat-primary`,
+   three classes deep, so a selector of two classes and an element loses to it
+   and the project's colour stays. Anchoring on `body` and stating the class
+   twice puts these above it in both halves. */
+body:not(.isDarkTheme) nav.action-nav-right button.tour-addBtn.tour-addBtn {
+  --mat-icon-button-state-layer-color: rgba(0, 0, 0, 0.87);
+  --mdc-icon-button-state-layer-color: rgba(0, 0, 0, 0.87);
+  --mat-icon-button-ripple-color: rgba(0, 0, 0, 0.1);
+}
+
+body.isDarkTheme nav.action-nav-right button.tour-addBtn.tour-addBtn {
+  --mat-icon-button-state-layer-color: #ffffff;
+  --mdc-icon-button-state-layer-color: #ffffff;
+  --mat-icon-button-ripple-color: rgba(255, 255, 255, 0.1);
+}
+
 /* The ring that pulses behind the button while time runs is drawn at a fixed
-   42px, sized for the button the app ships. Keep it just inside the circle. */
+   42px, sized for the button the app ships. Keep it just inside the circle, and
+   paint it from the theme rather than from the accent, which is the work
+   context's colour. */
 body > nav.action-nav-right .play-btn-wrapper .pulse-circle {
   width: calc(var(--play-button-size) - 4px);
   height: calc(var(--play-button-size) - 4px);
   left: 0;
+  background: var(--play-button-bg);
 }
 
 /* The play button is the one control in this strip that never dims, and the
@@ -1828,28 +2040,6 @@ magic-side-nav
   color: var(--sidenav-text) !important;
 }
 
-/* The line under the tabs on the Settings page runs the full width of the
-   view. The page pads itself by `--s`, and by `--s2` from the 600px breakpoint
-   up, so the tab header — and that line with it — stops short of the content on
-   both sides. The header is pulled back out by exactly that padding and given
-   it back as its own, so the tabs stay where they were and only the rule
-   grows. Colour and weight are the app's own here. */
-.page-settings .settings-tabs .mat-mdc-tab-header.mat-mdc-tab-header {
-  margin-left: calc(-1 * var(--s));
-  margin-right: calc(-1 * var(--s));
-  padding-left: var(--s);
-  padding-right: var(--s);
-}
-
-@media screen and (min-width: 600px) {
-  .page-settings .settings-tabs .mat-mdc-tab-header.mat-mdc-tab-header {
-    margin-left: calc(-1 * var(--s2));
-    margin-right: calc(-1 * var(--s2));
-    padding-left: var(--s2);
-    padding-right: var(--s2);
-  }
-}
-
 /* A tab is marked by a line, not by a shape. The Settings page rounds a tab's
    top corners and fills the selected one with `--state-selected`, which puts a
    slab behind the label that is round along the top and cut off flat against
@@ -1896,6 +2086,49 @@ magic-side-nav
 .mat-mdc-tab .mdc-tab-indicator__content--underline,
 .mat-mdc-tab-link .mdc-tab-indicator__content--underline {
   border-radius: 0;
+}
+
+/* On the Settings page the selected tab's line and the rule under the whole
+   header sat one above the other, two parallel lines a few pixels apart. The
+   indicator is moved down onto the rule and drawn at the same weight, so the
+   selected tab marks itself by colouring that stretch of the rule rather than
+   by adding a second line beside it. Both modes.
+
+   Moved by `top` on a relatively positioned element rather than by a
+   transform: the component slides the indicator between tabs with an inline
+   `transform`, and an inline style beats a stylesheet, so a transform here
+   would either be ignored or, forced through, break that slide. */
+.page-settings .settings-tabs .mat-mdc-tab .mdc-tab-indicator__content--underline {
+  border-top-width: var(--settings-rule-weight, 3px);
+  position: relative;
+  top: var(--settings-rule-weight, 3px);
+}
+/* And in dark mode the label above it stays where it was. The app lifts a
+   selected tab's text to `--text-color-most-intense` while the others sit at
+   `--text-color-less-intense`, which on these surfaces reads as a second mark
+   on top of the indicator that already says which tab is open. Light mode
+   keeps the app's own lift.
+
+   Two token families and a rule, because two stylesheets paint this label at
+   the same weight and which of them wins depends on the order they are loaded
+   in: the app states `color` from `--mat-tab-header-*`, its own names, while
+   the Material build under it uses `--mat-tab-active-*`. Both are set, and the
+   colour is stated outright at five classes deep so neither can decide it. */
+body.isDarkTheme .page-settings .settings-tabs {
+  --mat-tab-header-active-label-text-color: var(--text-color-less-intense);
+  --mat-tab-header-active-focus-label-text-color: var(--text-color-less-intense);
+  --mat-tab-header-active-hover-label-text-color: var(--text-color-less-intense);
+  --mat-tab-active-label-text-color: var(--text-color-less-intense);
+  --mat-tab-active-focus-label-text-color: var(--text-color-less-intense);
+  --mat-tab-active-hover-label-text-color: var(--text-color-less-intense);
+}
+
+body.isDarkTheme
+  .page-settings
+  .settings-tabs
+  .mdc-tab--active
+  .mdc-tab__text-label {
+  color: var(--text-color-less-intense);
 }
 
 /* The buttons keep the size the app gives them; only the hover layer is
@@ -2075,21 +2308,30 @@ config-page plugin-management .info-card .warning-icon {
  * size, which makes them read as heavy as the task title beside them. Both
  * step down slightly. Play also takes the accent instead of body ink: it is
  * the one action in the row that starts something, and colour marks it faster
- * than position does. `--c-primary` is the theme's own accent — Claude salmon
- * in the purple themes, Tokyo Night's blue in the night variant — so each
- * theme stays in its own palette. Hard-code a colour here to override that.
+ * than position does. `--palette-primary-500` is the colour Super Productivity
+ * writes for the project or tag you are in, so the row's play control matches
+ * the big one in the action bar. Hard-code a colour here to override that.
  *
  * The colour rule deliberately drops the `task` ancestor: the same button is
  * rendered by a child component and also appears in the context menu, and the
- * scoped version simply never matched. The big play button in the right-hand
- * action bar is left out — it is a filled salmon circle, and a salmon glyph on
- * it would vanish. `!important` is needed twice over: Material paints icon
- * buttons through `--mdc-icon-button-icon-color`, not through `color`. */
+ * scoped version simply never matched. The pause button a running row shows in
+ * its place is covered too: the app gives that one `color="accent"`, which the
+ * block above mirrors onto the primary, and it is named here as well so the
+ * two states cannot drift. The big play button in the right-hand action bar is
+ * left out — it is a filled circle in that same colour, and a glyph in it
+ * would vanish. `!important` is needed twice over: Material paints icon
+ * buttons through a token rather than through `color`, and it has carried two
+ * names across versions, so both are set. */
 .start-task-btn,
 .start-task-btn .mat-icon,
-.play-icon {
+.play-icon,
+.play-icon-indicator,
+.play-icon-indicator .mat-icon,
+task .ico-btn.mat-accent,
+task .ico-btn.mat-accent .mat-icon {
   color: var(--palette-primary-500) !important;
   --mdc-icon-button-icon-color: var(--palette-primary-500) !important;
+  --mat-icon-button-icon-color: var(--palette-primary-500) !important;
   fill: currentColor;
 }
 
@@ -2368,15 +2610,16 @@ body.isDarkTheme {
  * Accent, selection and the done row
  * ---------------------------------------------------------------------------
  * `--c-primary` is declared at `:root`, where it reads the palette the app
- * writes onto the `<html>` element from its own settings rather than this
- * theme's ladders, which live on `body`. Restating it on `body` looks like the
- * obvious fix, and it is a trap: the app paints the page itself from it —
+ * writes onto the `<html>` element for the project or tag you are in. This
+ * theme states no ladder of its own on `body`, so that colour reaches the
+ * rules below unchanged. Restating `--c-primary` on `body` is still a trap:
+ * the app paints the page itself from it —
  *
  *   body.isDarkTheme::before { background:
  *     radial-gradient(… color-mix(in srgb, var(--c-primary) 10%, transparent) …),
  *     linear-gradient(… color-mix(in srgb, var(--c-primary) 4%, transparent) …) }
  *
- * so the whole background picked up a salmon haze. The glyph accents below
+ * so a value set there washes the whole background. The glyph accents below
  * therefore name `--palette-primary-500` directly, which tints exactly what it
  * is written on and leaves the page to the app. */
 
@@ -2478,9 +2721,9 @@ done-toggle .done-check {
  *
  * The running task is the one state the app tints from the accent:
  * `--task-c-current-bg` is `color-mix(in srgb, var(--c-accent) 10%,
- * var(--surface-2))`, and with this theme's accent that comes out salmon. It
- * is restated here in the theme's own violet, which keeps a running task
- * clearly marked without borrowing the accent for a surface. */
+ * var(--surface-2))`, so the row would change hue with every project. It is
+ * restated here in muted ink, which keeps a running task clearly marked
+ * without borrowing the accent for a surface. */
 body,
 body.isDarkTheme {
   --task-c-current-bg: color-mix(in srgb, var(--ink-muted) 12%, var(--surface-2));
@@ -2529,9 +2772,9 @@ task.isSelected .first-line {
 }
 
 /* A focused row — what you get when you select a task with the detail panel
-   closed — is bordered in `--palette-primary-400` by the component, this
-   theme's salmon. Selection changes nothing here, so it takes the resting
-   hairline; hover below is the only state that marks a row. */
+   closed — is bordered in `--palette-primary-400` by the component, the colour
+   of the project you are in. Selection changes nothing here, so it takes the
+   resting hairline; hover below is the only state that marks a row. */
 task:focus .box.box,
 task:focus .inner-wrapper > .box {
   border-color: var(--separator) !important;

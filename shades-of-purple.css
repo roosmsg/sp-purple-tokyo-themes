@@ -1,11 +1,12 @@
 /**
- * Paper Purple — a light/dark pair for Super Productivity
+ * Shades of Purple — a light/dark pair for Super Productivity
  *
- *   Light — Licht: Personal Work Manager's neutral light, white and near-white
- *           surfaces on a zinc ink ramp, with Claude salmon as the accent —
- *           the accent the dark half carries, so it survives a mode switch.
- *   Dark  — Shades of Purple (Super Dark): deep indigo surfaces, white text,
- *           a muted violet for supporting text, Claude salmon as the accent.
+ *   Light — Shades of Purple: the editor theme's own indigo surfaces, white
+ *           text, a muted violet for supporting text, Claude salmon as the
+ *           accent. A dark palette in the light slot, deliberately: it is the
+ *           lighter of the two purples, not a light theme.
+ *   Dark  — Shades of Purple (Super Dark): the same family taken deeper —
+ *           near-black indigo surfaces, the same white text and salmon accent.
  *
  * Both halves are the palettes used in Personal Work Manager, remapped onto
  * Super Productivity's token contract (docs/theming-contract.md): the surface
@@ -14,9 +15,9 @@
  * remaining declarations cover the "category B" tokens, which the base pins to
  * a neutral grey ramp that the ladder does not reach.
  *
- * Selectors: light primitives sit on `body:not(.isDarkTheme)` rather than plain
- * `body`, so nothing declared for light can leak into dark mode. Both selectors
- * outrank the base's `body` declarations.
+ * Selectors: the first block sits on `body:not(.isDarkTheme)` rather than plain
+ * `body`, so nothing declared for the light slot can leak into the dark one.
+ * Both selectors outrank the base's `body` declarations.
  *
  * Card surfaces: as in PWM, cards and task rows sit a step *below* the page
  * rather than above it. Hover, current and selected states step up, so
@@ -29,35 +30,30 @@
  */
 
 /* ============================================================
- * LIGHT — Licht
+ * LIGHT SLOT — Shades of Purple
  * ============================================================ */
 body:not(.isDarkTheme) {
   /* Surface ladder: chrome → page → cards → elevated → highest */
-  --surface-0: #f5f5f5; /* deepest: toolbars, side nav (PWM --color-bg-background) */
-  --surface-1: #ffffff; /* app background (PWM --color-bg-primary) */
-  --surface-2: #fcfcfc; /* cards, tasks, dialogs (PWM --color-bg-secondary) */
-  --surface-3: #eeeeef; /* elevated: current task, drag-drop targets */
-  --surface-4: #e1e1e3; /* highest: banner, mobile bottom panel */
+  --surface-0: #1e1e3f; /* deepest: toolbars, side nav (PWM --color-bg-background) */
+  --surface-1: #2d2b55; /* app background (PWM --color-bg-primary) */
+  --surface-2: #222244; /* cards, tasks, dialogs (PWM --color-bg-secondary) */
+  --surface-3: #3a3768; /* elevated: current task, drag-drop targets */
+  --surface-4: #4a4585; /* highest: banner, mobile bottom panel */
 
-  /* Ink */
-  --ink-strong: #09090b;
-  --ink: #18181b; /* PWM --color-text-primary */
-  /* PWM's tertiary text (#57575c) clears AA on white; kept as is. */
-  --ink-muted: #57575c;
-  --ink-on-channel: 24, 24, 27; /* #18181b — overlays read zinc, not pure black */
+  /* Ink — white body text, violet for supporting text, as in the editor theme */
+  --ink-strong: #ffffff;
+  --ink: #ffffff;
+  --ink-muted: #a599e9; /* PWM --color-text-secondary */
+  --ink-on-channel: 255, 255, 255;
 
   /* Separators, scrim, overlays */
-  --separator: #dfdfdf; /* PWM --color-border-tertiary */
-  --divider: #e5e5e5; /* PWM --color-border-secondary */
-  --scrim: rgba(9, 9, 11, 0.45);
-  --bg-overlay: rgba(255, 255, 255, 0.85);
-  --system-surface: #f5f5f5; /* Android system bars; must stay opaque */
+  --separator: #3e3a72; /* PWM --color-border-tertiary */
+  --divider: #34305f; /* PWM --color-border-secondary */
+  --scrim: rgba(15, 15, 31, 0.7);
+  --bg-overlay: rgba(45, 43, 85, 0.85);
+  --system-surface: #1e1e3f; /* Android system bars; must stay opaque */
 
-  /* Primary — Claude salmon, the same ladder the dark half carries, so the
-     accent holds its hue across a mode switch. PWM's neutral light theme puts
-     sky blue here; salmon at 500 sits at 3.1:1 on the white page, a step
-     stronger than that blue's 2.6:1 and past the 3:1 a control or a glyph
-     needs. Text is a different threshold, which --link-color below answers. */
+  /* Primary — Claude salmon (PWM --color-accent-*) */
   --palette-primary-50: #fdf2ee;
   --palette-primary-100: #f7e4dc;
   --palette-primary-200: #f2cdbf;
@@ -68,80 +64,80 @@ body:not(.isDarkTheme) {
   --palette-primary-700: #a85336;
   --palette-primary-800: #85422b;
   --palette-primary-900: #6b3623;
-  /* Salmon stays light enough to carry the zinc ink through 600 (4.5:1);
-     white takes over at 700, where the ink falls to 3.3:1 and white is 5.3:1. */
-  --palette-primary-contrast-50: #18181b;
-  --palette-primary-contrast-100: #18181b;
-  --palette-primary-contrast-200: #18181b;
-  --palette-primary-contrast-300: #18181b;
-  --palette-primary-contrast-400: #18181b;
-  --palette-primary-contrast-500: #18181b;
-  --palette-primary-contrast-600: #18181b;
+  /* Salmon stays light enough to carry dark text through 600. */
+  --palette-primary-contrast-50: #1e1e3f;
+  --palette-primary-contrast-100: #1e1e3f;
+  --palette-primary-contrast-200: #1e1e3f;
+  --palette-primary-contrast-300: #1e1e3f;
+  --palette-primary-contrast-400: #1e1e3f;
+  --palette-primary-contrast-500: #1e1e3f;
+  --palette-primary-contrast-600: #1e1e3f;
   --palette-primary-contrast-700: #ffffff;
   --palette-primary-contrast-800: #ffffff;
   --palette-primary-contrast-900: #ffffff;
 
-  /* Warn — red, at the strength a white page needs */
-  --palette-warn-300: #fca5a5;
-  --palette-warn-400: #f87171;
-  --palette-warn-500: #dc2626;
-  --palette-warn-600: #b91c1c;
-  --palette-warn-700: #991b1b;
-  --palette-warn-contrast-300: #18181b;
-  --palette-warn-contrast-400: #18181b;
-  --palette-warn-contrast-500: #ffffff;
+  /* Warn — Shades of Purple pink */
+  --palette-warn-300: #ffa3ba;
+  --palette-warn-400: #ff83a3;
+  --palette-warn-500: #ff628c;
+  --palette-warn-600: #e04d76;
+  --palette-warn-700: #b93b5e;
+  --palette-warn-contrast-300: #1e1e3f;
+  --palette-warn-contrast-400: #1e1e3f;
+  --palette-warn-contrast-500: #1e1e3f;
   --palette-warn-contrast-600: #ffffff;
   --palette-warn-contrast-700: #ffffff;
 
-  /* Status — readable on white */
-  --color-success: #15803d;
-  --color-warning: #b45309;
-  --color-danger: #b91c1c;
-  --c-success: #15803d;
-  --c-warning: #b45309;
-  --c-error: #b91c1c;
-  --c-info: #0369a1;
-  --sun-yellow: #b45309;
+  /* Status — Shades of Purple */
+  --color-success: #3ad900;
+  --color-warning: #fad000;
+  --color-danger: #ff628c;
+  --c-success: #3ad900;
+  --c-warning: #fad000;
+  --c-error: #ff628c;
+  --c-info: #9effff;
+  --sun-yellow: #fad000;
 
-  /* Links carry the accent instead of the base's ink mix, at the 700 stop:
-     salmon 500 is a fill colour here and reaches only 3.1:1 on the page, where
-     a run of text needs 4.5:1. The 700 clears it at 5.3:1. */
-  --link-color: #a85336;
+  /* Links carry the accent at full strength instead of the base's ink mix. */
+  --link-color: #e08e70;
 
-  /* The play button in the action bar carries a white glyph rather than the
-     ink the rest of the salmon fills take: it is a 23px mark on a 46px circle,
-     read as a symbol rather than as a label, and white at 3.1:1 on the salmon
-     clears the 3:1 that size of graphic needs. Light mode only — the dark half
-     keeps the ink the app puts there. */
-  --play-icon-ink: #ffffff;
-
-  /* --- Category B: tokens the base hardcodes to white or neutral grey --- */
-  --bg-drag-col: #eeeeef;
-  --bg-super-light: #fafafa;
-  --right-panel-bg-mobile: #fcfcfc;
-  --bottom-panel-bg: #fcfcfc;
-  --selected-task-bg-color: #eeeeef;
-  --task-c-selected-bg: #eeeeef;
-  --extra-border-color: #e5e5e5;
-  --standard-note-bg: #fafafa; /* notes lift off the page like paper */
-  --standard-note-bg-hovered: #f2f2f3;
-  --standard-note-fg: var(--ink);
-  --task-detail-bg: #fcfcfc;
-  --task-detail-bg-hover: #eeeeef;
-  --schedule-event-bg: #fafafa;
-  --sidenav-hover-bg: rgba(24, 24, 27, 0.06);
-  --scrollbar-thumb: rgba(24, 24, 27, 0.25);
-  --scrollbar-thumb-hover: rgba(24, 24, 27, 0.45);
+  /* --- Category B: tokens the base pins to white or a neutral grey ramp --- */
+  --bg-slightly-lighter: #34305f;
+  --bg-super-light: #4a4585;
+  --bg-drag-col: #3a3768;
+  --right-panel-bg-mobile: #222244;
+  --bottom-panel-bg: #1e1e3f;
+  --text-color-less-intense: rgba(255, 255, 255, 0.82);
+  --text-color-more-intense: #ffffff;
+  --selected-task-bg-color: #3a3768;
+  --task-c-selected-bg: #3a3768;
+  --sub-task-c-bg: #272550; /* nested rows lift off the card */
+  --sub-task-c-bg-in-selected: #3a3768;
+  --sub-task-c-bg-done: #1e1e3f;
+  --task-c-bg-done: #1e1e3f;
+  --extra-border-color: #3e3a72;
+  --standard-note-bg: #272550;
+  --standard-note-bg-hovered: #3a3768;
+  --standard-note-fg: #ffffff;
+  --task-detail-bg: #272550;
+  --task-detail-bg-hover: #3a3768;
+  --schedule-event-bg: #34305f;
+  --schedule-event-bg-in-side-panel: #3a3768;
+  --sidenav-hover-bg: rgba(165, 153, 233, 0.09);
+  --sidenav-item-active-bg: rgba(217, 119, 87, 0.2);
+  --mat-sidenav-scrim-color: rgba(15, 15, 31, 0.75);
+  --scrollbar-thumb: rgba(165, 153, 233, 0.22);
+  --scrollbar-thumb-hover: rgba(165, 153, 233, 0.45);
   --scrollbar-track: transparent;
-  --grid-color: #e7e7e7;
-  --chip-outline-color: rgba(24, 24, 27, 0.22);
-  --progress-bg: rgba(24, 24, 27, 0.1);
-  --improvement-text: var(--ink);
-  --improvement-button-text: var(--ink);
-  --improvement-border: rgba(24, 24, 27, 0.22);
+  --grid-color: rgba(165, 153, 233, 0.1);
+  --chip-outline-color: rgba(165, 153, 233, 0.3);
+  --progress-bg: rgba(165, 153, 233, 0.16);
+  --improvement-text: #ffffff;
+  --improvement-button-text: #ffffff;
+  --improvement-border: rgba(165, 153, 233, 0.3);
 
   /* Text selection */
-  --theme-selection-bg: rgba(217, 119, 87, 0.2);
+  --theme-selection-bg: rgba(217, 119, 87, 0.28);
 }
 
 /* ============================================================
@@ -306,8 +302,8 @@ body:not(.isDarkTheme)::before {
  * nav transparent so a wallpaper can show through; delete these two rules to
  * get that behaviour back. */
 body:not(.isDarkTheme) {
-  --sidenav-bg: #f5f5f5;
-  --sidenav-bg-mobile: #f5f5f5;
+  --sidenav-bg: #1e1e3f;
+  --sidenav-bg-mobile: #1e1e3f;
 }
 
 /* Electron draws the functional minimise, maximise and close controls itself.
@@ -386,7 +382,7 @@ body.isDarkTheme {
 /* The gutter behind the app (overscroll, iOS safe areas) is pinned to a neutral
    grey by the base; match it to the page instead. */
 html:has(body:not(.isDarkTheme)) {
-  background: #ffffff;
+  background: #2d2b55;
 }
 
 html:has(body.isDarkTheme) {
@@ -728,13 +724,14 @@ body.isDarkTheme {
 }
 
 /* A tooltip is the one panel that should not match the page: it reads as a
-   label on top of the interface. Zinc ink in light mode, a lifted purple in
-   dark mode — themed either way, never grey. */
+   label on top of the interface. A lifted indigo in the light slot, the
+   deeper indigo of the dark half — themed either way, never the Material
+   default. */
 body:not(.isDarkTheme) {
-  --panel-shadow: 0 4px 16px rgba(9, 9, 11, 0.12);
-  --mat-tooltip-container-color: #18181b;
+  --panel-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --mat-tooltip-container-color: #4a4585;
   --mat-tooltip-supporting-text-color: #ffffff;
-  --mdc-plain-tooltip-container-color: #18181b;
+  --mdc-plain-tooltip-container-color: #4a4585;
   --mdc-plain-tooltip-supporting-text-color: #ffffff;
 }
 
