@@ -329,7 +329,10 @@ body:has(.page-settings, schedule, scheduled-list-page, search-page, .route-wrap
    or `null` — and the theme reads that: the picture, the veil over it and the
    floor beneath are hidden, and every rule in this file that keys on the
    app's `hasBgImage` class is guarded with the same test, so the view is
-   styled as it would be without a picture. The attribute match is on the
+   styled as it would be without a picture. The one exception is the rail's own
+   surface: the app frosts the rail whenever the class is set, placeholder or
+   not, and a frosted rail lets the page glow through — so the rule that gives
+   the rail back its opaque surface holds in both cases. The attribute match is on the
    serialised URL with its closing quote, so a real address that merely begins
    with `https://` is not caught. */
 body:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")']) .bg-image,
@@ -426,7 +429,11 @@ body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen)::after {
    for the panel to sit beside the list rather than over it. Everywhere else the
    rule does not apply and nothing moves. */
 body {
-  --detail-panel-top-gap: calc(var(--window-controls-height) + var(--s-half, 4px));
+  /* Rounded to a whole pixel: the window-controls height comes from the
+     platform and is not always whole, and a panel that starts on a fraction
+     puts every card in it on a fraction, where a rounded card's edges are
+     drawn soft — a second, faint line at every join. */
+  --detail-panel-top-gap: round(calc(var(--window-controls-height) + var(--s-half, 4px)), 1px);
 }
 
 @media screen and (min-width: 600px) {
@@ -450,17 +457,29 @@ body.isDarkTheme {
    surface already says where the panel starts. Both sides are named because
    a narrow window moves the edge to the other side. */
 right-panel .side.side {
-  background: var(--sidenav-bg);
+  background: var(--detail-panel-bg);
   border-left-width: 0 !important;
   border-right-width: 0 !important;
 }
 
-/* Without a picture the panel steps up instead of down. Beside a veiled photo
-   the rail's grey reads as a light column; beside the plain page, which is
-   lighter than that grey, the same panel read as a dark strip. So where there
-   is no picture — none set, or a placeholder — the panel takes
-   `--detail-panel-bg`, one step lighter than the page, and the cards inside
-   keep their own step above that. */
+/* The rail reaches one pixel into the content. The content column ends on
+   the rail's edge, and that edge falls on a fraction of a pixel (the screen
+   scale here is not a whole number): the last column of the panel is drawn
+   half-covered, a blend of panel and page, and the rail — snapped to the
+   next whole pixel — starts just past it. That blend was the dark line
+   between panel and rail in every theme, seam or no seam. One pixel wider,
+   the rail covers it; the rail stands above the panel, so nothing else
+   changes. */
+body.isVerticalActionBar > nav.action-nav-right.action-nav-right--teleported {
+  width: calc(var(--vertical-action-bar-width) + 1px) !important;
+}
+
+/* The panel has a surface of its own, `--detail-panel-bg`, one step lighter
+   than the page, in every mode — picture or not. It used to take the rail's
+   colour beside a picture, and then the strip of panel between the last
+   card and the rail read as the rail reaching in, with the rail's seam
+   standing 8px away from the cards like a gap; on its own surface that
+   strip is plainly the panel's margin and the seam is the rail's edge. */
 body {
   --detail-panel-bg: #f5f5f5;
 }
@@ -469,9 +488,13 @@ body.isDarkTheme {
   --detail-panel-bg: #1e1d3a;
 }
 
-body:not(.hasBgImage) right-panel .side.side,
-body.hasBgImage:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")']) right-panel .side.side {
-  background: var(--detail-panel-bg);
+/* Flush against the rail. Measured, the panel ended a pixel short of the
+   rail's edge — the content box rounds down where the rail's width rounds
+   up — and that pixel showed as a hairline of page between the two. The
+   panel reaches one pixel further; where there is no rail nothing changes,
+   since the panel then meets the window edge. */
+body.isVerticalActionBar right-panel .side.side {
+  margin-right: -2px; /* two: at a screen scale that is not a whole number, one pixel still left a sliver */
 }
 
 /* With a picture behind the app the rail keeps its own surface. The app turns
@@ -483,9 +506,9 @@ body.hasBgImage:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhos
    join. The rail is named three ways because the element is `nav.nav-sidenav`
    inside `magic-side-nav` on this build, and a build that renames one of the
    two still matches one of the other forms. */
-body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) magic-side-nav .nav-sidenav,
-body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) magic-side-nav > nav,
-body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) .nav-sidenav {
+body.hasBgImage magic-side-nav .nav-sidenav,
+body.hasBgImage magic-side-nav > nav,
+body.hasBgImage .nav-sidenav {
   background: var(--sidenav-bg) !important;
   backdrop-filter: none !important;
   box-shadow: none !important;
@@ -1084,9 +1107,8 @@ body.isDarkTheme {
   --schedule-panel-icon: 'pending_actions';
 }
 
-/* Covered: the "Voeg toe aan Mijn Day" button on Today, the add-to-today
-   control that appears when hovering a task row, the today button on the
-   Timeline, the "plan what is left of today" button on the day summary, the
+/* Covered: the "Voeg toe aan Mijn Day" button on Today, the today button on
+   the Timeline, the "plan what is left of today" button on the day summary, the
    today shortcut in the date picker.
 
    My Day's row in the rail is deliberately not here. It was, matched by
@@ -1096,14 +1118,14 @@ body.isDarkTheme {
    says, so there is no honest selector for it. The Lucide plugin maps the sun
    to a bolt instead, which reaches the row by name rather than by guessing at
    its position; failing that, the icon can be changed on the Today tag inside
-   the app. Each of these sits in a container where the sun is the only
+   the app. The add-to-today control on a hovered task row keeps the app's own
+   sun as well. Each of these sits in a container where the sun is the only
    icon, so the swap cannot reach a neighbour by accident — the plan-tomorrow
    one is pinned to its outlined button, because that tab also holds an
    add-task bar whose icons the bare component selector swept up. The second selector keys off the Dutch button title, so it follows
    the interface language — with the app in another language that line needs
    the string from that language. */
 .overdue-btn-wrapper button mat-icon,
-[title^='Voeg toe aan Mijn Day'] mat-icon,
 .today-btn mat-icon,
 plan-tasks-tomorrow .mat-mdc-outlined-button mat-icon,
 .quick-access > button:first-of-type mat-icon {
@@ -1116,7 +1138,6 @@ plan-tasks-tomorrow .mat-mdc-outlined-button mat-icon,
    which would drop the glyph past the bottom edge — and the icon clips what
    overflows, so it would simply be gone. */
 .overdue-btn-wrapper button mat-icon::after,
-[title^='Voeg toe aan Mijn Day'] mat-icon::after,
 .today-btn mat-icon::after,
 plan-tasks-tomorrow .mat-mdc-outlined-button mat-icon::after,
 .quick-access > button:first-of-type mat-icon::after {
@@ -1601,13 +1622,23 @@ work-view .status-bar .item:first-child .mat-icon {
 body {
   --detail-card-bg: #ffffff;
   --detail-card-bg-hover: #f0f0f3; /* a clear step down from the card, not a step up to white that nobody saw */
-  --detail-card-shadow: 0 1px 2px rgba(38, 43, 58, 0.08); /* the shadow alone: a ring of 1px around each card read as a border, and between two joined cards as a second line */
+  /* The shadow reaches down only: offset no smaller than the blur, so it
+     casts nothing upward onto the card above at a join — a blur that
+     reached up 2px was the soft line over the last card of a group. */
+  --detail-card-shadow: 0 2px 2px rgba(38, 43, 58, 0.08);
   --detail-card-join: color-mix(in srgb, var(--divider) 70%, transparent);
+  /* The join as drawn: a flat line in the join colour, inset from both
+     edges, the same under every card and between the steps. */
+  --detail-card-join-gradient: linear-gradient(var(--detail-card-join), var(--detail-card-join));
   /* The join between two fields starts at the side padding, flush with the
      glyph. */
   --detail-card-join-inset: var(--detail-card-pad);
   --detail-card-radius: 6px;
   --detail-card-pad: 14px;
+  /* The cards' margin to the panel's right edge, where the rail stands: a
+     little less than the 8px on the left, so the cards sit closer to the
+     rail's seam. */
+  --detail-card-margin-right: 8px;
   --task-detail-bg: var(--detail-card-bg);
   --task-detail-bg-hover: var(--detail-card-bg-hover);
 }
@@ -1615,13 +1646,35 @@ body {
 body.isDarkTheme {
   --detail-card-bg: #232144;
   --detail-card-bg-hover: #2a2850;
-  --detail-card-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.45);
+  --detail-card-shadow: 0 3px 3px rgba(0, 0, 0, 0.45);
   /* The join between two cards: a light hairline on the dark surface rather
      than the divider, which read as a black border. */
-  --detail-card-join: rgba(255, 255, 255, 0.06);
+  --detail-card-join: rgba(255, 255, 255, 0.07);
   --task-detail-bg: var(--detail-card-bg);
   --task-detail-bg-hover: var(--detail-card-bg-hover);
+}
+
+/* An issue panel with nothing in its header is not shown. The app renders
+   a panel for any task that carries an issue id, even when the provider
+   gives it no header and its data never arrives — what is left is a bare
+   chevron over an endless indeterminate progress bar, under Deadline. With
+   the header empty there is nothing the panel could tell; it goes. */
+task-detail-panel task-detail-item:has(.mat-expansion-panel-header issue-header:empty) {
+  display: none;
+}
+
+/* No borders of Material's own anywhere in a card. The expansion panels
+   carry edges between header, body and neighbour that showed as dark lines
+   in dark mode where the fields showed none; every one of them goes, and
+   the join gradient is the only line between two cards. */
+task-detail-item .mat-expansion-panel,
+task-detail-item .mat-expansion-panel-header,
+task-detail-item .mat-expansion-panel-body,
+task-detail-item .mat-expansion-panel-content,
+task-detail-item .mat-expansion-panel + .mat-expansion-panel,
+task-detail-item .input-item {
+  border: 0 !important;
+  outline: 0 !important;
 }
 
 /* The cards themselves: the field rows and the expansion panels alike. */
@@ -1631,7 +1684,7 @@ task-detail-item .mat-expansion-panel.mat-expansion-panel {
   border: 0;
   border-radius: var(--detail-card-radius);
   box-shadow: var(--detail-card-shadow);
-  margin: var(--s, 8px) var(--s, 8px) 0;
+  margin: var(--s, 8px) var(--detail-card-margin-right) 0 var(--s, 8px);
 }
 
 /* Row height and inner room: the field rows and the panel headers share one
@@ -1641,14 +1694,31 @@ task-detail-item .input-item.input-item {
   padding-inline: var(--detail-card-pad);
 }
 
+/* A single-line field is exactly 52px, not 51.99: measured, the row's text
+   metrics left every card a hundredth short, so each card started on a
+   fraction of a pixel and its 1px join was smeared over two rows — the
+   second, softer line above the real one. A whole height keeps the joins on
+   whole rows. The tag field, which grows with its chips, is left free. */
+task-detail-item .input-item.input-item.standard-size {
+  height: 52px;
+  box-sizing: border-box;
+}
+
 task-detail-item .mat-expansion-panel.mat-expansion-panel .mat-expansion-panel-header {
+  /* A whole 52px, open or closed, for the same reason the fields are: a
+     header a fraction tall puts the card after it on a fraction of a pixel,
+     and a card with a rounded corner is drawn with anti-aliased edges, so
+     its straight top edge came out as a second, softer line above the join
+     — seen under Planned for and Links & Files, whose next cards are the
+     rounded last of their group. */
+  height: 52px;
   min-height: 52px;
-  height: auto;
+  box-sizing: border-box;
   padding-inline: var(--detail-card-pad);
 }
 
 task-detail-item .mat-expansion-panel.mat-expansion-panel .mat-expansion-panel-header.mat-expanded {
-  height: auto;
+  height: 52px;
 }
 
 /* Two field cards that belong together become one: the second loses the gap
@@ -1656,20 +1726,24 @@ task-detail-item .mat-expansion-panel.mat-expansion-panel .mat-expansion-panel-h
    marks the join. Adjacent `input-item` fields only, so a panel between them
    breaks the run. */
 task-detail-item.input-item + task-detail-item.input-item .input-item.input-item {
-  margin-top: 0;
+  margin-top: -1px; /* overlaps the card above by a pixel: see the note at the joins */
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-  /* The join is a short hairline, not a full-width rule: drawn as a
-     background line from the label's left edge to the side padding. */
-  background-image: linear-gradient(var(--detail-card-join), var(--detail-card-join)) !important;
-  background-repeat: no-repeat !important;
-  background-position: var(--detail-card-join-inset) 0 !important;
-  background-size: calc(100% - var(--detail-card-join-inset) - var(--detail-card-pad)) 1px !important;
 }
 
 task-detail-item.input-item:has(+ task-detail-item.input-item) .input-item.input-item {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
+  /* And no shadow: it fell 1px onto the card below and showed through that
+     card's anti-aliased top edge as a second, softer line. The last card of
+     the group casts the shadow for all of them. Measured: with the shadow
+     off, the line was gone. */
+  box-shadow: none;
+}
+
+task-detail-panel .task-title-wrapper.task-title-wrapper:has(+ task-detail-item:not(.input-item)),
+task-detail-item:has(.attachment-list-panel-content-wrapper):has(+ task-detail-item.input-item) .mat-expansion-panel.mat-expansion-panel {
+  box-shadow: none;
 }
 
 /* The notes: an open card, the text straight on it. The app draws the
@@ -1739,6 +1813,8 @@ inline-markdown.isFocused.isFocused .markdown-wrapper.markdown-wrapper {
    reach it, and the join lines above are pinned the same way. */
 task-detail-panel .task-title-wrapper.task-title-wrapper:hover,
 task-detail-item .input-item.input-item.standard-size:hover,
+task-detail-panel .sub-tasks task:hover > swipe-block > .inner-wrapper > .inner-wrapper,
+task-detail-panel .sub-tasks task:hover .inner-wrapper > .inner-wrapper,
 task-detail-item .input-item.input-item.full-size:hover,
 task-detail-item .mat-expansion-panel-header.mat-expansion-panel-header:hover {
   background-color: var(--detail-card-bg-hover) !important;
@@ -1763,10 +1839,18 @@ task-detail-item .mat-expansion-panel-header.mat-expansion-panel-header.mat-expa
 /* And between that header and its content runs the same short hairline the
    fields have at their joins — Notes, sub-tasks and Links & Files alike. */
 task-detail-item .mat-expansion-panel.mat-expanded .mat-expansion-panel-content {
-  background-image: linear-gradient(var(--detail-card-join), var(--detail-card-join)) !important;
+  background-image: var(--detail-card-join-gradient) !important;
   background-repeat: no-repeat !important;
   background-position: var(--detail-card-join-inset) 0 !important;
   background-size: calc(100% - var(--detail-card-join-inset) - var(--detail-card-pad)) 1px !important;
+}
+
+/* Not under the name, though: the sub-tasks panel already carries the join
+   to the title card on its own top edge, and with its header hidden the
+   content's line fell on the same pixel row — two gradients on top of each
+   other, darker in the middle than the joins elsewhere. */
+task-detail-panel .task-title-wrapper + task-detail-item .mat-expansion-panel.mat-expanded .mat-expansion-panel-content {
+  background-image: none !important;
 }
 
 task-detail-item .input-item.input-item {
@@ -1837,12 +1921,12 @@ task-detail-panel .created {
 task-detail-panel .task-title-wrapper.task-title-wrapper {
   background: var(--detail-card-bg);
   box-shadow: var(--detail-card-shadow);
-  margin: var(--s, 8px) var(--s, 8px) 0;
+  margin: var(--s, 8px) var(--detail-card-margin-right) 0 var(--s, 8px);
   min-height: 56px;
   padding: 4px 6px 4px var(--detail-card-pad); /* the name sits on the same left edge as the field labels' glyphs, a small indent off the card */
 }
 
-task-detail-panel .task-title-wrapper.task-title-wrapper:has(+ task-detail-item) {
+task-detail-panel .task-title-wrapper.task-title-wrapper:has(+ task-detail-item:not(.input-item)) {
   /* Doubled class to outrank the radius rule above, which is `!important`
      at the same weight; without it the corners stayed round and the title
      card did not meet the sub-tasks. */
@@ -1980,6 +2064,54 @@ work-view task task .all-controls-wrapper .time-wrapper {
   height: auto !important;
 }
 
+/* And the strip itself keeps a little air from the row's right edge and from
+   the name, in both places. */
+task-detail-panel .sub-tasks task .all-controls-wrapper,
+work-view task task .all-controls-wrapper {
+  gap: 2px;
+  padding-inline: 2px;
+}
+
+/* The hover strip itself (task-hover-controls, drawn only while the row is
+   hovered) lays its buttons out as a flex row; it takes a gap of its own,
+   and the glyphs inside the 22px buttons come down from 24px to 18px —
+   at 24px they spilled over their buttons' edges and the strip read as
+   crowded whatever the margins said. */
+task-detail-panel .sub-tasks task task-hover-controls,
+work-view task task task-hover-controls {
+  gap: 0;
+  padding-inline: 0;
+  /* The strip hangs off the left edge of the row's own controls — the time
+     figures, the attachment count — and on an open sub-task those are
+     there, so the strip sat hard against them; a finished sub-task shows
+     none and the strip stood free. Measured: the margins between the
+     buttons were in place; it was the strip's own distance to what stands
+     right of it. */
+  /* Directly left of the row's own buttons, no gap: the app hangs the strip
+     off the left of `.controls`, and the panel toggle that stands there
+     stays in view while the strip is up, so the two together make one row
+     of buttons that ends on the right edge. */
+  right: 100% !important;
+}
+
+/* While the strip is up the app hides the time figures but leaves their
+   width, which pushed the strip a figure's width to the left of the toggle.
+   Out of the flow instead, so the strip closes up against the toggle. */
+task-detail-panel .sub-tasks task .first-line:has(task-hover-controls) .time-wrapper,
+work-view task task .first-line:has(task-hover-controls) .time-wrapper {
+  display: none !important;
+}
+
+task-detail-panel .sub-tasks task task-hover-controls .ico-btn .mat-icon,
+work-view task task task-hover-controls .ico-btn .mat-icon,
+task-detail-panel .sub-tasks task .all-controls-wrapper .ico-btn .mat-icon,
+work-view task task .all-controls-wrapper .ico-btn .mat-icon {
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+  line-height: 18px !important;
+}
+
 task-detail-panel .sub-tasks task .all-controls-wrapper .mat-mdc-icon-button,
 work-view task task .all-controls-wrapper .mat-mdc-icon-button,
 task-detail-panel .sub-tasks task .all-controls-wrapper .ico-btn,
@@ -1989,6 +2121,25 @@ work-view task task .all-controls-wrapper .ico-btn {
   height: 22px !important;
   min-height: 0 !important;
   padding: 2px !important;
+  margin-inline: 10px 0 !important; /* 10px before each button, none after: the last one sits on the right edge */
+}
+
+/* Inside the hover strip the room goes on both sides, 20px between the
+   buttons and 10px at either end of the strip. */
+task-detail-panel .sub-tasks task task-hover-controls .ico-btn,
+work-view task task task-hover-controls .ico-btn {
+  margin-inline: 10px !important;
+}
+
+/* The hover fill of each button is drawn a little inside the button — a 2px
+   inset all round, with a 4px corner — so two fills never meet even where
+   the buttons sit close, and the strip's own hover fill shows between them. */
+task-detail-panel .sub-tasks task task-hover-controls .mat-mdc-button-persistent-ripple,
+work-view task task task-hover-controls .mat-mdc-button-persistent-ripple,
+task-detail-panel .sub-tasks task task-hover-controls .mat-mdc-button-ripple,
+work-view task task task-hover-controls .mat-mdc-button-ripple {
+  inset: 2px !important;
+  border-radius: 4px !important;
 }
 
 task-detail-panel .sub-tasks task .box {
@@ -2001,7 +2152,7 @@ task-detail-panel .sub-tasks task .title-and-tags-wrapper {
 }
 
 task-detail-panel .sub-tasks .task-list-inner[data-list-id='SUB'] {
-  padding: 4px 0 !important;
+  padding: 0 !important;
 }
 
 task-detail-panel .sub-tasks task-list {
@@ -2046,7 +2197,7 @@ task-detail-panel .sub-tasks task .box.box.box.box.box.box {
 }
 
 task-detail-panel .sub-tasks task + task {
-  background-image: linear-gradient(var(--detail-card-join), var(--detail-card-join));
+  background-image: linear-gradient(var(--detail-card-join), var(--detail-card-join)); /* flat: the steps are lines, not card joins */
   background-repeat: no-repeat;
   background-position: var(--detail-card-join-inset) 0;
   background-size: calc(100% - var(--detail-card-join-inset) - var(--detail-card-pad)) 1px;
@@ -2111,25 +2262,55 @@ task-detail-item .input-item__title {
 }
 
 task-detail-panel .task-title-wrapper + task-detail-item .mat-expansion-panel.mat-expansion-panel {
-  margin-top: 0;
+  margin-top: -1px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-  /* The same short hairline as between two fields, so every join in the
-     panel is one line. */
-  background-image: linear-gradient(var(--detail-card-join), var(--detail-card-join)) !important;
-  background-repeat: no-repeat !important;
-  background-position: var(--detail-card-join-inset) 0 !important;
-  background-size: calc(100% - var(--detail-card-join-inset) - var(--detail-card-pad)) 1px !important;
 }
 
 /* And the tag field, which follows the attachments panel without a gap,
    joins it the same way. Named by the attachments panel's own content, so
    the sub-tasks panel — a card of its own above the fields — is not caught. */
 task-detail-item:has(.attachment-list-panel-content-wrapper) + task-detail-item.input-item .input-item.input-item {
-  background-image: linear-gradient(var(--detail-card-join), var(--detail-card-join)) !important;
-  background-repeat: no-repeat !important;
-  background-position: var(--detail-card-join-inset) 0 !important;
-  background-size: calc(100% - var(--detail-card-join-inset) - var(--detail-card-pad)) 1px !important;
+  margin-top: -1px;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+/* The join between two cards is drawn on the second card's host element,
+   not on the card. A card with a rounded corner is rasterised with
+   anti-aliased edges all round, and a 1px line painted inside it at its top
+   edge came out smeared over two rows wherever the card sat on a fraction
+   of a pixel — a second, softer line above the real one, under every field
+   whose next card was the rounded last of its group. The host is a plain
+   block with no rounding, so its line is snapped to one pixel row. It runs
+   from the card's side padding to the card's side padding: the card's own
+   8px margin plus the padding, on both sides.
+
+   The second card also overlaps the first by one pixel. Measured, every box
+   in the panel sits on a fraction of a pixel — the screen scale here is not
+   a whole number, so no CSS length lands on a whole device pixel — and a
+   rounded card is drawn with anti-aliased edges: the first card's bottom row
+   and the second card's top row were each half-covered, and the panel
+   showed through the pair as a faint line. Overlapped, each soft row lies on
+   the other card's solid interior and nothing shows. */
+task-detail-item.input-item + task-detail-item.input-item,
+task-detail-panel .task-title-wrapper + task-detail-item:not(.input-item),
+task-detail-item:has(.attachment-list-panel-content-wrapper) + task-detail-item.input-item {
+  position: relative;
+}
+
+task-detail-item.input-item + task-detail-item.input-item::before,
+task-detail-panel .task-title-wrapper + task-detail-item:not(.input-item)::before,
+task-detail-item:has(.attachment-list-panel-content-wrapper) + task-detail-item.input-item::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: calc(var(--s, 8px) + var(--detail-card-join-inset));
+  right: calc(var(--detail-card-margin-right) + var(--detail-card-pad));
+  height: 1px;
+  background-image: var(--detail-card-join-gradient);
+  pointer-events: none;
 }
 
 task-detail-item .add-btn-wrapper {
@@ -4166,6 +4347,7 @@ done-toggle .done-check {
    the one accent on the button is the mark of what it does; the hover below
    then brings the surface and the edge up to meet it. */
 .finish-day-button-wrapper .e2e-finish-day,
+.finish-day-button-wrapper .e2e-move-done-to-archive,
 .finish-day-button-wrapper .mat-mdc-unelevated-button.e2e-finish-day {
   --mdc-filled-button-container-color: var(--surface-3);
   --mdc-filled-button-label-text-color: var(--ink);
@@ -4180,7 +4362,8 @@ done-toggle .done-check {
   gap: 8px;
 }
 
-.finish-day-button-wrapper .e2e-finish-day .mat-icon {
+.finish-day-button-wrapper .e2e-finish-day .mat-icon ,
+.finish-day-button-wrapper .e2e-move-done-to-archive .mat-icon {
   color: var(--palette-primary-500);
   margin: 0; /* the gap above spaces it */
 }
@@ -4188,6 +4371,7 @@ done-toggle .done-check {
 /* Over a picture the button takes the tag treatment of the headings: the
    chrome colour at the same opacity with the photo blurred behind it. */
 body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) .finish-day-button-wrapper .e2e-finish-day,
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) .finish-day-button-wrapper .e2e-move-done-to-archive,
 body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) .finish-day-button-wrapper .mat-mdc-unelevated-button.e2e-finish-day {
   background-color: color-mix(in srgb, var(--sidenav-bg) 72%, transparent);
   backdrop-filter: blur(14px);
@@ -4403,6 +4587,7 @@ body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"loc
    stroked variant — the one shown before anything is done — takes the same
    treatment through the same class. */
 .finish-day-button-wrapper .e2e-finish-day,
+.finish-day-button-wrapper .e2e-move-done-to-archive,
 .finish-day-button-wrapper .mat-mdc-unelevated-button.e2e-finish-day {
   --mat-filled-button-hover-state-layer-opacity: 0;
   --mat-outlined-button-hover-state-layer-opacity: 0;
@@ -4415,7 +4600,9 @@ body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"loc
 }
 
 .finish-day-button-wrapper .e2e-finish-day:hover,
+.finish-day-button-wrapper .e2e-move-done-to-archive:hover,
 .finish-day-button-wrapper .e2e-finish-day:focus-visible,
+.finish-day-button-wrapper .e2e-move-done-to-archive:focus-visible,
 .finish-day-button-wrapper .mat-mdc-unelevated-button.e2e-finish-day:hover,
 .finish-day-button-wrapper .mat-mdc-unelevated-button.e2e-finish-day:focus-visible {
   background-color: color-mix(in srgb, var(--palette-primary-500) 18%, var(--surface-3)) !important;
@@ -4424,7 +4611,9 @@ body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"loc
 }
 
 .finish-day-button-wrapper .e2e-finish-day:hover .mat-icon,
-.finish-day-button-wrapper .e2e-finish-day:focus-visible .mat-icon {
+.finish-day-button-wrapper .e2e-move-done-to-archive:hover .mat-icon,
+.finish-day-button-wrapper .e2e-finish-day:focus-visible .mat-icon ,
+.finish-day-button-wrapper .e2e-move-done-to-archive:focus-visible .mat-icon {
   color: var(--palette-primary-500);
   transition: color 140ms var(--ani-standard-timing, ease);
 }
@@ -4486,6 +4675,21 @@ task.isSelected > swipe-block,
 task.isSelected .inner-wrapper,
 task.isSelected .first-line {
   background: transparent !important;
+}
+
+/* Except the divider a sub-task carries on its own top edge: that line is a
+   background image on the row element, and the shorthand above wiped it the
+   moment the row was selected — open a sub-task's detail panel and the line
+   above it vanished. Restated for the selected (and running) row at a weight
+   past the rule above. */
+work-view task task + task.isSelected,
+work-view task task + task.isCurrent,
+task-detail-panel .sub-tasks task + task.isSelected,
+task-detail-panel .sub-tasks task + task.isCurrent {
+  background-image: linear-gradient(var(--detail-card-join), var(--detail-card-join)) !important;
+  background-repeat: no-repeat !important;
+  background-position: var(--detail-card-join-inset) 0 !important;
+  background-size: calc(100% - var(--detail-card-join-inset) - var(--detail-card-pad)) 1px !important;
 }
 
 /* A focused row — what you get when you select a task with the detail panel
@@ -4585,11 +4789,17 @@ task task .inner-wrapper > .box.box.box {
    fill is dropped so a done row hovers like the rest. */
 task.isDone task-hover-controls,
 task.isDone task-hover-controls button,
-task.isDone task-hover-controls .mat-mdc-button-persistent-ripple {
+task.isDone task-hover-controls .mat-mdc-button-persistent-ripple,
+task task task-hover-controls,
+task task task-hover-controls button,
+task task task-hover-controls .mat-mdc-button-persistent-ripple {
   background: transparent !important;
 }
 
-task.isDone task-hover-controls button {
+/* The same for every sub-task, finished or not: the strip and its buttons
+   carry no fill of their own, only the round state layer under the pointer. */
+task.isDone task-hover-controls button,
+task task task-hover-controls button {
   height: auto !important;
 }
 
