@@ -10,18 +10,24 @@
  * in, so the play button, Add task, links and the rest of the primary-coloured
  * interface take that colour and change with it.
  *
- * Both halves are the palettes used in Personal Work Manager, remapped onto
- * Super Productivity's token contract (docs/theming-contract.md): the surface
- * ladder and the ink primitives drive the semantic tokens (--bg, --card-bg,
+ * Both halves are remapped onto Super Productivity's token contract
+ * (docs/theming-contract.md): the surface ladder and the ink primitives
+ * drive the semantic tokens (--bg, --card-bg,
  * --text-color, …), so most of the app follows from the two blocks below. The
  * remaining declarations cover the "category B" tokens, which the base pins to
  * a neutral grey ramp that the ladder does not reach.
+ *
+ * Both blocks are laid out in the order the app's own dark-base theme uses:
+ * the public contract first (surface ladder, ink, separators), then the
+ * backgrounds, the text colours, the borders, the accent palettes and the
+ * remaining interface tokens. A colour is therefore found by what it paints
+ * rather than by when it was added.
  *
  * Selectors: light primitives sit on `body:not(.isDarkTheme)` rather than plain
  * `body`, so nothing declared for light can leak into dark mode. Both selectors
  * outrank the base's `body` declarations.
  *
- * Card surfaces: as in PWM, cards and task rows sit a step *below* the page
+ * Card surfaces: cards and task rows sit a step *below* the page
  * rather than above it. Hover, current and selected states step up, so
  * interaction still reads as a lift.
  *
@@ -35,48 +41,72 @@
  * LIGHT — Tokyo Light
  * ============================================================ */
 body:not(.isDarkTheme) {
+  /* ===============================
+   * PUBLIC THEME CONTRACT
+   * ===============================*/
   /* Surface ladder: chrome → page → cards → elevated → highest */
   --surface-0: #d6d8df; /* deepest: toolbars, side nav (--bg-darker) */
-  --surface-1: #e6e7ed; /* app background (PWM --color-bg-primary) */
-  --surface-2: #e1e2e8; /* cards, tasks, dialogs (PWM --color-bg-secondary) */
-  --surface-3: #dcdee3; /* elevated: current task, drag-drop targets */
+  --surface-1: #e0e2e8; /* app background: the page, +3.5 L* over the rail */
+  --surface-2: #dbdde4; /* cards, tasks, dialogs */
+  --surface-3: #d7d9e0; /* elevated: current task, drag-drop targets */
   --surface-4: #cdced1; /* highest: banner, mobile bottom panel */
 
   /* Ink */
   --ink-strong: #262b3a;
-  --ink: #363c4d; /* PWM --color-text-primary */
-  /* PWM's tertiary text (#707280) lands at 3.9:1 on this page colour; nudged
+  --ink: #363c4d;
+  /* The source tertiary text (#707280) lands at 3.9:1 on this page colour; nudged
      darker so muted labels clear WCAG AA for normal text. */
   --ink-muted: #5c6478;
   --ink-on-channel: 54, 60, 77; /* #363c4d — overlays read blue-grey, not black */
 
   /* Separators, scrim, overlays */
-  --separator: #c9cbd2; /* PWM --color-border-tertiary */
-  --divider: #d0d2d9; /* PWM --color-border-secondary */
+  --separator: #c9cbd2;
+  --divider: #d0d2d9;
   --scrim: rgba(38, 43, 58, 0.45);
   --bg-overlay: rgba(255, 255, 255, 0.8); /* the app's own light veil */
-  --system-surface: #d6d8df; /* Android system bars; must stay opaque */
+  --system-surface: var(--surface-0); /* Android system bars; must stay opaque */
 
-  /* Primary — left to Super Productivity. The app writes the primary palette
-     from the colour of the project or tag you are in, so the play button, the
-     Add task button, links and every other primary-coloured control follow it.
-     Give this block a --palette-primary-* ladder to pin one hue instead. */
+  /* ===============================
+   * BACKGROUND COLORS
+   * ===============================*/
+  /* Page and chrome */
+  --bg-super-light: #e9ebf0;
+  --bg-drag-col: var(--surface-3);
 
-  /* The triangle inside the play button in the right action bar, which
-     Material would fill with the contrast ink of whatever colour the circle
-     carries. It takes the colour of the labels in the left menu instead, so
-     the two read as one interface rather than as a control in the project's
-     palette. Light mode only, and `--sidenav-text` rather than a stated
-     colour, so it keeps following those labels. */
-  --play-icon-ink: color-mix(in srgb, var(--sidenav-text) 78%, var(--surface-1)); /* the menu labels' colour, lifted a little toward the page */
+  /* Component backgrounds */
+  --right-panel-bg-mobile: var(--surface-2);
+  --bottom-panel-bg: var(--surface-2);
+  --task-detail-bg: var(--surface-2);
+  --task-detail-bg-hover: var(--surface-3);
+  --schedule-event-bg: #e7e9ee;
 
-  /* The disc under that triangle. It never takes the colour of the project,
-     tag, My Day or Inbox you happen to be in — those tint the primary palette,
-     and a control at the head of the strip that changes hue with the view
-     reads as a status light rather than as a button. A quiet ink wash on the
-     page instead, dark enough to carry the glyph above. */
-  --play-button-bg: color-mix(in srgb, var(--ink) 22%, var(--surface-1));
+  /* Task backgrounds */
+  --selected-task-bg-color: var(--surface-3);
+  --task-c-selected-bg: var(--surface-3);
 
+  /* Note backgrounds */
+  --standard-note-bg: #e7e9ee; /* notes lift off the page like paper */
+  --standard-note-bg-hovered: var(--surface-1);
+
+  /* ===============================
+   * TEXT COLORS
+   * ===============================*/
+  /* The two tiers around the body ink, as in the dark half: 82% of the ink
+     for the quieter tier, the strong ink for the louder one. The base pins
+     both to a neutral grey in light mode. */
+  --text-color-less-intense: rgba(54, 60, 77, 0.82);
+  --text-color-more-intense: var(--ink-strong);
+  --standard-note-fg: var(--ink);
+
+  /* ===============================
+   * BORDERS & SEPARATORS
+   * ===============================*/
+  --extra-border-color: #d0d2d9;
+  --chip-outline-color: rgba(54, 60, 77, 0.24);
+
+  /* ===============================
+   * ACCENT & THEME COLORS
+   * ===============================*/
   /* Warn — Tokyo Night Light red */
   --palette-warn-300: #c07281;
   --palette-warn-400: #a65a6a;
@@ -99,27 +129,42 @@ body:not(.isDarkTheme) {
   --c-info: #0f4b6e;
   --sun-yellow: #8f5e15;
 
-  /* --- Category B: tokens the base hardcodes to white or neutral grey --- */
-  --bg-drag-col: #dcdee3;
-  --bg-super-light: #eef0f4;
-  --right-panel-bg-mobile: #e1e2e8;
-  --bottom-panel-bg: #e1e2e8;
-  --selected-task-bg-color: #dcdee3;
-  --task-c-selected-bg: #dcdee3;
-  --extra-border-color: #d0d2d9;
-  --standard-note-bg: #eceef2; /* notes lift off the page like paper */
-  --standard-note-bg-hovered: #e6e7ed;
-  --standard-note-fg: var(--ink);
-  --task-detail-bg: #e1e2e8;
-  --task-detail-bg-hover: #dcdee3;
-  --schedule-event-bg: #eceef2;
+  /* ===============================
+   * UI ELEMENTS
+   * ===============================*/
+  /* Side nav */
   --sidenav-hover-bg: rgba(54, 60, 77, 0.07);
+
+  /* The disc under that triangle. It never takes the colour of the project,
+     tag, My Day or Inbox you happen to be in — those tint the primary palette,
+     and a control at the head of the strip that changes hue with the view
+     reads as a status light rather than as a button. A quiet ink wash on the
+     page instead, dark enough to carry the glyph above. */
+  --play-button-bg: color-mix(in srgb, var(--ink) 22%, var(--surface-1));
+  /* Primary — left to Super Productivity. The app writes the primary palette
+     from the colour of the project or tag you are in, so the play button, the
+     Add task button, links and every other primary-coloured control follow it.
+     Give this block a --palette-primary-* ladder to pin one hue instead. */
+  /* The triangle inside the play button in the right action bar, which
+     Material would fill with the contrast ink of whatever colour the circle
+     carries. It takes the colour of the labels in the left menu instead, so
+     the two read as one interface rather than as a control in the project's
+     palette. Light mode only, and `--sidenav-text` rather than a stated
+     colour, so it keeps following those labels. */
+  --play-icon-ink: color-mix(in srgb, var(--sidenav-text) 78%, var(--surface-1)); /* the menu labels' colour, lifted a little toward the page */
+
+  /* Scrollbar */
   --scrollbar-thumb: rgba(54, 60, 77, 0.25);
   --scrollbar-thumb-hover: rgba(54, 60, 77, 0.45);
   --scrollbar-track: transparent;
+
+  /* Grid */
   --grid-color: #cfd1d8;
-  --chip-outline-color: rgba(54, 60, 77, 0.24);
+
+  /* Progress */
   --progress-bg: rgba(54, 60, 77, 0.12);
+
+  /* Improvement banner */
   --improvement-text: var(--ink);
   --improvement-button-text: var(--ink);
   --improvement-border: rgba(54, 60, 77, 0.25);
@@ -132,46 +177,80 @@ body:not(.isDarkTheme) {
  * DARK — Tokyo Night
  * ============================================================ */
 body.isDarkTheme {
+  /* ===============================
+   * PUBLIC THEME CONTRACT
+   * ===============================*/
   /* Surface ladder */
-  --surface-0: #16161e; /* deepest: toolbars, side nav (PWM --color-bg-background) */
-  --surface-1: #1a1b26; /* app background (PWM --color-bg-primary) */
-  --surface-2: #16161e; /* cards, tasks, dialogs (PWM --color-bg-secondary) */
+  --surface-0: #16161e; /* deepest: toolbars, side nav */
+  --surface-1: #1b1d28; /* app background: the page, +3.5 L* over the rail */
+  --surface-2: #16161e; /* cards, tasks, dialogs */
   --surface-3: #1e202e; /* elevated: current task, drag-drop targets */
   --surface-4: #292e42; /* highest: banner, mobile bottom panel */
 
   /* Ink — the theme's pale blue foreground, its UI grey for supporting text */
   --ink-strong: #d5dcf7;
-  --ink: #c0caf5; /* PWM --color-text-primary */
-  --ink-muted: #9aa2c4; /* PWM's #787c99, lifted to clear AA on the page */
+  --ink: #c0caf5;
+  --ink-muted: #9aa2c4; /* lifted to clear AA on the page */
   --ink-on-channel: 192, 202, 245;
 
+  /* Separators, scrim, overlays */
+  --separator: color-mix(in srgb, var(--ink) var(--hairline-ink), var(--surface-1));
+  --divider: color-mix(in srgb, var(--ink) var(--hairline-ink-soft), var(--surface-1));
+  --scrim: rgba(9, 10, 17, 0.7);
+  --bg-overlay: rgba(14, 14, 20, 1); /* the veil proper: the rail's surface (#16161e) pulled a third of the way to black, fully opaque so the slider bites at full rate; the wallpaper floor below does the rest of the darkening */
+  --system-surface: var(--surface-0);
+
+  /* ===============================
+   * BACKGROUND COLORS
+   * ===============================*/
+  /* Page and chrome */
+  --bg-slightly-lighter: var(--surface-3);
+  --bg-super-light: var(--surface-4);
+  --bg-drag-col: var(--surface-3);
+
+  /* Component backgrounds */
+  --right-panel-bg-mobile: var(--surface-2);
+  --bottom-panel-bg: var(--surface-0);
+  --task-detail-bg: #1b1c28;
+  --task-detail-bg-hover: var(--surface-3);
+  --schedule-event-bg: var(--surface-3);
+  --schedule-event-bg-in-side-panel: var(--surface-4);
+
+  /* Task backgrounds */
+  --selected-task-bg-color: var(--surface-3);
+  --task-c-selected-bg: var(--surface-3);
+  --sub-task-c-bg: #1b1c28; /* nested rows lift off the card */
+  --sub-task-c-bg-in-selected: var(--surface-3);
+  --sub-task-c-bg-done: var(--surface-0);
+  --task-c-bg-done: var(--surface-0);
+
+  /* Note backgrounds */
+  --standard-note-bg: #1b1c28;
+  --standard-note-bg-hovered: var(--surface-3);
+
+  /* ===============================
+   * TEXT COLORS
+   * ===============================*/
+  --text-color-less-intense: rgba(192, 202, 245, 0.82);
+  --text-color-more-intense: var(--ink-strong);
+  --standard-note-fg: var(--ink);
+
+  /* ===============================
+   * BORDERS & SEPARATORS
+   * ===============================*/
+  --extra-border-color: var(--separator);
+  --chip-outline-color: color-mix(in srgb, var(--ink) 14%, transparent);
   /* Separators, scrim, overlays. The hairlines are stated as a share of body
-     ink mixed into the page rather than as PWM's own border colours, which sit
+     ink mixed into the page rather than as stated border colours, which sit
      high on surfaces this dark: --hairline-ink is the separator that edges
      cards, rows and panels, --hairline-ink-soft the quieter divider. Lower
      either to fade those lines further; 0% removes them altogether. */
   --hairline-ink: 6%;
   --hairline-ink-soft: 3%;
-  --separator: color-mix(in srgb, var(--ink) var(--hairline-ink), var(--surface-1));
-  --divider: color-mix(in srgb, var(--ink) var(--hairline-ink-soft), var(--surface-1));
-  --scrim: rgba(9, 10, 17, 0.7);
-  --bg-overlay: rgba(14, 14, 20, 1); /* the veil proper: the rail's surface (#16161e) pulled a third of the way to black, fully opaque so the slider bites at full rate; the wallpaper floor below does the rest of the darkening */
-  --system-surface: #16161e;
 
-  /* Primary — left to Super Productivity, as in the light half above. */
-
-  /* The triangle inside the play button, as in the light half above — but the
-     colour the dimmed buttons beside it come out at rather than the labels of
-     the left menu, which are a pale blue here and would light up the middle of
-     the circle. `--play-icon-ink-idle` is that colour, stated once further
-     down and read by both halves; here it also covers the live button, so the
-     glyph is the same in every state. */
-  --play-icon-ink: color-mix(in srgb, var(--ink-muted) 14%, var(--sidenav-bg)); /* a touch more of the menu's own dark than the idle colour (20% ink) carries */
-
-  /* The disc, as in the light half: never the work context's colour. Pale
-     here, because the glyph on it is the dark ink of the dimmed buttons. */
-  --play-button-bg: var(--ink-muted);
-
+  /* ===============================
+   * ACCENT & THEME COLORS
+   * ===============================*/
   /* Warn — Tokyo Night red */
   --palette-warn-300: #fbb4c0;
   --palette-warn-400: #f9939f;
@@ -194,46 +273,50 @@ body.isDarkTheme {
   --c-info: #7dcfff;
   --sun-yellow: #e0af68;
 
-  /* --- Category B: the base maps these to a neutral grey ramp --- */
-  --bg-slightly-lighter: #1e202e;
-  --bg-super-light: #292e42;
-  --text-color-less-intense: rgba(192, 202, 245, 0.82);
-  --text-color-more-intense: #d5dcf7;
-  --selected-task-bg-color: #1e202e;
-  --task-c-selected-bg: #1e202e;
-  --sub-task-c-bg: #1b1c28; /* nested rows lift off the card */
-  --sub-task-c-bg-in-selected: #1e202e;
-  --sub-task-c-bg-done: #16161e;
-  --task-c-bg-done: #16161e;
-  --extra-border-color: var(--separator);
-  --standard-note-bg: #1b1c28;
-  --standard-note-bg-hovered: #1e202e;
-  --standard-note-fg: #c0caf5;
-  --task-detail-bg: #1b1c28;
-  --task-detail-bg-hover: #1e202e;
-  --bottom-panel-bg: #16161e;
-  --schedule-event-bg: #1e202e;
-  --schedule-event-bg-in-side-panel: #292e42;
+  /* ===============================
+   * UI ELEMENTS
+   * ===============================*/
+  /* Side nav */
   --sidenav-hover-bg: rgba(192, 202, 245, 0.08);
   --mat-sidenav-scrim-color: rgba(9, 10, 17, 0.75);
+
+  /* The disc, as in the light half: never the work context's colour. Pale
+     here, because the glyph on it is the dark ink of the dimmed buttons. */
+  --play-button-bg: var(--ink-muted);
+  /* Primary — left to Super Productivity, as in the light half above. */
+  /* The triangle inside the play button, as in the light half above — but the
+     colour the dimmed buttons beside it come out at rather than the labels of
+     the left menu, which are a pale blue here and would light up the middle of
+     the circle. `--play-icon-ink-idle` is that colour, stated once further
+     down and read by both halves; here it also covers the live button, so the
+     glyph is the same in every state. */
+  --play-icon-ink: color-mix(in srgb, var(--ink-muted) 14%, var(--sidenav-bg)); /* a touch more of the menu's own dark than the idle colour (20% ink) carries */
+
+  /* Scrollbar */
   --scrollbar-thumb: rgba(192, 202, 245, 0.2);
   --scrollbar-thumb-hover: rgba(192, 202, 245, 0.4);
   --scrollbar-track: transparent;
+
+  /* Grid */
   --grid-color: rgba(192, 202, 245, 0.09);
-  --chip-outline-color: color-mix(in srgb, var(--ink) 14%, transparent);
+
+  /* Progress */
   --progress-bg: rgba(192, 202, 245, 0.14);
-  --improvement-text: #c0caf5;
+
+  /* Improvement banner */
+  --improvement-text: var(--ink);
   --improvement-button-text: #c0caf5;
   --improvement-border: rgba(192, 202, 245, 0.28);
 
+  /* Text selection */
   --theme-selection-bg: color-mix(in srgb, var(--brand) 26%, transparent);
 }
 
 /* ============================================================
  * ONE ACCENT PER MODE
  * ============================================================
- * PWM works with a single accent colour, so Super Productivity's accent role
- * mirrors the primary rather than introducing a second hue. With no ladder of
+ * The palette works with a single accent colour, so Super Productivity's
+ * accent role mirrors the primary rather than introducing a second hue. With no ladder of
  * its own in the blocks above, that primary is the one the app writes for the
  * project or tag you are in, so accent-coloured controls — the play button
  * while a task runs, among them — take the project's colour as well.
@@ -306,8 +389,8 @@ body:has(.page-settings, schedule, scheduled-list-page, search-page, .route-wrap
 /* A placeholder image means "no wallpaper here". The app falls back to the
    global wallpaper on any project or tag that has no picture of its own, and
    there is no way to say "none" for one context. So a context that should
-   stand bare is given a placeholder for a picture — `https://`, `localhost`
-   or `null` — and the theme reads that: the picture, the veil over it and the
+   stand bare is given a placeholder for a picture — `https://` or `null` —
+   and the theme reads that: the picture, the veil over it and the
    floor beneath are hidden, and every rule in this file that keys on the
    app's `hasBgImage` class is guarded with the same test, so the view is
    styled as it would be without a picture. The one exception is the rail's own
@@ -316,8 +399,8 @@ body:has(.page-settings, schedule, scheduled-list-page, search-page, .route-wrap
    the rail back its opaque surface holds in both cases. The attribute match is on the
    serialised URL with its closing quote, so a real address that merely begins
    with `https://` is not caught. */
-body:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")']) .bg-image,
-body:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")']) .bg-overlay {
+body:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")']) .bg-image,
+body:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")']) .bg-overlay {
   display: none !important;
 }
 
@@ -369,12 +452,12 @@ body.isDisableBackgroundTint .info-panel {
 /* ============================================================
  * CHROME
  * ============================================================
- * PWM keeps the side bar a step darker than the page. The base leaves the side
+ * The side bar sits a step darker than the page. The base leaves the side
  * nav transparent so a wallpaper can show through; delete these two rules to
  * get that behaviour back. */
 body:not(.isDarkTheme) {
-  --sidenav-bg: #d6d8df;
-  --sidenav-bg-mobile: #d6d8df;
+  --sidenav-bg: var(--surface-0);
+  --sidenav-bg-mobile: var(--surface-0);
 }
 
 /* Electron draws the functional minimise, maximise and close controls itself.
@@ -412,18 +495,27 @@ body.isDarkTheme {
 }
 
 
-/* The panel has a surface of its own, `--detail-panel-bg`, one step lighter
-   than the page, in every mode — picture or not. It used to take the rail's
-   colour beside a picture, and then the strip of panel between the last
-   card and the rail read as the rail reaching in, with the rail's seam
-   standing 8px away from the cards like a gap; on its own surface that
-   strip is plainly the panel's margin and the seam is the rail's edge. */
+/* The panel has a surface of its own, `--detail-panel-bg`, in every mode —
+   picture or not. It used to take the rail's colour beside a picture, and
+   then the strip of panel between the last card and the rail read as the rail
+   reaching in, with the rail's seam standing 8px away from the cards like a
+   gap; on its own surface that strip is plainly the panel's margin and the
+   seam is the rail's edge.
+
+   Which surface is settled by the window's ladder, the one Paper Purple's
+   light mode carries, measured as perceptual lightness (L*) against the rail.
+   The rail is the ground in both modes and stays where it is; the rest is
+   placed against it — page +3.5, detail panel +1.4, backlog −1.7, and the
+   rail and the right action bar at 0. So the panel stands a step above the
+   rail and a step below the page: its own surface, without pulling ahead of
+   the list. What separation the panel needs is carried by the cards it holds,
+   which stand +2.0 over it. */
 body {
-  --detail-panel-bg: #f0f1f5;
+  --detail-panel-bg: #dadce3;
 }
 
 body.isDarkTheme {
-  --detail-panel-bg: #1a1b26;
+  --detail-panel-bg: #181921;
 }
 
 /* Flush against the rail. Measured, the panel ended a pixel short of the
@@ -448,17 +540,17 @@ right-panel .side.side {
   backdrop-filter: none !important;
   isolation: isolate;
   /* And above the veil. Measured: the app's wallpaper veil (`.bg-overlay`,
-     z-index 1) painted over the panel, whose own z-index was auto — so the
+     `--z-bg-overlay`) painted over the panel, whose own z-index was auto — so the
      darken/lighten slider dimmed the panel with the picture. One step above
      the veil, well under the header (12) and the rail (70). */
   position: relative;
-  z-index: 2 !important;
+  z-index: calc(var(--z-bg-overlay) + 1) !important;
 }
 
 body.isElectron.isNoMac.isObsidianStyleHeader:not(.isFullScreen)::after {
   content: '';
   position: fixed;
-  z-index: var(--z-main-header, 10);
+  z-index: var(--z-main-header);
   inset: 0 0 auto auto;
   width: calc(
     100vw - env(titlebar-area-x, 0px) -
@@ -533,8 +625,8 @@ body {
 }
 
 body.isDarkTheme {
-  --sidenav-bg: #16161e;
-  --sidenav-bg-mobile: #16161e;
+  --sidenav-bg: var(--surface-0);
+  --sidenav-bg-mobile: var(--surface-0);
 }
 
 /* The gutter behind the app (overscroll, iOS safe areas) is pinned to a neutral
@@ -557,17 +649,16 @@ html:has(body.isDarkTheme) {
  * Themes cannot ship or fetch font files (the installer rejects external
  * assets), so the stack can only name families the machine already has.
  *
- * Body copy is set in Inter, the face Personal Work Manager uses — it ships
- * InterVariable under src/renderer/public/fonts/ and sets it through Tailwind.
- * Install that file (or any complete Inter) and this theme picks it up on its
- * own. Watch out for a partial install: a Cyrillic-only Inter from fontsource
+ * Body copy is set in Inter, the face this theme is drawn against. Install a
+ * complete Inter and the theme picks it up on its own. Watch out for a
+ * partial install: a Cyrillic-only Inter from fontsource
  * registers under the same family name and carries no Latin, so the alphabet
  * falls through glyph by glyph to the next face. Where Inter is absent the
  * stack continues into Super Productivity's own default, which keeps the
  * interface coherent rather than landing on an unrelated substitute.
  *
- * Headings run on the same face: PWM sets its whole interface in Inter, so
- * this theme does too. `--font-heading-stack` still exists and simply points
+ * Headings run on the same face: the whole interface is set in Inter.
+ * `--font-heading-stack` still exists and simply points
  * at the body stack, which keeps the split available for later.
  *
  * Other complete families on this machine, should the body face need another
@@ -575,13 +666,13 @@ html:has(body.isDarkTheme) {
  * 'Atkinson Hyperlegible Next' (drawn for legibility), 'Outfit' (geometric),
  * 'Rubik' (rounder). */
 :root {
-  /* One face for the whole interface, as in PWM: headings share the body
+  /* One face for the whole interface: headings share the body
      stack rather than running on a second family. The variable stays so the
      two can be split again — point it at another family and every heading
      follows, without touching a single rule. */
   --font-heading-stack: var(--font-body-stack);
-  /* Body text is set in Inter, the face Personal Work Manager ships as
-     InterVariable and the one this theme is drawn against. Themes cannot ship
+  /* Body text is set in Inter, the face this theme is drawn against.
+     Themes cannot ship
      font files, so Inter has to be installed on the machine; where it is not,
      the stack falls through to the app's own default — the same faces Super
      Productivity would pick anyway, so the interface stays coherent instead
@@ -785,7 +876,7 @@ magic-side-nav nav-mat-menu > li.nav-item .g-multi-btn-wrapper.g-multi-btn-wrapp
   display: flex;
   align-items: stretch;
   opacity: 0;
-  transition: opacity var(--transition-duration-s, 150ms) var(--ani-standard-timing, ease);
+  transition: opacity var(--transition-duration-s, 150ms) var(--ani-standard-timing);
 }
 
 magic-side-nav .nav-list:has(
@@ -846,7 +937,7 @@ magic-side-nav .nav-sidenav.mobile nav-mat-menu {
 /* ============================================================
  * FLAT SURFACES
  * ============================================================
- * PWM separates its cards with a hairline border and no drop shadow. Task rows
+ * Cards separate with a hairline border and no drop shadow. Task rows
  * already carry `1px solid var(--task-border-color)`, so dropping the shadows
  * leaves exactly that idiom. Panels keep a whisper of shadow because nothing
  * outlines them. */
@@ -862,7 +953,12 @@ body.isDarkTheme {
 
 body:not(.isDarkTheme) {
   --card-shadow: 0 1px 2px rgba(38, 43, 58, 0.07);
-  /* Controls that appear on hover do so without an outline, as in dark mode. */
+}
+
+/* Controls that appear on hover do so without an outline. The base draws one
+   in light mode only; stated for both modes so the theme owns the value. */
+body,
+body.isDarkTheme {
   --hover-controls-border: none;
   --hover-controls-border-opacity: 0;
 }
@@ -1032,7 +1128,7 @@ work-view .add-more-or-finish .btn-wrapper .mat-mdc-outlined-button {
    `background-color`, not the shorthand, so the short rule the heading
    carries as a background image stays. Both modes take the token, which is
    already set per mode. */
-body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view collapsible .collapsible-header.collapsible-header {
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")'])) work-view collapsible .collapsible-header.collapsible-header {
   --tag-opacity: 72%;
   --tag-blur: 14px;
   background-color: color-mix(in srgb, var(--sidenav-bg) var(--tag-opacity), transparent);
@@ -1066,7 +1162,7 @@ work-view .section-container > collapsible .collapsible-header::after {
   background: var(--palette-primary-500);
 }
 
-body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view .section-container > collapsible .collapsible-header.collapsible-header {
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")'])) work-view .section-container > collapsible .collapsible-header.collapsible-header {
   --section-rule-inset-right: calc(2px + var(--s-half, 4px) + 40px);
 }
 
@@ -1079,16 +1175,16 @@ body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"loc
    makes the set Overdue and every `.collapsible-section` — Completed tasks,
    Recurring tasks, Later today, the claim pool; the date groups and backlog
    sections, which have no wrapper, keep the small tag. */
-body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view .overdue-tasks > collapsible .collapsible-header.collapsible-header,
-body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view .collapsible-section > collapsible .collapsible-header.collapsible-header {
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")'])) work-view .overdue-tasks > collapsible .collapsible-header.collapsible-header,
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")'])) work-view .collapsible-section > collapsible .collapsible-header.collapsible-header {
   padding: 8px 22px 8px 12px;
   --section-rule-inset-right: 22px;
 }
 
 /* On a light page over a picture the muted ink is too little for a heading
    on glass; the title and its arrow take the full ink there. */
-body:not(.isDarkTheme).hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view collapsible .collapsible-title,
-body:not(.isDarkTheme).hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view collapsible .collapsible-header .mat-icon {
+body:not(.isDarkTheme).hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")'])) work-view collapsible .collapsible-title,
+body:not(.isDarkTheme).hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")'])) work-view collapsible .collapsible-header .mat-icon {
   color: var(--ink);
 }
 /* And nothing on hover. Material answers the pointer on these buttons with a
@@ -1099,7 +1195,7 @@ body:not(.isDarkTheme).hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-
    not depend on the token names. Outline and filter cleared with them, so
    there is no second source of a rim. The button still darkens the text
    under the pointer through its own colour rule, which is answer enough. */
-body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")']))
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")']))
   work-view
   :is(.overdue-btn-wrapper, .add-more-or-finish .btn-wrapper)
   .mat-mdc-outlined-button {
@@ -1113,7 +1209,7 @@ body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"loc
   filter: none !important;
 }
 
-body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")']))
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")']))
   work-view
   :is(.overdue-btn-wrapper, .add-more-or-finish .btn-wrapper)
   .mat-mdc-outlined-button
@@ -1195,7 +1291,7 @@ body collapsible.isExpanded .collapsible-header.collapsible-header {
  * neutral grey (#424242 in dark, near-white in light) for menus, dialogs,
  * dropdowns, cards and the date picker. Against these surfaces that grey reads
  * as a foreign patch, so every container is pointed at the theme's own
- * elevated surface — the same one PWM uses for popovers and modals — with a
+ * elevated surface — the one used for popovers and modals — with a
  * hairline and a soft shadow so a floating panel still separates from the page.
  *
  * Two layers on purpose: the variables are the clean route, since the
@@ -1295,7 +1391,7 @@ body.isDarkTheme {
 }
 
 /* ============================================================
- * TODAY ICON — bolt instead of the sun
+ * NAVIGATION ICONS
  * ============================================================
  * The icon font draws its glyphs from the text inside the element, and CSS
  * cannot rewrite text. What it can do is hide the glyph and draw a replacement
@@ -1303,59 +1399,16 @@ body.isDarkTheme {
  * weight axis from the element it sits in, so the substitute lines up exactly
  * where the original stood.
  *
- * The name below is the Material Symbols ligature. Change this one value if
- * your Today tag carries a different bolt: 'electric_bolt', 'offline_bolt',
- * 'flash_on' and 'thunderstorm' are the other candidates in the icon picker. */
+ * The names below are Material Symbols ligatures.
+ *
+ * The today affordances are deliberately not among them. They carried a bolt
+ * in place of the sun; the app's own `wb_sunny` stands there again, drawn by
+ * the app itself, so nothing in this file reaches for it. */
 body,
 body.isDarkTheme {
-  --today-icon: 'bolt';
   --planner-nav-icon: 'next_week';
   --schedule-nav-icon: 'calendar_clock';
   --schedule-panel-icon: 'pending_actions';
-}
-
-/* Covered: the "Voeg toe aan Mijn Day" button on Today, the today button on
-   the Timeline, the "plan what is left of today" button on the day summary, the
-   today shortcut in the date picker.
-
-   My Day's row in the rail is deliberately not here. It was, matched by
-   position — and `nav-item:first-of-type` turned out to mean "first in its
-   own list", so every project group's first row took the bolt as well. The
-   icon on those rows is user data and a stylesheet cannot read what an element
-   says, so there is no honest selector for it. The Lucide plugin maps the sun
-   to a bolt instead, which reaches the row by name rather than by guessing at
-   its position; failing that, the icon can be changed on the Today tag inside
-   the app. The add-to-today control on a hovered task row keeps the app's own
-   sun as well. Each of these sits in a container where the sun is the only
-   icon, so the swap cannot reach a neighbour by accident — the plan-tomorrow
-   one is pinned to its outlined button, because that tab also holds an
-   add-task bar whose icons the bare component selector swept up. The second selector keys off the Dutch button title, so it follows
-   the interface language — with the app in another language that line needs
-   the string from that language. */
-.overdue-btn-wrapper button mat-icon,
-.today-btn mat-icon,
-plan-tasks-tomorrow .mat-mdc-outlined-button mat-icon,
-.quick-access > button:first-of-type mat-icon {
-  visibility: hidden !important;
-  position: relative;
-}
-
-/* The replacement is centred in the icon box rather than set as a line of
-   text: inside a button that box is 18px while the line height stays 24px,
-   which would drop the glyph past the bottom edge — and the icon clips what
-   overflows, so it would simply be gone. */
-.overdue-btn-wrapper button mat-icon::after,
-.today-btn mat-icon::after,
-plan-tasks-tomorrow .mat-mdc-outlined-button mat-icon::after,
-.quick-access > button:first-of-type mat-icon::after {
-  content: var(--today-icon);
-  visibility: visible;
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
 }
 
 /* Planner uses next_week in the left navigation. Schema uses calendar_clock
@@ -1472,8 +1525,8 @@ html[data-lucide-icons] task.isSelected .show-additional-info-btn:not(:has(.upda
  * Nothing above needs changing for the plugin. The substitutions keep working
  * unaltered: a theme changes an icon by writing a different ligature into a
  * pseudo-element, and the plugin reads the ligature asked for and draws the
- * Lucide equivalent — so the bolt on the today affordances arrives as Lucide's
- * `zap`, not as a Material glyph standing among Lucide ones.
+ * Lucide equivalent — so `next_week` on the Planner row arrives as Lucide's
+ * `calendar-arrow-down`, not as a Material glyph standing among Lucide ones.
  *
  * The plugin sets `data-lucide-icons` on the root element while it is drawing
  * and removes it when disabled, so everything here falls away on its own and
@@ -1498,70 +1551,43 @@ html[data-lucide-icons] body.isDarkTheme {
   --icon-scale-tasks: 0.7;
 }
 
-/* The play triangle gets a fill. Lucide's play is an outline — the plugin
-   draws it as a mask on the icon's `::after` — so the inside of the
-   triangle is whatever the button is. The icon's `::before` is free: a
-   triangle cut with `clip-path` to reach just under the outline's stroke
-   (the outline runs 6,3 → 20,12 → 6,21 in a 24-unit box, stroke 2; the
-   stroke is drawn above the fill, so the overlap never shows), at the same
-   1em the mask is, in `--play-icon-fill` — a light grey, in the header and
-   in the vertical rail alike. Play only; the pause glyph, shown while a
-   task runs, has no inside. The plugin hides the icon element itself and
-   shows only its own `::after`; a pseudo-element inherits that hiding, so
-   this one says it is visible. */
-html[data-lucide-icons] body {
-  --play-icon-fill: rgba(185, 188, 199, 0.2); /* the grey #b9bcc7, four fifths transparent */
+/* ---------------------------------------------------------------------------
+ * The play button keeps the app's own glyph
+ * ---------------------------------------------------------------------------
+ * Everything else in this section is drawn in Lucide when the plugin is
+ * installed. The time-tracking button is not, and is the one place where the
+ * icon font is the better source: Material Symbols carries a `FILL` axis, the
+ * play button component asks for the filled cut of it (`FILL 1`), and a solid
+ * mark is what that disc wants. Lucide has no fill axis — its icons are
+ * stroke-only — so drawing this one from it meant laying a second shape under
+ * the outline and keeping the two registered by hand.
+ *
+ * Two declarations undo the plugin for this element and no other:
+ *
+ *   - the plugin hides the icon so only its own mask shows; the text is still
+ *     in the element, so making it visible again brings the ligature back and
+ *     the icon font draws it;
+ *   - its mask lives in the `::after`, which is removed outright.
+ *
+ * The plugin is left alone — it goes on replacing every other icon, here and
+ * in every other app that installs it. Nothing above this line has to know.
+ *
+ * The rules that colour and size the glyph sit further down and are stated
+ * without reference to the plugin, because from here on there is nothing to
+ * refer to: the button carries the same mark either way. */
+html[data-lucide-icons]
+  nav.action-nav-right
+  button.play-btn
+  mat-icon[data-lucide-icon] {
+  visibility: visible !important;
 }
 
-/* Light mode: a lighter tint, nine tenths transparent, so the fill is a
-   breath of white on the button rather than a grey block. */
-html[data-lucide-icons] body:not(.isDarkTheme) {
-  --play-icon-fill: rgba(255, 255, 255, 0.22);
+html[data-lucide-icons]
+  nav.action-nav-right
+  button.play-btn
+  mat-icon[data-lucide-icon]::after {
+  display: none !important;
 }
-
-html[data-lucide-icons] nav.action-nav-right button.play-btn mat-icon[data-lucide-icon='play_arrow'] {
-  position: relative;
-}
-
-html[data-lucide-icons] nav.action-nav-right button.play-btn mat-icon[data-lucide-icon='play_arrow']::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  width: 1em;
-  height: 1em;
-  margin: auto;
-  clip-path: polygon(24% 12%, 85% 50%, 24% 88%);
-  background: var(--play-icon-fill);
-  visibility: visible;
-  pointer-events: none;
-}
-
-/* The pause glyph, shown while a task is tracked, gets the same fill: two
-   bars, drawn as two background images in `--play-icon-fill` inside the same
-   1em box (the outline's bars run x 5–10 and 14–19, y 3–21 in the 24-unit
-   box, stroke 2; the fill reaches half a unit under the stroke, as the play fill does). A background rather
-   than a clipped polygon, since one polygon cannot hold two shapes without a
-   bridge between them. */
-html[data-lucide-icons] nav.action-nav-right button.play-btn mat-icon[data-lucide-icon='pause'] {
-  position: relative;
-}
-
-html[data-lucide-icons] nav.action-nav-right button.play-btn mat-icon[data-lucide-icon='pause']::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  width: 1em;
-  height: 1em;
-  margin: auto;
-  background-image: linear-gradient(var(--play-icon-fill), var(--play-icon-fill)),
-    linear-gradient(var(--play-icon-fill), var(--play-icon-fill));
-  background-repeat: no-repeat;
-  background-size: 16.7% 70.8%;
-  background-position: 27.5% 50%, 72.5% 50%;
-  visibility: visible;
-  pointer-events: none;
-}
-
 /* The task list, the view around it and the detail panel read their own scale.
    These are the places where an icon sits beside 14px text rather than beside
    a label in a rail or a menu, and the size that reads as balanced there is a
@@ -1695,7 +1721,7 @@ work-view .status-bar .take-a-break-reset-btn:hover button {
    `!important` because the mini-fab paints its container from a token of its
    own; the transition matches the header row's 140ms. */
 work-view .status-bar .take-a-break-reset-btn button {
-  transition: background-color 140ms var(--ani-standard-timing, ease), color 140ms var(--ani-standard-timing, ease);
+  transition: background-color 140ms var(--ani-standard-timing), color 140ms var(--ani-standard-timing);
 }
 
 work-view .status-bar .take-a-break-reset-btn:hover button {
@@ -1753,7 +1779,7 @@ work-view .no-tasks-illu-wrapper .no-tasks-label {
   text-shadow: none !important;
 }
 
-body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view .no-tasks-illu-wrapper .no-tasks-label {
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")'])) work-view .no-tasks-illu-wrapper .no-tasks-label {
   text-shadow: var(--no-tasks-glow) !important;
 }
 
@@ -1873,10 +1899,10 @@ work-view .status-bar .item:first-child .mat-icon {
  * pale card with a soft shadow and no rim, generous in height, the related
  * ones (parent and duration, schedule and deadline) joined into one card with
  * a hairline between, the notes an open card of their own, and the created-on
- * line a muted footnote. The ground is the rail's surface, already set on the
- * panel; the cards stand a clear step above it — near-white on the light
- * page, the lifted surface on the dark one — which is the contrast the app's
- * own cards, one shade off the ground with a border, did not have.
+ * line a muted footnote. The ground is the panel's own surface, a step above
+ * the rail; the cards stand a clear step above that — the page's colour in
+ * both modes, the same surface the task list stands on — which is the contrast
+ * the app's own cards, one shade off the ground with a border, did not have.
  *
  * `--detail-card-bg`, `--detail-card-bg-hover` and `--detail-card-shadow` are
  * the three figures; `--detail-card-radius` and `--detail-card-pad` the shape.
@@ -1884,8 +1910,8 @@ work-view .status-bar .item:first-child .mat-icon {
  * over the gap and squaring the corners that meet; the app's own tokens for
  * the card fill are pointed at the new ones so its hover states follow. */
 body {
-  --detail-card-bg: #f3f4f8;
-  --detail-card-bg-hover: #e8eaf0; /* a clear step down from the card, not a step up to white that nobody saw */
+  --detail-card-bg: #e0e2e8;
+  --detail-card-bg-hover: #d2d3db; /* a clear step down from the card, the same step the light reference takes */
   /* The shadow reaches down only: offset no smaller than the blur, so it
      casts nothing upward onto the card above at a join — a blur that
      reached up 2px was the soft line over the last card of a group. */
@@ -1908,8 +1934,12 @@ body {
 }
 
 body.isDarkTheme {
-  --detail-card-bg: #1e202e;
-  --detail-card-bg-hover: #272a3c;
+  /* The cards take the page's colour, as the light mode's take white: the
+     brightest surface in the window, +2.0 L* over the panel under them.
+     Hover keeps the light mode's step size and turns it the way dark mode
+     runs, so the card lifts where the light one sinks. */
+  --detail-card-bg: #1b1d28;
+  --detail-card-bg-hover: #24263e;
   --detail-card-shadow: 0 3px 3px rgba(0, 0, 0, 0.45);
   /* The join between two cards: a light hairline on the dark surface rather
      than the divider, which read as a black border. */
@@ -2079,7 +2109,7 @@ task-detail-panel .sub-tasks task:hover .inner-wrapper > .inner-wrapper,
 task-detail-item .input-item.input-item.full-size:hover,
 task-detail-item .mat-expansion-panel-header.mat-expansion-panel-header:hover {
   background-color: var(--detail-card-bg-hover) !important;
-  transition: background-color 120ms var(--ani-standard-timing, ease);
+  transition: background-color 120ms var(--ani-standard-timing);
 }
 
 /* The hover keeps the card's shape. A panel header takes its corners from
@@ -2593,38 +2623,84 @@ task-detail-item .add-btn-wrapper .mat-mdc-button .mat-icon {
   margin: 0;
 }
 
-/* The project backlog, in light mode, stands on a surface of its own,
-   `--backlog-bg` — a step darker than the detail panel — rather than on the
-   page, so the lower pane of the split reads as one block under the list.
-   Dark mode keeps the page. Both the pane and the `backlog` component inside
-   it, which paints its own white over the pane. */
+/* The project backlog stands on a surface of its own, `--backlog-bg` — the
+   most recessed of the five panels, a step below the rail rather than above
+   it — rather than on the page, so the lower pane of the split reads as one
+   block under the list. Both the pane and the `backlog` component inside it,
+   which paints its own fill over the pane. Dark mode used to keep the page
+   and let the app's translucent black do the darkening; it states its own
+   surface now, as light mode does. */
 body:not(.isDarkTheme) {
-  --backlog-bg: #eaecf1;
+  --backlog-bg: #d2d3da;
 }
 
-body:not(.isDarkTheme) work-view .backlog,
-body:not(.isDarkTheme) work-view .backlog backlog {
+body.isDarkTheme {
+  --backlog-bg: #121317;
+}
+
+work-view .backlog,
+work-view .backlog backlog {
   background: var(--backlog-bg) !important;
 }
 
 /* And the component's darkening layer goes: the app lays a translucent black
    `::before` over the whole backlog to mark it as a separate area, which
-   turned the panel colour a grey a step darker than the panel itself. */
-body:not(.isDarkTheme) work-view .backlog backlog::before {
+   turned the panel colour a step darker than the panel itself. */
+work-view .backlog backlog::before {
   display: none !important;
 }
 
 /* The backlog toggle — the round button on the split between the list and the
    project backlog, with the count on it — carries its glyph, its count and
-   its label in the task window's background colour in light mode; the button
-   itself keeps the colour the app gives it. */
-body:not(.isDarkTheme) split .handle button.mat-mdc-fab,
-body:not(.isDarkTheme) split .handle button.mat-mdc-fab .mat-icon,
-body:not(.isDarkTheme) split .handle button.mat-mdc-fab .counter,
-body:not(.isDarkTheme) split .handle button.mat-mdc-fab .mdc-button__label {
-  --mat-fab-foreground-color: var(--surface-1);
-  --mdc-fab-icon-color: var(--surface-1);
-  color: var(--surface-1) !important;
+   its label in the palest colour the mode has, whatever the app fills the
+   button with. The fill is the project's own theme colour, written inline by
+   the app, so it is not a colour this file can know; what it can do is keep
+   the glyph on the same side of that fill in both modes. Light mode takes the
+   page, which is a hair off white. Dark mode takes the pale ink rather than
+   the page, which down there is nearly black: left to the app's own default
+   the glyph came out light on the light page and dark on the dark one, which
+   is the one thing a cut-out on a coloured disc should not do. */
+body:not(.isDarkTheme) {
+  --split-fab-ink: var(--surface-1);
+}
+
+body.isDarkTheme {
+  --split-fab-ink: var(--ink-strong);
+}
+
+split .handle button.mat-mdc-fab,
+split .handle button.mat-mdc-fab .mat-icon,
+split .handle button.mat-mdc-fab .counter,
+split .handle button.mat-mdc-fab .mdc-button__label {
+  --mat-fab-foreground-color: var(--split-fab-ink);
+  --mdc-fab-icon-color: var(--split-fab-ink);
+  color: var(--split-fab-ink) !important;
+}
+
+/* The count and the glyph stood flush against each other; a gap between the
+   two. The app places both itself — the count out of flow above the glyph, at
+   an offset this file has no reason to restate — so the gap is made by moving
+   them rather than by placing them, and the move is split between the pair
+   instead of loaded onto the count alone: the count sits near the top of the
+   disc already, and lifting it the whole distance would run it into the edge.
+   Two pixels up and two down, four between them. A transform rather than
+   a margin, because a margin does nothing to an element positioned by `top`,
+   and moving them rather than re-laying out the button, because the count and
+   the glyph are not siblings this file can order — an earlier attempt to lay
+   them out as a flex column put the count under the glyph instead of over it.
+   The two figures are a pair: raise one and lower the other by the same step
+   to widen the gap without shifting where the set sits in the disc.
+
+   The glyph only steps down when there is a count to step down for. The app
+   drops the span altogether when the backlog is empty, so the button is asked
+   whether it holds one — without that the glyph sat two pixels low in an
+   otherwise empty disc, off centre against nothing. */
+split .handle button.mat-mdc-fab .counter {
+  transform: translateY(-2px);
+}
+
+split .handle button.mat-mdc-fab:has(.counter) .mat-icon {
+  transform: translateY(2px);
 }
 
 /* ============================================================
@@ -2776,6 +2852,9 @@ body {
   --action-bar-scale: 0.85;
   /* Non-primary actions stay visible but recede until the rail is used. */
   --action-bar-idle-opacity: 0.2;
+  /* Where the horizontal row waits with the rail off: out of sight until it
+     is reached for. Raise it to leave the row faintly visible at rest. */
+  --action-bar-hidden-opacity: 0;
   /* The colour those dimmed buttons come out at: the app's muted ink at the
      opacity above, flattened onto the chrome surface they stand on. The play
      button borrows it while it is disabled, so a control that cannot even be
@@ -3012,6 +3091,40 @@ nav.action-nav-right
   color: var(--play-icon-ink-idle);
 }
 
+/* The play glyph a step above the size the app draws it, and the same size in
+   both places the button appears. Left alone the mark is 24px in the top bar's
+   40px circle and 23px in the rail's 46px one — the theme's own rail sizing
+   states it at half the disc — so it is not only small for the button, it is
+   two different sizes depending on where the button is standing.
+
+   One figure settles both. The size is stated here rather than derived from
+   the disc, and the selector names nothing above the button, so the rail and
+   the top bar are drawn alike.
+
+   `--play-glyph-scale` is the knob. `1` is the 24px the default theme draws;
+   above that the mark grows, and the box goes with it — `mat-icon` clips what
+   overflows, so a font-size raised on its own would cut the triangle off at
+   the edge of the box it used to fill.
+
+   Only where the app is drawing its own glyphs. With the Lucide Icons plugin
+   installed the mark is a mask instead, hung on a hidden element, and the
+   LUCIDE ICONS PLUGIN section above sizes it — a font-size would reach
+   nothing. Play and pause alike, so the glyph does not change size the moment
+   a task starts running.
+
+   Written short — the button and the icon, nothing about the nav around them
+   — and forced. The play button component styles this same element, and the
+   size it would otherwise keep is stated in more places than is worth
+   out-weighing one by one. */
+button.play-btn mat-icon {
+  --play-glyph-scale: 1.1;
+  --play-glyph-size: 24px;
+  font-size: calc(var(--play-glyph-size) * var(--play-glyph-scale)) !important;
+  width: calc(var(--play-glyph-size) * var(--play-glyph-scale)) !important;
+  height: calc(var(--play-glyph-size) * var(--play-glyph-scale)) !important;
+  line-height: calc(var(--play-glyph-size) * var(--play-glyph-scale)) !important;
+}
+
 /* The disc, and the ring that pulses on it while the clock runs. Both are
    painted from `--play-button-bg` rather than from the palette, so neither
    follows the project, tag, My Day or Inbox you are in. Material states the
@@ -3039,7 +3152,7 @@ nav.action-nav-right button.play-btn:not(:disabled):not(.mat-mdc-button-disabled
 /* Under the pointer the glass clears to the full colour. */
 nav.action-nav-right button.play-btn:not(:disabled):not(.mat-mdc-button-disabled):is(:hover, :focus-visible) {
   --play-button-glass: 100%;
-  transition: background-color 140ms var(--ani-standard-timing, ease);
+  transition: background-color 140ms var(--ani-standard-timing);
 }
 
 /* On the light page the app's 3dp shadow under the disc reads as a smudge
@@ -3057,7 +3170,9 @@ body:not(.isDarkTheme) nav.action-nav-right button.play-btn:not(:disabled):not(.
 
 /* While a task is tracked — the app puts its pulse ring in the wrapper — the
    disc is the full colour and, in light mode, the glyph's line the full
-   label colour, pointer or not: a running timer is never dimmed. */
+   label colour, pointer or not: a running timer is never dimmed. Both halves, at the same figure: on the
+   light page it reads as a lighter touch than on the dark one, which is what a
+   single opacity over two backgrounds does. */
 nav.action-nav-right .play-btn-wrapper:has(.pulse-circle) button.play-btn:not(:disabled):not(.mat-mdc-button-disabled) {
   --play-button-glass: 100%;
 }
@@ -3066,78 +3181,62 @@ body:not(.isDarkTheme) nav.action-nav-right .play-btn-wrapper:has(.pulse-circle)
   color: var(--sidenav-text);
 }
 
-body:not(.isDarkTheme) nav.action-nav-right button.tour-addBtn.tour-addBtn {
-  color: color-mix(in srgb, var(--text-color) 78%, var(--surface-1));
-  --mat-icon-button-icon-color: color-mix(in srgb, var(--text-color) 78%, var(--surface-1));
-  --mdc-icon-button-icon-color: color-mix(in srgb, var(--text-color) 78%, var(--surface-1));
+/* The play button rests below full and comes to full under the pointer.
+ *
+ * `--play-button-idle-opacity` is what it rests at. Everything below is that
+ * one figure, restated in the two places it differs — the light page, and, on
+ * the dark one, a timer that is running. The opacity, the transition and the
+ * lift back to full are stated once, here.
+ *
+ * The tracked state used to be exempt from all of this, on the reasoning that a
+ * timer you have started should never step back. The pulse ring the app draws
+ * already says the timer is running; holding the button at full as well made it
+ * the loudest thing on the page while the rest of the row sat at rest.
+ *
+ * `.play-btn-wrapper` is stated twice for weight, not for effect. The header
+ * block further down forces play to full opacity while the rest of the row
+ * hides — (0,5,4) — and this rule has to outweigh it; doubling the class takes
+ * it to (0,6,3), which wins on the class count. It used to reach that weight
+ * through a pulse-ring exclusion that no longer belongs in the selector.
+ *
+ * Forced, for the same reason. */
+nav.action-nav-right
+  play-button
+  .play-btn-wrapper.play-btn-wrapper
+  button.play-btn:not(:disabled):not(.mat-mdc-button-disabled) {
+  --play-button-idle-opacity: 0.75;
+  opacity: var(--play-button-idle-opacity) !important;
+  transition: opacity 140ms var(--ani-standard-timing) !important;
 }
 
-body:not(.isDarkTheme) nav.action-nav-right button.tour-addBtn.tour-addBtn:is(:hover, :focus-visible) {
-  color: var(--text-color);
-  --mat-icon-button-icon-color: var(--text-color);
-  --mdc-icon-button-icon-color: var(--text-color);
+/* Light mode carries its own figure. One opacity over two backgrounds does not
+   read as one weight: 0.75 on the dark page is a button stepping back, and
+   the same figure on the light page is a button going faint. 0.92 lands at
+   the felt weight the dark half has here. Each file states its own: 0.95 in
+   `paper-purple.css`, 0.92 in `minimal-tokyo.css`, 0.8 in
+   `shades-of-purple.css`.
+
+   Only the variable is restated — the opacity, the transition and the lift to
+   full are the rule above's, unchanged. */
+body:not(.isDarkTheme)
+  nav.action-nav-right
+  play-button
+  .play-btn-wrapper.play-btn-wrapper
+  button.play-btn:not(:disabled):not(.mat-mdc-button-disabled) {
+  --play-button-idle-opacity: 0.92;
 }
 
-/* Dark mode the other way round: a little darker at rest — the ink pulled
-   toward the menu's surface — and the full ink under the pointer. */
-body.isDarkTheme nav.action-nav-right button.tour-addBtn.tour-addBtn {
-  color: color-mix(in srgb, var(--text-color) 68%, var(--sidenav-bg));
-  --mat-icon-button-icon-color: color-mix(in srgb, var(--text-color) 68%, var(--sidenav-bg));
-  --mdc-icon-button-icon-color: color-mix(in srgb, var(--text-color) 68%, var(--sidenav-bg));
-}
+/* No rule for a running timer in either half: this file rests at the figure it
+   would hold one at, so starting a timer does not change the button's weight.
+   The other two state a dark-mode figure of their own here. */
 
-body.isDarkTheme nav.action-nav-right button.tour-addBtn.tour-addBtn:is(:hover, :focus-visible) {
-  color: var(--text-color);
-  --mat-icon-button-icon-color: var(--text-color);
-  --mdc-icon-button-icon-color: var(--text-color);
-}
-
-
-/* Add task the same way: the app gives it `color="primary"`, which Material
-   draws in the work context's colour. Body ink instead, in every state. */
-nav.action-nav-right button.tour-addBtn {
-  color: var(--text-color);
-  --mat-icon-button-icon-color: var(--text-color);
-  --mdc-icon-button-icon-color: var(--text-color);
-}
-
-/* And the circle under it goes. With no task to start the button cannot be
-   pressed or even hovered, so the filled disc is a target that is not there;
-   what is left is a glyph in the same ink as the dimmed buttons along the
-   strip, which is what the control has become. Material's disabled container
-   colour, the fill it paints underneath and the elevation the app puts on the
-   button are all cleared — a shadow around nothing reads worse than the disc
-   did. The button keeps its size, so nothing in the strip moves. */
-nav.action-nav-right button.play-btn:is(:disabled, .mat-mdc-button-disabled) {
-  --mat-fab-small-disabled-state-container-color: transparent;
-  --mdc-fab-small-container-color: transparent;
-  --mat-fab-small-container-color: transparent;
-  background-color: transparent;
-  box-shadow: none;
-}
-
-/* Its hover, in any state. The app gives Add task `color="primary"`, so
-   Material draws both the glyph and the state layer of a coloured icon button
-   in the work context's colour. The buttons further along the strip are
-   uncoloured and get Material's own neutral wash; Add task is given the same
-   two values, stated per mode because that is how Material states them — near
-   black on a light page, white on a dark one.
-
-   Specificity is the whole point of the shape of these selectors. The dark
-   half of the app's own rule is `.isDarkTheme .mat-mdc-icon-button.mat-primary`,
-   three classes deep, so a selector of two classes and an element loses to it
-   and the project's colour stays. Anchoring on `body` and stating the class
-   twice puts these above it in both halves. */
-body:not(.isDarkTheme) nav.action-nav-right button.tour-addBtn.tour-addBtn {
-  --mat-icon-button-state-layer-color: rgba(0, 0, 0, 0.87);
-  --mdc-icon-button-state-layer-color: rgba(0, 0, 0, 0.87);
-  --mat-icon-button-ripple-color: rgba(0, 0, 0, 0.1);
-}
-
-body.isDarkTheme nav.action-nav-right button.tour-addBtn.tour-addBtn {
-  --mat-icon-button-state-layer-color: #ffffff;
-  --mdc-icon-button-state-layer-color: #ffffff;
-  --mat-icon-button-ripple-color: rgba(255, 255, 255, 0.1);
+/* The pointer brings it to full in every state: that is feedback on the
+   control, not a statement about the timer. */
+nav.action-nav-right
+  play-button
+  .play-btn-wrapper.play-btn-wrapper
+  button.play-btn:not(:disabled):not(.mat-mdc-button-disabled):is(:hover, :focus-visible) {
+  opacity: 1 !important;
 }
 
 /* Play straddles the rail's edge. The column was narrowed by `--rail-inset`,
@@ -3345,7 +3444,7 @@ magic-side-nav nav-item plugin-icon.nav-icon::after {
     --action-bar-fade-delay: 300ms;
     opacity: var(--action-bar-hidden-opacity, 0);
     transition: opacity var(--action-bar-fade-out)
-      var(--ani-standard-timing, ease) var(--action-bar-fade-delay) !important;
+      var(--ani-standard-timing) var(--action-bar-fade-delay) !important;
   }
 
   /* The play button has three states, and only one of them hides. Running:
@@ -3367,7 +3466,7 @@ magic-side-nav nav-item plugin-icon.nav-icon::after {
     --action-bar-fade-delay: 300ms;
     opacity: var(--action-bar-hidden-opacity, 0);
     transition: opacity var(--action-bar-fade-out)
-      var(--ani-standard-timing, ease) var(--action-bar-fade-delay) !important;
+      var(--ani-standard-timing) var(--action-bar-fade-delay) !important;
   }
 
   /* Add task follows the play button: while play is in view — running or
@@ -3501,7 +3600,7 @@ magic-side-nav nav-item plugin-icon.nav-icon::after {
 main-header .page-title-actions .project-settings-btn,
 main-header .page-title-actions .task-filter-btn:not(.isCustomized) {
   opacity: var(--action-bar-idle-opacity);
-  transition: opacity 500ms var(--ani-standard-timing, ease) 300ms !important;
+  transition: opacity 500ms var(--ani-standard-timing) 300ms !important;
 }
 
 main-header
@@ -3510,7 +3609,7 @@ main-header
   :is(.project-settings-btn, .task-filter-btn),
 main-header .page-title-actions .project-settings-btn[aria-expanded='true'] {
   opacity: 1;
-  transition: opacity 140ms var(--ani-standard-timing, ease) 0ms !important;
+  transition: opacity 140ms var(--ani-standard-timing) 0ms !important;
 }
 
 /* The header keeps its room for the window controls only while it reaches
@@ -3652,7 +3751,7 @@ main-header .wrapper.wrapper {
        force when the pointer leaves. */
     --pill-fade: 140ms;
     --pill-return-delay: 350ms;
-    transition: opacity var(--pill-fade) var(--ani-standard-timing, ease)
+    transition: opacity var(--pill-fade) var(--ani-standard-timing)
       var(--pill-return-delay) !important;
   }
 
@@ -3682,6 +3781,49 @@ main-header .wrapper.wrapper {
   }
 
 
+}
+
+/* ---------------------------------------------------------------------------
+ * Compact context menus
+ * ---------------------------------------------------------------------------
+ * Material sizes menus for touch: 48px rows, a 14px label and a 24px glyph.
+ * On a pointer-driven desktop the task context menu and its submenus come out
+ * taller than the task list they belong to. Everything here scales that down.
+ *
+ * Two of the app's own stylesheets fight this, both compiled by Angular with
+ * `[_ngcontent]` attributes that add specificity: the context menu's own SCSS
+ * sizes and rounds the quick-access strip, and `select-option-row` lays out
+ * the tag, project and estimate rows. Where a plain selector loses to those,
+ * the class is repeated, `!important` is used, or — cleanest — the custom
+ * property their rule reads is redefined on the element itself. */
+
+/* Menu rows. `!important` because Material's own 48px min-height is set with
+   the same specificity and wins on source order otherwise. The `:not()` spares
+   the invisible focus-catcher the menu opens with — it is a menu item too,
+   carrying `height: 0` inline, and an `!important` height would inflate it
+   into an empty band above the icon strip. */
+.mat-mdc-menu-panel .mat-mdc-menu-item:not([style*='height: 0']) {
+  min-height: 40px !important;
+  height: auto !important;
+  padding-left: 12px;
+  padding-right: 12px;
+  font-size: 12.5px;
+}
+
+.mat-mdc-menu-item .mat-icon,
+.mat-mdc-menu-item .material-icons,
+.mat-mdc-menu-item .material-symbols-outlined {
+  width: 17px;
+  height: 17px;
+  font-size: 17px;
+  line-height: 17px;
+  margin-right: 12px;
+}
+
+/* The submenu chevron sits in the trailing slot and follows the same scale. */
+.mat-mdc-menu-item .mat-mdc-menu-submenu-icon {
+  height: 8px;
+  width: 8px;
 }
 
 /* `.key-i` is the app's own shortcut chip. It is secondary information and
@@ -3731,14 +3873,14 @@ main-header .wrapper.wrapper {
    nothing. Over a background image only; without one the app's own
    reveal-on-hover stands. `!important` throughout, against the app's own
    opacity ladder, which is stated on the same element. */
-body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view .section-container > collapsible > .collapsible-header > button[mat-icon-button] {
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")'])) work-view .section-container > collapsible > .collapsible-header > button[mat-icon-button] {
   opacity: var(--action-bar-idle-opacity) !important;
-  transition: opacity 140ms var(--ani-standard-timing, ease) !important;
+  transition: opacity 140ms var(--ani-standard-timing) !important;
 }
 
-body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view .section-container > collapsible > .collapsible-header > button[mat-icon-button]:hover,
-body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view .section-container > collapsible > .collapsible-header > button[mat-icon-button]:focus-visible,
-body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view .section-container > collapsible > .collapsible-header > button[mat-icon-button][aria-expanded='true'] {
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")'])) work-view .section-container > collapsible > .collapsible-header > button[mat-icon-button]:hover,
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")'])) work-view .section-container > collapsible > .collapsible-header > button[mat-icon-button]:focus-visible,
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")'])) work-view .section-container > collapsible > .collapsible-header > button[mat-icon-button][aria-expanded='true'] {
   opacity: 1 !important;
 }
 
@@ -4287,118 +4429,7 @@ task .attachment-btn .mat-icon,
      on. Thinner strokes would need a different icon source, not a setting. */
 }
 
-/* ---------------------------------------------------------------------------
- * Project on the task line, tags below it
- * ---------------------------------------------------------------------------
- * A task row stacks its title and its chips: `.title-and-tags-wrapper` is a
- * block, so `tag-list` always starts a second line — even when the only chip
- * is the project. The project belongs beside the title; the tags do not.
- *
- * The app renders both from one list, with the project always first and no
- * class to tell them apart, so the split is done in the layout. `display:
- * contents` dissolves `tag-list` and its two wrappers, which lifts the chips
- * into the row's own flex container; `order` then puts the project on the
- * title's line and the tags after it, and a zero-height full-width `::after`
- * sits between the two orders as a forced line break — the standard way to
- * break a flex line without an element to break on.
- *
- * Note the one case this cannot tell apart: inside a project view the app
- * hides the project chip, so the first chip is an ordinary tag and lands on
- * the title line. A parent task's breadcrumb keeps its own line above. */
-task .title-and-tags-wrapper {
-  display: flex;
-  flex-flow: row wrap;
-  /* Centre, not baseline. The project sits in a chip whose first child is an
-     icon, and a flex container takes its baseline from that first item — so
-     with the project text at a different size than the title, baseline
-     alignment lined the title up with the icon's baseline instead of the
-     project's text, and the two lines drifted apart. Centring the boxes keeps
-     both texts on one optical line whatever size either one is. */
-  align-items: center;
-  /* A wrapping flex container stretches its lines to fill spare height by
-     default, which put uneven air between the title and the tags. Centring
-     the lines instead keeps them together and sits them in the middle of the
-     row, so a task with tags is balanced rather than top-heavy. */
-  align-content: center;
-  column-gap: var(--s);
-  row-gap: 0;
-  /* Only a row that wraps grows on this: a single-line row is still shorter
-     than the 44px minimum, so its height is unchanged. */
-  padding-top: 3px;
-  padding-bottom: 3px;
-}
-
-task .title-and-tags-wrapper > .parent-title {
-  order: -2;
-  flex: 0 0 100%;
-}
-
-/* Shrink-to-fit so the project can follow the text; everything else about the
-   title — font, size, weight, padding — is left to the app. */
-task .title-and-tags-wrapper > .task-title {
-  order: -1;
-  flex: 0 1 auto;
-  min-width: 0;
-}
-
-task .title-and-tags-wrapper > tag-list,
-task .title-and-tags-wrapper .tags-container,
-task .title-and-tags-wrapper .tags {
-  display: contents;
-}
-
-/* The project sits on the title's line behind a divider, as in PWM: name,
-   8px, a hairline, 8px, then the project. PWM writes that divider as a `|`
-   glyph; here it is a background stripe on the chip, because a border would
-   run the chip's full height and a pseudo-element would land inside it. */
-task .title-and-tags-wrapper .tags > tag:first-child {
-  order: 0;
-  margin-left: 0;
-  padding-left: 17px;
-  /* PWM writes the divider as a `|` in its quaternary text colour, a muted
-     violet that stays clearly visible; `--separator` is a card-edge colour and
-     came out far too dark for that job. */
-  background-image: linear-gradient(
-    color-mix(in srgb, var(--ink-muted) 70%, transparent),
-    color-mix(in srgb, var(--ink-muted) 70%, transparent)
-  );
-  background-size: 1px 1.9em;
-  background-position: 8px center;
-  background-repeat: no-repeat;
-}
-
-/* The break. Zero height, so it costs nothing when there are no tags. */
-task .title-and-tags-wrapper::after {
-  content: '';
-  order: 1;
-  flex: 0 0 100%;
-  height: 0;
-}
-
-/* Everything after the project drops to the line below and flows there. The
-   tag line is pulled up against the title: the visible gap at this point is
-   line-height, not margin, so the chips take a tighter leading and a negative
-   top margin eats the rest. The 2px underneath keeps the last line off the
-   card's edge. */
-task .title-and-tags-wrapper .tags > tag:not(:first-child) {
-  order: 2;
-  margin-top: -1px;
-  margin-bottom: 2px;
-  line-height: 1.15;
-}
-
-/* The tag line keeps the 3px indent the app gives its tag container. */
-task .title-and-tags-wrapper .tags > tag:nth-child(2) {
-  margin-left: 3px;
-}
-
-task .title-and-tags-wrapper .tags-container {
-  margin-top: 0 !important;
-  margin-bottom: 0 !important;
-  margin-left: 0 !important;
-}
-
-/* The task line, drawn after the reference: PWM sets the name in the interface
+/* The task line, drawn after the reference: the name is set in the interface
    face at `text-sm` — 14px on a 20px line, regular weight, in the primary ink —
    and those are the values here. Tag and project icons are left exactly as the
    app draws them. */
@@ -4410,7 +4441,7 @@ task .task-title input {
   font-size: 14px;
   /* The title component states `line-height: 1.5` on the value, the edit
      textarea and the hidden element that measures it, from a selector that
-     outranks this one on the last two; the flag lands PWM's 20px on all
+     outranks this one on the last two; the flag lands the 20px on all
      three, so an open row and a row being edited keep the same leading. */
   line-height: 20px !important;
   font-weight: 400;
@@ -4418,7 +4449,7 @@ task .task-title input {
   color: var(--ink);
 }
 
-/* Row metrics, taken from PWM's task card: 12px above and below the line and
+/* Row metrics, from the reference task card: 12px above and below the line and
    a 44px row, against Super Productivity's 4px and 40px. Tag text matches the
    title instead of the 90% the tag component gives it. The first two are the
    app's own variables, so subtask rows and the planner follow along. */
@@ -4467,7 +4498,7 @@ task .title-and-tags-wrapper .tags > tag:not(:first-child) mat-icon {
   --icon-scale: 1;
 }
 
-/* The done toggle, matched to PWM. There it is a Tailwind-forms checkbox:
+/* The done toggle, matched to the reference: a Tailwind-forms checkbox at
    16px, a 4px corner, a 1px border in a muted grey, with 10px between it and
    the task name. Super Productivity draws an SVG instead — a 19px square at
    `rx: 5.5` and `stroke-width: 2` — so the shape is redrawn through CSS rather
@@ -4493,13 +4524,13 @@ done-toggle .done-shape.done-shape {
   y: 4px;
   stroke: var(--ink-muted) !important;
   stroke-width: 1 !important;
-  /* PWM draws the box in its quaternary border colour — a muted step below
+  /* The box is drawn in a quaternary border colour — a muted step below
      the secondary text, not the text colour itself. Holding the ink and
      dropping the opacity lands in the same place in both light and dark. */
   opacity: 0.55 !important;
 }
 
-/* A finished task, after PWM: the box fills with the accent and carries a
+/* A finished task: the box fills with the accent and carries a
    light check, and the line itself steps back rather than staying at full
    strength. `.is-done` sits on the toggle's host element, and the component's
    own rules for it are compiled with host and content attributes, so these
@@ -4529,8 +4560,9 @@ body.isDarkTheme {
   --task-is-done-dim-opacity: 0.22;
 }
 
-/* The ink a finished name takes. PWM uses its tertiary text colour, which on
-   two of these palettes falls short of AA; the muted ink is that colour with
+/* The ink a finished name takes. The reference uses a tertiary text colour,
+   which on two of these palettes falls short of AA; the muted ink is that
+   colour with
    the contrast correction this theme already applies to every other muted
    label, so the done row stays legible and in step with the rest. */
 body,
@@ -4586,7 +4618,7 @@ body.isDarkTheme task.isDone .box.box {
 }
 
 
-/* The done-tasks divider sits centred under the list in PWM, with a small
+/* The done-tasks divider sits centred under the list, with a small
    caret rather than the app's oversized one. Scoped to the work view: the
    same component carries the section headers in Settings, which are meant to
    read as headings and keep the app's own styling. */
@@ -4595,7 +4627,7 @@ work-view collapsible .collapsible-header {
   gap: var(--s-half);
   width: fit-content;
   interpolate-size: allow-keywords;
-  transition: width 320ms var(--ani-standard-timing, ease);
+  transition: width 320ms var(--ani-standard-timing);
   margin-inline: 0; /* at the head of the list, where the app has it */
   margin-bottom: 8px; /* room between the line and the first row, as over a picture */
   --section-rule-weight: 2px; /* two device pixels; the block below restates it per screen scale */
@@ -4676,7 +4708,7 @@ work-view collapsible .collapsible-header::after {
   width: calc(100% - var(--section-rule-inset-left) - var(--section-rule-inset-right));
   background: var(--separator);
   pointer-events: none;
-  transition: width 320ms var(--ani-standard-timing, ease);
+  transition: width 320ms var(--ani-standard-timing);
 }
 
 /* Open, the line grows from under the text to the full width of the column.
@@ -4727,11 +4759,11 @@ work-view collapsible.isExpanded .collapsible-header .collapsible-expand-icon {
   transform: rotate(0deg) !important;
 }
 
-/* PWM shows the mark it would set while you hover an open task, in grey, so
+/* The mark a click would set is shown in grey while an open task is hovered, so
    the click needs no explaining. Same trick as the done state: the path is
    dashed and only drawn by the animation, so the offset has to be cleared. */
 done-toggle:not(.is-done):hover .done-check {
-  /* PWM draws this preview mark in a plain grey (#888) rather than in the
+  /* This preview mark is a plain grey (#888) rather than the
      theme's ink, so it reads as a hint and not as a set value. */
   stroke: #888888 !important;
   stroke-dasharray: none !important;
@@ -4739,7 +4771,7 @@ done-toggle:not(.is-done):hover .done-check {
   opacity: 0.9 !important;
 }
 
-/* The check carries the weight it has in PWM rather than the hairline the
+/* The check carries a real weight rather than the hairline the
    smaller box left it with. */
 done-toggle .done-check {
   stroke-width: 2 !important;
@@ -4772,9 +4804,9 @@ done-toggle .done-check {
   --mat-filled-button-focus-state-layer-opacity: 0;
   --mat-outlined-button-focus-state-layer-opacity: 0;
   transition:
-    background-color 140ms var(--ani-standard-timing, ease),
-    border-color 140ms var(--ani-standard-timing, ease),
-    color 140ms var(--ani-standard-timing, ease);
+    background-color 140ms var(--ani-standard-timing),
+    border-color 140ms var(--ani-standard-timing),
+    color 140ms var(--ani-standard-timing);
 }
 
 .finish-day-button-wrapper .e2e-finish-day .mat-icon ,
@@ -4785,9 +4817,9 @@ done-toggle .done-check {
 
 /* Over a picture the button takes the tag treatment of the headings: the
    chrome colour at the same opacity with the photo blurred behind it. */
-body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) .finish-day-button-wrapper .e2e-finish-day,
-body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) .finish-day-button-wrapper .e2e-move-done-to-archive,
-body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) .finish-day-button-wrapper .mat-mdc-unelevated-button.e2e-finish-day {
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")'])) .finish-day-button-wrapper .e2e-finish-day,
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")'])) .finish-day-button-wrapper .e2e-move-done-to-archive,
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")'])) .finish-day-button-wrapper .mat-mdc-unelevated-button.e2e-finish-day {
   background-color: color-mix(in srgb, var(--sidenav-bg) 72%, transparent);
   backdrop-filter: blur(14px);
   border-color: transparent;
@@ -4812,9 +4844,9 @@ daily-summary .bottom-buttons .mat-mdc-unelevated-button.mat-primary {
   letter-spacing: 0.01em;
   gap: 8px;
   transition:
-    background-color 140ms var(--ani-standard-timing, ease),
-    box-shadow 140ms var(--ani-standard-timing, ease),
-    transform 140ms var(--ani-standard-timing, ease);
+    background-color 140ms var(--ani-standard-timing),
+    box-shadow 140ms var(--ani-standard-timing),
+    transform 140ms var(--ani-standard-timing);
 }
 
 daily-summary .bottom-buttons .mat-mdc-unelevated-button .mat-icon {
@@ -4859,8 +4891,8 @@ daily-summary tasks-by-tag {
   border: 0; /* the by-tag card has no edge; the note keeps its hairline */
 }
 
-body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) daily-summary tasks-by-tag,
-body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) daily-summary .day-end-note inline-markdown {
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")'])) daily-summary tasks-by-tag,
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")'])) daily-summary .day-end-note inline-markdown {
   background: color-mix(in srgb, var(--sidenav-bg) 72%, transparent);
   backdrop-filter: blur(14px);
   border-color: transparent;
@@ -4907,8 +4939,8 @@ daily-summary plan-tasks-tomorrow .mat-mdc-outlined-button.mat-primary {
   letter-spacing: 0.01em;
   gap: 8px;
   transition:
-    background-color 140ms var(--ani-standard-timing, ease),
-    border-color 140ms var(--ani-standard-timing, ease);
+    background-color 140ms var(--ani-standard-timing),
+    border-color 140ms var(--ani-standard-timing);
 }
 
 daily-summary plan-tasks-tomorrow .mat-mdc-outlined-button .mat-icon {
@@ -4935,7 +4967,7 @@ planner-day {
   padding-top: var(--s-half, 4px);
 }
 
-body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) planner-day {
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")'])) planner-day {
   background: color-mix(in srgb, var(--sidenav-bg) 72%, transparent);
   backdrop-filter: blur(14px);
   border-color: transparent !important;
@@ -4988,7 +5020,7 @@ daily-summary .mat-mdc-tab-header {
   }
 }
 
-body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) daily-summary .mat-mdc-tab-header {
+body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"null")'])) daily-summary .mat-mdc-tab-header {
   background: color-mix(in srgb, var(--sidenav-bg) 72%, transparent);
   backdrop-filter: blur(14px);
 }
@@ -5017,7 +5049,7 @@ body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"loc
 .finish-day-button-wrapper .e2e-finish-day:focus-visible .mat-icon ,
 .finish-day-button-wrapper .e2e-move-done-to-archive:focus-visible .mat-icon {
   color: var(--palette-primary-500);
-  transition: color 140ms var(--ani-standard-timing, ease);
+  transition: color 140ms var(--ani-standard-timing);
 }
 
 /* ---------------------------------------------------------------------------
