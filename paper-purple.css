@@ -455,6 +455,25 @@ right-panel .side.side {
   border-right-width: 0 !important;
 }
 
+/* Without a picture the panel steps up instead of down. Beside a veiled photo
+   the rail's grey reads as a light column; beside the plain page, which is
+   lighter than that grey, the same panel read as a dark strip. So where there
+   is no picture — none set, or a placeholder — the panel takes
+   `--detail-panel-bg`, one step lighter than the page, and the cards inside
+   keep their own step above that. */
+body {
+  --detail-panel-bg: #f5f5f5;
+}
+
+body.isDarkTheme {
+  --detail-panel-bg: #1e1d3a;
+}
+
+body:not(.hasBgImage) right-panel .side.side,
+body.hasBgImage:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")']) right-panel .side.side {
+  background: var(--detail-panel-bg);
+}
+
 /* With a picture behind the app the rail keeps its own surface. The app turns
    it into a pane of milk glass in that case — `background: var(--c-dark-50)`
    with a 20px blur — and leaves the right panel out of it, so one side of the
@@ -554,6 +573,15 @@ body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"loc
    side padding. Restated for picture mode, whose padding differs. */
 work-view .section-container > collapsible .collapsible-header {
   --section-rule-inset-right: calc(var(--s, 8px) + var(--s-half, 4px) + 40px);
+}
+
+/* The line under a custom section's heading — the sections you set up in a
+   project's backlog — is drawn in the primary: in Minimal Tokyo the colour
+   of the project you are in, in the purple pair the theme's accent. The
+   app's own sections (Overdue, Completed tasks, the date groups) keep the
+   hairline. */
+work-view .section-container > collapsible .collapsible-header::after {
+  background: var(--palette-primary-500);
 }
 
 body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"localhost")'], .bg-image[style*='"null")'])) work-view .section-container > collapsible .collapsible-header.collapsible-header {
@@ -1526,6 +1554,23 @@ daily-summary {
   scrollbar-width: none !important;
 }
 
+/* And the main task views — a project, My Day, Inbox, a tag — whose scroller
+   is the page component as well, and anything that scrolls inside the work
+   view. The list scrolls as before; only the bar is gone. */
+project-task-page,
+tag-task-page,
+work-view,
+work-view * {
+  scrollbar-width: none !important;
+}
+
+/* And the left menu: its list scrolls when the projects and tags outgrow the
+   window, and the bar down a narrow rail is one more edge on it. */
+magic-side-nav,
+magic-side-nav * {
+  scrollbar-width: none !important;
+}
+
 /* The status bar at the head of the work view ends its first figure — the
    estimate remaining — with an hourglass glyph, which sits right after a
    number that already says "time" and is the only figure in that row to get
@@ -1535,6 +1580,579 @@ work-view .status-bar .item:first-child mat-icon,
 work-view .status-bar .item:first-child .mat-icon {
   display: none;
 }
+
+/* ============================================================
+ * DETAIL PANEL CARDS — the panel set as in Microsoft To Do
+ * ============================================================
+ * The task detail panel is a column of cards on a quiet ground: each field a
+ * pale card with a soft shadow and no rim, generous in height, the related
+ * ones (parent and duration, schedule and deadline) joined into one card with
+ * a hairline between, the notes an open card of their own, and the created-on
+ * line a muted footnote. The ground is the rail's surface, already set on the
+ * panel; the cards stand a clear step above it — near-white on the light
+ * page, the lifted surface on the dark one — which is the contrast the app's
+ * own cards, one shade off the ground with a border, did not have.
+ *
+ * `--detail-card-bg`, `--detail-card-bg-hover` and `--detail-card-shadow` are
+ * the three figures; `--detail-card-radius` and `--detail-card-pad` the shape.
+ * The join between two adjacent field cards is made by pulling the second up
+ * over the gap and squaring the corners that meet; the app's own tokens for
+ * the card fill are pointed at the new ones so its hover states follow. */
+body {
+  --detail-card-bg: #ffffff;
+  --detail-card-bg-hover: #f0f0f3; /* a clear step down from the card, not a step up to white that nobody saw */
+  --detail-card-shadow: 0 1px 2px rgba(38, 43, 58, 0.08); /* the shadow alone: a ring of 1px around each card read as a border, and between two joined cards as a second line */
+  --detail-card-join: color-mix(in srgb, var(--divider) 70%, transparent);
+  /* The join between two fields starts at the side padding, flush with the
+     glyph. */
+  --detail-card-join-inset: var(--detail-card-pad);
+  --detail-card-radius: 6px;
+  --detail-card-pad: 14px;
+  --task-detail-bg: var(--detail-card-bg);
+  --task-detail-bg-hover: var(--detail-card-bg-hover);
+}
+
+body.isDarkTheme {
+  --detail-card-bg: #232144;
+  --detail-card-bg-hover: #2a2850;
+  --detail-card-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.45);
+  /* The join between two cards: a light hairline on the dark surface rather
+     than the divider, which read as a black border. */
+  --detail-card-join: rgba(255, 255, 255, 0.06);
+  --task-detail-bg: var(--detail-card-bg);
+  --task-detail-bg-hover: var(--detail-card-bg-hover);
+}
+
+/* The cards themselves: the field rows and the expansion panels alike. */
+task-detail-item .input-item.input-item,
+task-detail-item .mat-expansion-panel.mat-expansion-panel {
+  background: var(--detail-card-bg);
+  border: 0;
+  border-radius: var(--detail-card-radius);
+  box-shadow: var(--detail-card-shadow);
+  margin: var(--s, 8px) var(--s, 8px) 0;
+}
+
+/* Row height and inner room: the field rows and the panel headers share one
+   measure, the To Do row. */
+task-detail-item .input-item.input-item {
+  min-height: 52px;
+  padding-inline: var(--detail-card-pad);
+}
+
+task-detail-item .mat-expansion-panel.mat-expansion-panel .mat-expansion-panel-header {
+  min-height: 52px;
+  height: auto;
+  padding-inline: var(--detail-card-pad);
+}
+
+task-detail-item .mat-expansion-panel.mat-expansion-panel .mat-expansion-panel-header.mat-expanded {
+  height: auto;
+}
+
+/* Two field cards that belong together become one: the second loses the gap
+   above it and the corners where the two meet are squared, and a hairline
+   marks the join. Adjacent `input-item` fields only, so a panel between them
+   breaks the run. */
+task-detail-item.input-item + task-detail-item.input-item .input-item.input-item {
+  margin-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  /* The join is a short hairline, not a full-width rule: drawn as a
+     background line from the label's left edge to the side padding. */
+  background-image: linear-gradient(var(--detail-card-join), var(--detail-card-join)) !important;
+  background-repeat: no-repeat !important;
+  background-position: var(--detail-card-join-inset) 0 !important;
+  background-size: calc(100% - var(--detail-card-join-inset) - var(--detail-card-pad)) 1px !important;
+}
+
+task-detail-item.input-item:has(+ task-detail-item.input-item) .input-item.input-item {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* The notes: an open card, the text straight on it. The app draws the
+   markdown halves as a darker inset box inside the panel; here the panel is
+   the card and the halves are transparent on it, with the card's own room
+   around the text. */
+task-detail-item .panel-content-wrapper {
+  margin: 0;
+  padding: 0 var(--detail-card-pad) var(--detail-card-pad);
+}
+
+task-detail-item inline-markdown,
+task-detail-item inline-markdown .markdown-wrapper,
+task-detail-item inline-markdown .markdown-unparsed,
+task-detail-item inline-markdown .markdown-parsed {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+task-detail-item inline-markdown .markdown-unparsed,
+task-detail-item inline-markdown .markdown-parsed {
+  padding: var(--s, 8px) 0 22px !important; /* the app pads 40px under the text to clear its controls; the controls below are smaller, so less will do */
+}
+
+/* The three controls that appear over the note — checklist, full screen,
+   and the rest — at the size the summary page's note has them. */
+task-detail-item inline-markdown .mat-mdc-icon-button {
+  --mdc-icon-button-state-layer-size: 30px;
+  --mdc-icon-button-icon-size: 18px;
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+}
+
+task-detail-item inline-markdown .mat-mdc-icon-button .mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  line-height: 18px;
+}
+
+/* And no reserve under the text: the app holds the wrapper at 60px and pads
+   the halves, which left a band of empty card under a three-line note. */
+task-detail-item inline-markdown .markdown-wrapper {
+  min-height: 0 !important;
+}
+
+task-detail-item .panel-content-wrapper {
+  padding-bottom: 6px;
+}
+
+/* And no shadow while a note is being edited — in the detail panel and in
+   every other inline-markdown field: the app lifts the markdown wrapper to
+   3dp on focus, `!important`, at a weight a plain rule cannot reach. The
+   card is the surface; the editor does not float on it. */
+task-detail-item .panel-content-wrapper inline-markdown.isFocused .markdown-wrapper.markdown-wrapper,
+inline-markdown.isFocused.isFocused .markdown-wrapper.markdown-wrapper {
+  box-shadow: none !important;
+}
+
+/* Hover on a field or a panel header, open or closed: the card steps down a
+   shade.
+   The app has this too, but through a `background` shorthand that swapped
+   the fill for a white nobody could see and wiped the join line with it;
+   stated here as the colour alone, `!important` so the shorthand cannot
+   reach it, and the join lines above are pinned the same way. */
+task-detail-panel .task-title-wrapper.task-title-wrapper:hover,
+task-detail-item .input-item.input-item.standard-size:hover,
+task-detail-item .input-item.input-item.full-size:hover,
+task-detail-item .mat-expansion-panel-header.mat-expansion-panel-header:hover {
+  background-color: var(--detail-card-bg-hover) !important;
+  transition: background-color 120ms var(--ani-standard-timing, ease);
+}
+
+/* The hover keeps the card's shape. A panel header takes its corners from
+   the panel it heads — round where the card is round, square where it is
+   joined to the next — and the ripple inside a field is clipped to the
+   field's corners rather than drawn as a rectangle over them. */
+task-detail-item .mat-expansion-panel-header.mat-expansion-panel-header {
+  border-radius: inherit;
+}
+
+/* Open, the header is the top of a taller card: its bottom corners are
+   square, the content runs on beneath. */
+task-detail-item .mat-expansion-panel-header.mat-expansion-panel-header.mat-expanded {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* And between that header and its content runs the same short hairline the
+   fields have at their joins — Notes, sub-tasks and Links & Files alike. */
+task-detail-item .mat-expansion-panel.mat-expanded .mat-expansion-panel-content {
+  background-image: linear-gradient(var(--detail-card-join), var(--detail-card-join)) !important;
+  background-repeat: no-repeat !important;
+  background-position: var(--detail-card-join-inset) 0 !important;
+  background-size: calc(100% - var(--detail-card-join-inset) - var(--detail-card-pad)) 1px !important;
+}
+
+task-detail-item .input-item.input-item {
+  overflow: hidden;
+}
+
+task-detail-item .input-item .ripple,
+task-detail-item .input-item .mat-ripple {
+  border-radius: inherit;
+}
+
+/* The tag field holds a chip input, and Material underlines a chip input on
+   hover and focus; inside a card that underline is a stray line. */
+task-detail-item .input-item .mat-mdc-chip-input,
+task-detail-item .input-item .mat-mdc-chip-input:hover,
+task-detail-item .input-item .mat-mdc-chip-input:focus {
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  background: transparent !important;
+}
+
+/* The time fields (parent, duration) carry a progress bar along their
+   bottom edge, whose empty track the app paints in the border colour — a
+   line under the field whether or not any time is booked. The track goes;
+   the filled part, the share of the estimate already spent, stays. */
+task-detail-item .input-item.input-item.input-item.--estimate progress-bar,
+task-detail-item .input-item.input-item.input-item.--estimate:hover progress-bar {
+  /* Stacked classes: the app turns the track to the accent on hover at a
+     weight the plain selector did not reach, which put a line under the tag
+     field the moment the pointer arrived. */
+  background: transparent !important;
+}
+
+/* The field labels on the same left line as the name and the panel headers.
+   The app steps a field's title in by 24px inside the row; with the card's
+   own padding that put "Duration" and the rest a step to the right of
+   "Notes / Checklist". The step goes; the glyph sits on the card padding and
+   the label 8px after it, as in the headers. */
+task-detail-item .input-item .input-item__title {
+  margin-left: 0 !important;
+}
+
+/* Icons in the muted ink, as To Do sets its glyphs; the labels keep the ink. */
+task-detail-item .input-item__title .mat-icon,
+task-detail-item .mat-expansion-panel-header .mat-icon:first-of-type {
+  color: var(--ink-muted);
+}
+
+/* The footnote. */
+task-detail-panel .date-info,
+task-detail-panel .created {
+  opacity: 1;
+  color: var(--ink-muted);
+  font-size: 12px;
+  padding-top: var(--s2, 16px);
+}
+
+/* The head of the panel: the title and its sub-tasks as one card, as To Do
+   sets a task's name with its steps beneath it. The title bar becomes the
+   first card — the same fill, shadow and radius as the fields, the name a
+   size up — and the sub-tasks panel that follows is joined to it: no gap,
+   the meeting corners squared, a hairline at the join. Its own header (the
+   list glyph and the count) is a row like any field — the same height, label
+   and glyph as Deadline — and the button that
+   adds a step is the accent line To Do ends the card with — a plus and the
+   words in the primary, at the left, no capitals. */
+task-detail-panel .task-title-wrapper.task-title-wrapper {
+  background: var(--detail-card-bg);
+  box-shadow: var(--detail-card-shadow);
+  margin: var(--s, 8px) var(--s, 8px) 0;
+  min-height: 56px;
+  padding: 4px 6px 4px var(--detail-card-pad); /* the name sits on the same left edge as the field labels' glyphs, a small indent off the card */
+}
+
+task-detail-panel .task-title-wrapper.task-title-wrapper:has(+ task-detail-item) {
+  /* Doubled class to outrank the radius rule above, which is `!important`
+     at the same weight; without it the corners stayed round and the title
+     card did not meet the sub-tasks. */
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+task-detail-panel .task-title-wrapper .task-title.task-title {
+  font-size: 18px;
+  font-weight: var(--bold-font-weight, 600);
+  line-height: 1.3;
+}
+
+/* Editing a name is plain: no frame, anywhere. The app marks a title's focus
+   with a ring in the focus colour, a 4dp shadow and its own fill, which
+   turned the name into a boxed input — in the detail panel, in the task
+   rows, in the sub-task rows. Here only the caret says the name is being
+   edited, as To Do has it. The 1px border stays, transparent, so nothing
+   moves when focus arrives. */
+task-title.is-focused.is-focused,
+task-title.is-focused:focus-within,
+task-title:focus-within {
+  border-color: transparent !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  outline: none !important;
+}
+
+task-title textarea:focus,
+task-title textarea.textarea:focus {
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+/* The sub-task rows in the panel sit lower and closer to the edge. The app
+   gives them the full row height of the main list (40px first line, 36px
+   title row) and steps their title in by 16px; here the rows are 30px, the
+   title 4px from the toggle, the list padded 4px, so a handful of steps
+   reads as a short list under the name rather than as a second task list. */
+task-detail-panel .sub-tasks task,
+work-view task task {
+  --task-first-line-min-height: 22px;
+  /* The toggle is what sets the row's height once the box is gone: the
+     app draws it at 40px. */
+  --done-toggle-size: 22px;
+  margin: 0 var(--s-quarter, 2px) !important;
+}
+
+task-detail-panel .sub-tasks task .title-and-left-btns-wrapper,
+work-view task task .title-and-left-btns-wrapper {
+  min-height: 20px;
+}
+
+task-detail-panel .sub-tasks task done-toggle,
+work-view task task done-toggle {
+  margin-right: 6px;
+}
+
+/* The name's own padding and line box, trimmed to match. */
+task-detail-panel .sub-tasks task task-title,
+work-view task task task-title {
+  padding-top: 1px !important;
+  padding-bottom: 1px !important;
+  min-height: 18px;
+  line-height: 1.35;
+}
+
+/* The name fills its line. The app sizes a task's title to its text, so a
+   click on the empty run beside a short name landed on the row and not on
+   the name — and opened nothing. The title element is let grow across the
+   line (its tags already wrap to a line of their own below), so a click
+   anywhere along the row's text line opens the name for editing. Tasks and
+   sub-tasks alike. */
+task .title-and-tags-wrapper > task-title {
+  flex: 1 1 100%;
+  min-width: 0;
+  width: 100%;
+  /* And the full height of the row, so a click above or below the text line
+     opens the name as well; the text stays centred in it. */
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+}
+
+task .title-and-left-btns-wrapper > .title-and-tags-wrapper {
+  align-self: stretch;
+  align-content: center;
+}
+
+task .title-and-tags-wrapper > task-title > .wrapper,
+task .title-and-tags-wrapper > task-title .display-value {
+  width: 100%;
+  flex-grow: 1;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+}
+
+/* The pointer over a sub-task stays an arrow. The app gives the whole first
+   line a grab hand, which promises a drag where a click on the name — or on
+   the empty run beside it — opens the name for editing. The hand is left to
+   the parts that do drag or press: the toggle, the controls, the handle. */
+task-detail-panel .sub-tasks task .first-line.first-line,
+work-view task task .first-line.first-line,
+task-detail-panel .sub-tasks task .title-and-left-btns-wrapper.title-and-left-btns-wrapper,
+work-view task task .title-and-left-btns-wrapper.title-and-left-btns-wrapper,
+task-detail-panel .sub-tasks task .title-and-tags-wrapper,
+work-view task task .title-and-tags-wrapper,
+task-detail-panel .sub-tasks task task-title,
+work-view task task task-title {
+  cursor: default !important;
+}
+
+/* What actually set the height, measured: the inner wrapper pads the row by
+   12px above and 13px below, the title row holds a 36px minimum at attribute
+   weight, and the controls on the right are a 40px strip. All three come
+   down; the hover buttons in that strip shrink with it. */
+task-detail-panel .sub-tasks task .inner-wrapper > .inner-wrapper,
+work-view task task .inner-wrapper > .inner-wrapper {
+  padding-top: 2px !important;
+  padding-bottom: 2px !important;
+}
+
+task-detail-panel .sub-tasks task .title-and-left-btns-wrapper.title-and-left-btns-wrapper,
+work-view task task .title-and-left-btns-wrapper.title-and-left-btns-wrapper {
+  min-height: 20px !important;
+}
+
+task-detail-panel .sub-tasks task .all-controls-wrapper.all-controls-wrapper,
+work-view task task .all-controls-wrapper.all-controls-wrapper,
+task-detail-panel .sub-tasks task .all-controls-wrapper .time-wrapper,
+work-view task task .all-controls-wrapper .time-wrapper {
+  min-height: 0 !important;
+  height: auto !important;
+}
+
+task-detail-panel .sub-tasks task .all-controls-wrapper .mat-mdc-icon-button,
+work-view task task .all-controls-wrapper .mat-mdc-icon-button,
+task-detail-panel .sub-tasks task .all-controls-wrapper .ico-btn,
+work-view task task .all-controls-wrapper .ico-btn {
+  --mdc-icon-button-state-layer-size: 22px;
+  width: 22px !important;
+  height: 22px !important;
+  min-height: 0 !important;
+  padding: 2px !important;
+}
+
+task-detail-panel .sub-tasks task .box {
+  top: 1px;
+  bottom: 1px;
+}
+
+task-detail-panel .sub-tasks task .title-and-tags-wrapper {
+  margin-left: 4px !important;
+}
+
+task-detail-panel .sub-tasks .task-list-inner[data-list-id='SUB'] {
+  padding: 4px 0 !important;
+}
+
+task-detail-panel .sub-tasks task-list {
+  margin: 0 !important;
+}
+
+/* The steps run the full width of the card, edge to edge like the name above
+   them: the panel's content padding, the list's margins and the rows' own
+   side margins all go, and each row pads itself by the card's side padding
+   instead, so the toggle stands on the same left line as the name. */
+task-detail-panel .task-title-wrapper + task-detail-item .panel-content-wrapper {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+task-detail-panel .sub-tasks,
+task-detail-panel .sub-tasks task-list,
+task-detail-panel .sub-tasks .task-list-inner {
+  margin-inline: 0 !important;
+  padding-inline: 0 !important;
+}
+
+task-detail-panel .sub-tasks task {
+  margin-inline: 0 !important;
+}
+
+task-detail-panel .sub-tasks task .first-line.first-line {
+  padding-left: calc(var(--detail-card-pad) - 3px);
+  padding-right: var(--detail-card-pad);
+}
+
+/* The rows are lines, not boxes: as To Do lists a task's steps, each one a
+   toggle and a name on the card itself, a short hairline between them, no
+   fill and no frame of their own. The hairline starts past the toggle, on
+   the same inset the joins use. */
+task-detail-panel .sub-tasks task .box.box.box.box.box.box {
+  /* Six classes: the hover and finished-row rules further down state the
+     edge at up to five with `!important`, and a hovered step took a frame. */
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+task-detail-panel .sub-tasks task + task {
+  background-image: linear-gradient(var(--detail-card-join), var(--detail-card-join));
+  background-repeat: no-repeat;
+  background-position: var(--detail-card-join-inset) 0;
+  background-size: calc(100% - var(--detail-card-join-inset) - var(--detail-card-pad)) 1px;
+}
+
+/* The same for sub-tasks in the main task views: under their parent they are
+   lines on the parent's card, not boxes of their own — no fill, no frame, a
+   short hairline between them. The parent keeps its card. Weighted past the
+   nested-row hover rule further down, which pins the edge to the hairline. */
+work-view task task .box.box.box.box.box.box,
+work-view task task .inner-wrapper > .box.box.box.box.box {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+work-view task task + task {
+  background-image: linear-gradient(var(--detail-card-join), var(--detail-card-join));
+  background-repeat: no-repeat;
+  background-position: var(--detail-card-join-inset) 0;
+  background-size: calc(100% - var(--detail-card-join-inset) - var(--detail-card-pad)) 1px;
+}
+
+/* The add-a-step line under the last step takes the same hairline above it. */
+task-detail-panel .sub-tasks ~ .add-btn-wrapper,
+task-detail-panel .sub-tasks ~ add-subtask-input {
+  background-image: linear-gradient(var(--detail-card-join), var(--detail-card-join));
+  background-repeat: no-repeat;
+  background-position: var(--detail-card-join-inset) 0;
+  background-size: calc(100% - var(--detail-card-join-inset) - var(--detail-card-pad)) 1px;
+}
+
+/* And once the steps are open, their own header — the list glyph and the
+   count — steps aside: the steps sit straight under the name, as in To Do.
+   Closed, the header stays, since it is the only way to open them. */
+task-detail-panel .task-title-wrapper + task-detail-item .mat-expansion-panel.mat-expanded > .mat-expansion-panel-header {
+  display: none;
+}
+
+/* And the field for a new sub-task is plain as well: the app frames it with a
+   border, a 4dp shadow and its own fill, and colours the border in the accent
+   on focus. No frame, no shadow, the card's surface, the caret alone. */
+task-detail-panel add-subtask-input .add-subtask-input,
+task-detail-panel add-subtask-input .add-subtask-input:focus,
+add-subtask-input .add-subtask-input.add-subtask-input,
+add-subtask-input .add-subtask-input.add-subtask-input:focus {
+  border-color: transparent !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  outline: 0 !important;
+}
+
+/* Name and field labels in one ink. The app colours the name from
+   `--text-color` and the panel headers from Material's own token; both are
+   pointed at the theme's ink so the name and "Subtasks" beneath it match. */
+task-detail-panel .task-title-wrapper task-title,
+task-detail-panel .task-title-wrapper task-title textarea,
+task-detail-panel .task-title-wrapper task-title .display-value,
+task-detail-item .mat-expansion-panel-header-title,
+task-detail-item .input-item__title {
+  color: var(--ink) !important;
+}
+
+task-detail-panel .task-title-wrapper + task-detail-item .mat-expansion-panel.mat-expansion-panel {
+  margin-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+  /* The same short hairline as between two fields, so every join in the
+     panel is one line. */
+  background-image: linear-gradient(var(--detail-card-join), var(--detail-card-join)) !important;
+  background-repeat: no-repeat !important;
+  background-position: var(--detail-card-join-inset) 0 !important;
+  background-size: calc(100% - var(--detail-card-join-inset) - var(--detail-card-pad)) 1px !important;
+}
+
+/* And the tag field, which follows the attachments panel without a gap,
+   joins it the same way. Named by the attachments panel's own content, so
+   the sub-tasks panel — a card of its own above the fields — is not caught. */
+task-detail-item:has(.attachment-list-panel-content-wrapper) + task-detail-item.input-item .input-item.input-item {
+  background-image: linear-gradient(var(--detail-card-join), var(--detail-card-join)) !important;
+  background-repeat: no-repeat !important;
+  background-position: var(--detail-card-join-inset) 0 !important;
+  background-size: calc(100% - var(--detail-card-join-inset) - var(--detail-card-pad)) 1px !important;
+}
+
+task-detail-item .add-btn-wrapper {
+  text-align: left;
+  padding: 0 calc(var(--detail-card-pad) - 8px) 6px;
+}
+
+task-detail-item .add-btn-wrapper .mat-mdc-button {
+  color: var(--palette-primary-500);
+  --mdc-text-button-label-text-color: var(--palette-primary-500);
+  font-size: 14px;
+  font-weight: var(--body-font-weight, 400);
+  letter-spacing: 0;
+  text-transform: none;
+  padding-inline: 8px;
+  gap: 6px;
+}
+
+task-detail-item .add-btn-wrapper .mat-mdc-button .mat-icon {
+  color: var(--palette-primary-500);
+  margin: 0;
+}
+
 
 /* ============================================================
  * CONTENT VIEW SCALE
@@ -2106,6 +2724,23 @@ magic-side-nav nav-item plugin-icon.nav-icon::after {
       var(--ani-standard-timing, ease) var(--action-bar-fade-delay) !important;
   }
 
+  /* Add task follows the play button: while play is in view — running or
+     ready — Add task beside it is in view as well, dimmed to the row's idle
+     opacity like the project menu beside the title, and full under the
+     pointer; it hides only when play does. `!important` so none of the row's
+     states (hidden, pointer on play) can take it down. */
+  body:not(.isVerticalActionBar):not(:has(.page-settings))
+    nav.action-nav-right:has(play-button button.play-btn:not(:disabled):not(.mat-mdc-button-disabled))
+    button.tour-addBtn {
+    opacity: var(--action-bar-idle-opacity) !important;
+  }
+
+  body:not(.isVerticalActionBar):not(:has(.page-settings))
+    nav.action-nav-right:has(play-button button.play-btn:not(:disabled):not(.mat-mdc-button-disabled))
+    button.tour-addBtn:is(:hover, :focus-visible) {
+    opacity: 1 !important;
+  }
+
   body:not(.isVerticalActionBar)
     nav.action-nav-right
     play-button
@@ -2266,6 +2901,34 @@ main-header .page-title-actions .project-settings-btn[aria-expanded='true'] {
   transition: opacity 140ms var(--ani-standard-timing, ease) 0ms !important;
 }
 
+/* The header keeps its room for the window controls only while it reaches
+   them. The app pads the header's right edge by the width of the window
+   controls overlay, and means to drop that padding while the detail panel is
+   open — the panel owns that corner then — but its rule, two host-contexts
+   deep, did not take: measured, the header still carried ~138px of padding
+   beside an open panel and the action row stopped well short of the panel's
+   edge. Stated here on the panel's open class and, as a second signal, on
+   the panel having content; from 600px up, where the panel stands beside
+   the content rather than over it. */
+@media screen and (min-width: 600px) {
+  right-panel.isOpen main-header,
+  right-panel:has(.side task-detail-panel) main-header,
+  right-panel:has(.side .side-inner > * > *) main-header {
+    padding-right: 0 !important;
+  }
+}
+
+/* The header is one height on every page. The app holds it at a 48px
+   minimum and lets the content decide the rest: on a task page the title's
+   own buttons make it 51px, on a plugin page — no title buttons — it drops
+   to the minimum, and everything centred in it, the play button first,
+   moves up with it. Measured: 6px from the top on Inbox, 5px on a plugin
+   page. A fixed 52px, one more than the tallest case, so the play button
+   sits 6px from the top wherever you are. */
+main-header .wrapper.wrapper {
+  min-height: 52px !important;
+}
+
 /* ============================================================
  * PLAY AT THE END OF THE ROW - the horizontal header only
  * ============================================================
@@ -2298,10 +2961,20 @@ main-header .page-title-actions .project-settings-btn[aria-expanded='true'] {
     );
   }
 
+  /* Add task goes to the end as well, directly left of play: the two
+     primary actions together in the corner, the secondary ones — sync,
+     plugins, the rest — shifted left to fill the room. The group's break
+     now falls before Add task rather than after it. */
   body:not(.isVerticalActionBar) nav.action-nav-right button.tour-addBtn {
-    margin-inline-end: calc(
+    order: 99;
+    margin-inline-end: 4px; /* a little clear of the play button */
+    margin-inline-start: calc(
       var(--header-action-group-gap, 16px) - var(--header-nav-button-gap, 8px)
     );
+  }
+
+  body:not(.isVerticalActionBar) nav.action-nav-right play-button .play-btn-wrapper {
+    margin-inline-start: 0;
   }
   /* The tracked-task pill. On this build the play component draws the name
      of the running task beside its own button, out of flow, and with the
@@ -2470,7 +3143,7 @@ body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"loc
    because the app's own rule is. */
 task-detail-panel .task-title-wrapper.task-title-wrapper {
   border-bottom-width: 0 !important;
-  border-radius: 0 !important;
+  border-radius: var(--detail-card-radius, 6px) !important;
 }
 
 /* The notes and the checklist in the detail panel — and every other
@@ -3341,7 +4014,7 @@ body collapsible.isExpanded .collapsible-header.collapsible-header {
    Open or collapsed alike: the line belongs to the heading, not to the list
    under it. */
 work-view collapsible .collapsible-header {
-  --section-rule-weight: 3px;
+  --section-rule-weight: 2px; /* two device pixels; the block below restates it per screen scale */
   /* Where the line starts and stops, measured from the header's edges: past
      the arrow and the gap on the left, short of the side padding on the
      right. The picture-mode rules below restate these for their padding. */
@@ -3356,11 +4029,51 @@ work-view collapsible .collapsible-header {
   position: relative;
 }
 
+/* The line is two device pixels on every screen. Chromium snaps a box to
+   whole device pixels when it paints it, so a 1px line on a 125% screen —
+   1.25 device pixels — comes out one pixel high under one heading and two
+   under the next, wherever the rounding happens to fall; a 1.5px line the
+   same. Stating the weight as a whole number of device pixels, per screen
+   scale, takes the rounding out of it. */
+@media (min-resolution: 1.2dppx) and (max-resolution: 1.4dppx) {
+  work-view collapsible .collapsible-header {
+    --section-rule-weight: 1.6px;
+  }
+}
+
+@media (min-resolution: 1.4dppx) and (max-resolution: 1.6dppx) {
+  work-view collapsible .collapsible-header {
+    --section-rule-weight: 1.334px;
+  }
+}
+
+@media (min-resolution: 1.6dppx) and (max-resolution: 1.9dppx) {
+  work-view collapsible .collapsible-header {
+    --section-rule-weight: 1.143px;
+  }
+}
+
+@media (min-resolution: 1.9dppx) {
+  work-view collapsible .collapsible-header {
+    --section-rule-weight: 1px;
+  }
+}
+
 work-view collapsible .collapsible-header::after {
   content: '';
   position: absolute;
   left: var(--section-rule-inset-left);
-  top: calc(50% + 9px + var(--section-rule-gap));
+  /* Rounded to a whole pixel for the same reason: a line on a half-pixel row
+     is drawn as two faint ones. */
+  top: round(calc(50% + 9px + var(--section-rule-gap)), 1px);
+  /* Drawn on a layer of its own. The screen scale here is not a round number
+     (a 125% screen with the app's own zoom on top: measured 1.229), so no
+     CSS length is a whole number of device pixels, and a line painted in the
+     page is snapped to the pixel grid differently under each heading. A
+     composited layer is rasterised on its own grid and placed whole, so the
+     line comes out the same under every heading. */
+  will-change: transform;
+  transform: translateZ(0);
   height: var(--section-rule-weight);
   width: calc(100% - var(--section-rule-inset-left) - var(--section-rule-inset-right));
   background: var(--separator);
