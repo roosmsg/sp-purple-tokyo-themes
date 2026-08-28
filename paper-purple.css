@@ -872,17 +872,104 @@ magic-side-nav nav-item .nav-link:focus:not(.active) {
   background: transparent;
 }
 
-/* Help removed. It is the only entry in the navigation built as a fold-out
-   menu, so hiding that component removes Help and nothing else. Its contents
-   (docs, bug report, feedback, the tours) stay reachable from Settings and the
-   project pages.
+/* Help kept, as a small button at the end of the Settings row. It is the only
+   entry in the navigation built as a fold-out menu — a `nav-mat-menu` holding
+   one list item — and it stands directly above Settings, the last item. The
+   item is taken out of the flow (no height, no margin) so its top edge is the
+   top edge of the Settings row, and the button is laid over that row's right
+   end: a square icon button the size of the three-dot button on a project
+   row, in the same muted ink, with the same fill under the pointer. Icon
+   only; the label is dropped. It comes up when the Settings row or the button
+   itself is hovered or holds keyboard focus, as the three-dot button does on
+   a project row, and hovering it lights the Settings row as one. The Settings
+   row is known by the tour class the app puts on its link, not by its place
+   in the list. Opacity, not
+   visibility, so it stays in the tab order.
 
-   The component sets `display: contents` on its own host element, and Angular
-   compiles that to an attribute selector — which outranks a plain element
-   selector. Hence `!important`, and the list item is hidden as well so the row
-   disappears even if the host rule changes. */
-nav-mat-menu,
-nav-mat-menu > li {
+   The button is a menu item like the Settings link beside it and keeps that
+   item's minimum height, so the two rows are the same height by
+   construction and the button runs the full height of the row, as the
+   three-dot button does; `--nav-help-button-size` is its width. Hidden in the compact rail and on the phone layout, where the app
+   hides the three-dot buttons as well. The host sets `display: contents` on
+   itself, which Angular compiles to an attribute selector; hence the doubled
+   classes and the importants. */
+body {
+  --nav-help-button-size: 40px;
+}
+
+magic-side-nav nav-mat-menu > li.nav-item.nav-item {
+  display: block !important;
+  position: relative;
+  height: 0;
+  margin: 0;
+  overflow: visible;
+  z-index: 1;
+  zoom: var(--nav-footer-scale, 1);
+}
+
+magic-side-nav nav-mat-menu > li.nav-item .g-multi-btn-wrapper.g-multi-btn-wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: var(--nav-help-button-size); /* stated: shrink-to-fit around a 100%-wide host resolves to nothing */
+  display: flex;
+  align-items: stretch;
+  opacity: 0;
+  transition: opacity var(--transition-duration-s, 150ms) var(--ani-standard-timing, ease);
+}
+
+magic-side-nav .nav-list:has(
+    .tour-settingsMenuBtn:hover,
+    .tour-settingsMenuBtn:focus-visible,
+    nav-mat-menu li:hover,
+    nav-mat-menu li:focus-within
+  )
+  nav-mat-menu > li.nav-item .g-multi-btn-wrapper {
+  opacity: 1;
+}
+
+magic-side-nav nav-mat-menu > li.nav-item nav-item.nav-item {
+  width: var(--nav-help-button-size);
+  background-color: transparent !important;
+}
+
+magic-side-nav nav-mat-menu > li.nav-item .nav-link.nav-link {
+  width: var(--nav-help-button-size);
+  min-width: var(--nav-help-button-size);
+  padding: 0;
+  gap: 0;
+  justify-content: center;
+  border-radius: 0;
+  color: var(--sidenav-text-secondary, var(--sidenav-text));
+  background: transparent;
+}
+
+magic-side-nav nav-mat-menu > li.nav-item .nav-link.nav-link .nav-label {
+  display: none !important;
+}
+
+magic-side-nav nav-mat-menu > li.nav-item .nav-link.nav-link .nav-icon.nav-icon {
+  margin: 0;
+  /* The icon takes the button's colour, as the three-dot button's does: a
+     menu item colours an icon of its own through Material's menu-item token,
+     which is not the ink the three-dot button rests in. */
+  color: inherit !important;
+}
+
+magic-side-nav nav-mat-menu > li.nav-item .nav-link.nav-link:hover,
+magic-side-nav nav-mat-menu > li.nav-item .nav-link.nav-link:focus-visible {
+  background: var(--sidenav-hover-bg) !important;
+  color: var(--sidenav-text) !important;
+}
+
+/* Hovering the button lights the Settings row under it, as the row's own
+   three-dot button would. */
+magic-side-nav .nav-list:has(nav-mat-menu li:hover, nav-mat-menu li:focus-within) li:has(.tour-settingsMenuBtn) nav-item {
+  background-color: var(--sidenav-hover-bg);
+}
+
+magic-side-nav .nav-sidenav.compactMode nav-mat-menu,
+magic-side-nav .nav-sidenav.mobile nav-mat-menu {
   display: none !important;
 }
 
