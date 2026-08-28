@@ -2978,9 +2978,8 @@ button.play-btn mat-icon {
 /* The play button rests below full and comes to full under the pointer.
  *
  * `--play-button-idle-opacity` is what it rests at. Everything below is that
- * one figure, restated in the two places it differs — the light page, and, on
- * the dark one, a timer that is running. The opacity, the transition and the
- * lift back to full are stated once, here.
+ * one figure, restated in the one place it differs — the light page. The
+ * opacity, the transition and the lift back to full are stated once, here.
  *
  * The tracked state used to be exempt from all of this, on the reasoning that a
  * timer you have started should never step back. The pulse ring the app draws
@@ -2998,15 +2997,15 @@ nav.action-nav-right
   play-button
   .play-btn-wrapper.play-btn-wrapper
   button.play-btn:not(:disabled):not(.mat-mdc-button-disabled) {
-  --play-button-idle-opacity: 0.65;
+  --play-button-idle-opacity: 0.9;
   opacity: var(--play-button-idle-opacity) !important;
   transition: opacity 140ms var(--ani-standard-timing) !important;
 }
 
 /* Light mode carries its own figure. One opacity over two backgrounds does not
-   read as one weight: 0.65 on the dark page is a button stepping back, and
-   the same figure on the light page is a button going faint. 0.95 lands at
-   the felt weight the dark half has here. Each file states its own: 0.95 in
+   read as one weight: 0.9 on the dark page is a button a shade below full, and
+   the same figure on the light page is a button not quite arrived. 0.95 lands
+   at the felt weight the dark half has here. Each file states its own: 0.95 in
    `paper-purple.css`, 0.92 in `minimal-tokyo.css`, 0.8 in
    `shades-of-purple.css`.
 
@@ -3020,18 +3019,14 @@ body:not(.isDarkTheme)
   --play-button-idle-opacity: 0.95;
 }
 
-/* Dark, with a timer running: a step forward from rest. A running timer is not
-   at rest, and on the dark page there is room for that difference to read.
-
-   The light half needs no rule of its own — it already rests near enough to
-   full that a tracked button and an idle one are the same weight there. */
-body.isDarkTheme
-  nav.action-nav-right
-  play-button
-  .play-btn-wrapper.play-btn-wrapper:has(.pulse-circle)
-  button.play-btn:not(:disabled):not(.mat-mdc-button-disabled) {
-  --play-button-idle-opacity: 0.75;
-}
+/* Dark used to step forward from rest while a timer ran, at 0.75 against a
+   0.65 rest. Rest is 0.9 now, a shade off full, and the step has nowhere left
+   to go: the rule is gone. The pulse ring the app draws is what says the timer
+   is running, and the button need not say it a second time. No file carries
+   that step any more — `minimal-tokyo.css` never had one, where dark rest and
+   a running timer are both 0.75, and `shades-of-purple.css` drops it alongside
+   this one. `body.isDarkTheme … .play-btn-wrapper:has(.pulse-circle)` is the
+   selector to bring back if the tracked state should stand apart here again. */
 
 /* The pointer brings it to full in every state: that is feedback on the
    control, not a statement about the timer. */
