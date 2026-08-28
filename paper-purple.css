@@ -458,20 +458,24 @@ body.isDarkTheme {
    a narrow window moves the edge to the other side. */
 right-panel .side.side {
   background: var(--detail-panel-bg);
+  /* Opaque and on its own, whatever the wallpaper does: the app's veil and
+     its darkening slider live under the content, and a solid panel is not
+     touched by them — stated outright, with nothing translucent or blended
+     on the panel box, so no mode or picture can let them through. */
+  background-color: var(--detail-panel-bg) !important;
+  background-image: none !important;
+  opacity: 1 !important;
+  mix-blend-mode: normal !important;
+  backdrop-filter: none !important;
+  isolation: isolate;
+  /* And above the veil. Measured: the app's wallpaper veil (`.bg-overlay`,
+     z-index 1) painted over the panel, whose own z-index was auto — so the
+     darken/lighten slider dimmed the panel with the picture. One step above
+     the veil, well under the header (12) and the rail (70). */
+  position: relative;
+  z-index: 2 !important;
   border-left-width: 0 !important;
   border-right-width: 0 !important;
-}
-
-/* The rail reaches one pixel into the content. The content column ends on
-   the rail's edge, and that edge falls on a fraction of a pixel (the screen
-   scale here is not a whole number): the last column of the panel is drawn
-   half-covered, a blend of panel and page, and the rail — snapped to the
-   next whole pixel — starts just past it. That blend was the dark line
-   between panel and rail in every theme, seam or no seam. One pixel wider,
-   the rail covers it; the rail stands above the panel, so nothing else
-   changes. */
-body.isVerticalActionBar > nav.action-nav-right.action-nav-right--teleported {
-  width: calc(var(--vertical-action-bar-width) + 1px) !important;
 }
 
 /* The panel has a surface of its own, `--detail-panel-bg`, one step lighter
@@ -481,7 +485,7 @@ body.isVerticalActionBar > nav.action-nav-right.action-nav-right--teleported {
    standing 8px away from the cards like a gap; on its own surface that
    strip is plainly the panel's margin and the seam is the rail's edge. */
 body {
-  --detail-panel-bg: #f5f5f5;
+  --detail-panel-bg: #f9f9f9;
 }
 
 body.isDarkTheme {
@@ -834,7 +838,7 @@ magic-side-nav:has(
 magic-side-nav nav-item:hover,
 magic-side-nav nav-item:focus-within {
   background-color: var(--sidenav-hover-bg);
-  border-radius: var(--radius-sm);
+  border-radius: 0;
 }
 
 /* Hovering a heading lights the whole block, buttons included. A nav row keeps
@@ -1546,12 +1550,6 @@ body {
   }
 }
 
-/* The column itself is the anchor; the `work-view` host has no width of its
-   own (its wrapper is absolutely positioned), so it cannot be. */
-work-view .task-list-wrapper {
-  anchor-name: --task-column;
-}
-
 /* ============================================================
  * SCROLLBARS
  * ============================================================
@@ -1692,6 +1690,7 @@ task-detail-item .mat-expansion-panel.mat-expansion-panel {
 task-detail-item .input-item.input-item {
   min-height: 52px;
   padding-inline: var(--detail-card-pad);
+  overflow: hidden; /* clips the ripple to the corners */
 }
 
 /* A single-line field is exactly 52px, not 51.99: measured, the row's text
@@ -1752,7 +1751,7 @@ task-detail-item:has(.attachment-list-panel-content-wrapper):has(+ task-detail-i
    around the text. */
 task-detail-item .panel-content-wrapper {
   margin: 0;
-  padding: 0 var(--detail-card-pad) var(--detail-card-pad);
+  padding: 0 var(--detail-card-pad) 6px;
 }
 
 task-detail-item inline-markdown,
@@ -1790,10 +1789,6 @@ task-detail-item inline-markdown .mat-mdc-icon-button .mat-icon {
    the halves, which left a band of empty card under a three-line note. */
 task-detail-item inline-markdown .markdown-wrapper {
   min-height: 0 !important;
-}
-
-task-detail-item .panel-content-wrapper {
-  padding-bottom: 6px;
 }
 
 /* And no shadow while a note is being edited — in the detail panel and in
@@ -1851,10 +1846,6 @@ task-detail-item .mat-expansion-panel.mat-expanded .mat-expansion-panel-content 
    other, darker in the middle than the joins elsewhere. */
 task-detail-panel .task-title-wrapper + task-detail-item .mat-expansion-panel.mat-expanded .mat-expansion-panel-content {
   background-image: none !important;
-}
-
-task-detail-item .input-item.input-item {
-  overflow: hidden;
 }
 
 task-detail-item .input-item .ripple,
@@ -1921,6 +1912,8 @@ task-detail-panel .created {
 task-detail-panel .task-title-wrapper.task-title-wrapper {
   background: var(--detail-card-bg);
   box-shadow: var(--detail-card-shadow);
+  border-bottom-width: 0 !important; /* the app's primary underline */
+  border-radius: var(--detail-card-radius) !important;
   margin: var(--s, 8px) var(--detail-card-margin-right) 0 var(--s, 8px);
   min-height: 56px;
   padding: 4px 6px 4px var(--detail-card-pad); /* the name sits on the same left edge as the field labels' glyphs, a small indent off the card */
@@ -2335,6 +2328,27 @@ task-detail-item .add-btn-wrapper .mat-mdc-button .mat-icon {
 }
 
 
+/* The project backlog, in light mode, stands on a surface of its own,
+   `--backlog-bg` — a step darker than the detail panel — rather than on the
+   page, so the lower pane of the split reads as one block under the list.
+   Dark mode keeps the page. Both the pane and the `backlog` component inside
+   it, which paints its own white over the pane. */
+body:not(.isDarkTheme) {
+  --backlog-bg: #f0f0f0;
+}
+
+body:not(.isDarkTheme) work-view .backlog,
+body:not(.isDarkTheme) work-view .backlog backlog {
+  background: var(--backlog-bg) !important;
+}
+
+/* And the component's darkening layer goes: the app lays a translucent black
+   `::before` over the whole backlog to mark it as a separate area, which
+   turned the panel colour a grey a step darker than the panel itself. */
+body:not(.isDarkTheme) work-view .backlog backlog::before {
+  display: none !important;
+}
+
 /* ============================================================
  * CONTENT VIEW SCALE
  * ============================================================
@@ -2350,6 +2364,7 @@ body {
 work-view .task-list-wrapper {
   width: calc(100% / var(--work-view-scale));
   zoom: var(--work-view-scale);
+  anchor-name: --task-column; /* the add-task bar centres on this column */
 }
 
 @media screen and (min-width: 600px) {
@@ -2609,6 +2624,9 @@ body.isVerticalActionBar
    is gone; `0` removes it and leaves the corner's own seam standing. */
 body.isVerticalActionBar > nav.action-nav-right.action-nav-right--teleported {
   --rail-corner-seam: 1px;
+  /* One pixel into the content: the content ends on the rail's edge, which
+     a fractional screen scale leaves half-covered, and the rail covers it. */
+  width: calc(var(--vertical-action-bar-width) + 1px) !important;
   --rail-seam-color: var(--separator);
   --rail-joint-color: color-mix(in srgb, var(--rail-seam-color) 30%, transparent);
   --rail-seam-length: 100px;
@@ -3137,9 +3155,7 @@ main-header .wrapper.wrapper {
 
   body:not(.isVerticalActionBar) nav.action-nav-right play-button .play-btn-wrapper {
     order: 100;
-    margin-inline-start: calc(
-      var(--header-action-group-gap, 16px) - var(--header-nav-button-gap, 8px)
-    );
+    margin-inline-start: 0;
   }
 
   /* Add task goes to the end as well, directly left of play: the two
@@ -3152,10 +3168,6 @@ main-header .wrapper.wrapper {
     margin-inline-start: calc(
       var(--header-action-group-gap, 16px) - var(--header-nav-button-gap, 8px)
     );
-  }
-
-  body:not(.isVerticalActionBar) nav.action-nav-right play-button .play-btn-wrapper {
-    margin-inline-start: 0;
   }
   /* The tracked-task pill. On this build the play component draws the name
      of the running task beside its own button, out of flow, and with the
@@ -3315,18 +3327,6 @@ body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"loc
   opacity: 1 !important;
 }
 
-/* The app underlines the title at the head of the task detail panel with a
-   2px rule in the primary colour, `!important`, on a box it also rounds with
-   `--card-border-radius` — so the line bent upward at each end and read as
-   the bottom of a pill. The title is already the heaviest text in the panel;
-   it does not need a bar under it as well. The line goes, and the rounding
-   with it so nothing else in the box picks the corners up. Both `!important`,
-   because the app's own rule is. */
-task-detail-panel .task-title-wrapper.task-title-wrapper {
-  border-bottom-width: 0 !important;
-  border-radius: var(--detail-card-radius, 6px) !important;
-}
-
 /* The notes and the checklist in the detail panel — and every other
    inline-markdown field — carry Material's `mat-body-2` class, which sets
    the text at weight 500. In Inter that reads as bold, on both the editor
@@ -3426,11 +3426,6 @@ body.isDarkTheme {
  * as its own design intends. Icon buttons are circular wherever they are, and
  * list, option and tab rows keep Material's radius.
  */
-magic-side-nav nav-item:hover,
-magic-side-nav nav-item:focus-within {
-  border-radius: 0;
-}
-
 /* The side-nav highlight is drawn on `.nav-link`, which the component rounds
    at 6px — the row element this theme tints on hover sits underneath it, so
    squaring only that left the rounded link on top. The class is repeated to
@@ -4048,16 +4043,15 @@ done-toggle .done-shape.done-shape {
   height: 16px;
   rx: 4px;
   ry: 4px;
+  /* Origin at 4, so the 16-unit box shares the check's centre at 12. */
+  x: 4px;
+  y: 4px;
   stroke: var(--ink-muted) !important;
   stroke-width: 1 !important;
   /* PWM draws the box in its quaternary border colour — a muted step below
      the secondary text, not the text colour itself. Holding the ink and
      dropping the opacity lands in the same place in both light and dark. */
   opacity: 0.55 !important;
-}
-
-done-toggle .done-check {
-  stroke-width: 1.6 !important;
 }
 
 /* A finished task, after PWM: the box fills with the accent and carries a
@@ -4158,6 +4152,19 @@ work-view collapsible .collapsible-header {
   transition: width 320ms var(--ani-standard-timing, ease);
   margin-inline: 0; /* at the head of the list, where the app has it */
   margin-bottom: 8px; /* room between the line and the first row, as over a picture */
+  --section-rule-weight: 2px; /* two device pixels; the block below restates it per screen scale */
+  /* Where the line starts and stops, measured from the header's edges: past
+     the arrow and the gap on the left, short of the side padding on the
+     right. The picture-mode rules below restate these for their padding. */
+  --section-rule-inset-left: calc(var(--s, 8px) + 24px + var(--s-half, 4px));
+  --section-rule-inset-right: var(--s, 8px);
+  /* The line hangs from the text, not from the header's bottom edge: the
+     title is centred in the header, so the line sits at the header's middle
+     plus half the title's line box plus this gap — the same distance under
+     every heading whatever else the header holds (a backlog section's menu
+     button makes its header taller; the tag over a picture has more padding). */
+  --section-rule-gap: 4px;
+  position: relative;
 }
 
 /* The bar under a section heading goes, everywhere and in both modes:
@@ -4194,22 +4201,6 @@ body collapsible.isExpanded .collapsible-header.collapsible-header {
    moves; `--section-rule-weight` is the thickness and the only figure left.
    Open or collapsed alike: the line belongs to the heading, not to the list
    under it. */
-work-view collapsible .collapsible-header {
-  --section-rule-weight: 2px; /* two device pixels; the block below restates it per screen scale */
-  /* Where the line starts and stops, measured from the header's edges: past
-     the arrow and the gap on the left, short of the side padding on the
-     right. The picture-mode rules below restate these for their padding. */
-  --section-rule-inset-left: calc(var(--s, 8px) + 24px + var(--s-half, 4px));
-  --section-rule-inset-right: var(--s, 8px);
-  /* The line hangs from the text, not from the header's bottom edge: the
-     title is centred in the header, so the line sits at the header's middle
-     plus half the title's line box plus this gap — the same distance under
-     every heading whatever else the header holds (a backlog section's menu
-     button makes its header taller; the tag over a picture has more padding). */
-  --section-rule-gap: 4px;
-  position: relative;
-}
-
 /* The line is two device pixels on every screen. Chromium snaps a box to
    whole device pixels when it paints it, so a 1px line on a 125% screen —
    1.25 device pixels — comes out one pixel high under one heading and two
@@ -4310,16 +4301,6 @@ work-view collapsible.isExpanded .collapsible-header .collapsible-expand-icon {
   transform: rotate(0deg) !important;
 }
 
-/* The rect is drawn at x=2.5 y=2.5 inside a 24-unit viewBox, sized to fill it.
-   Shrinking it to 16 units without moving its origin left it 1.5 units above
-   and left of centre, while the check keeps the centre of the viewBox — so the
-   mark sat off inside the box. Moving the origin to 4 restores a shared
-   centre at 12. */
-done-toggle .done-shape.done-shape {
-  x: 4px;
-  y: 4px;
-}
-
 /* PWM shows the mark it would set while you hover an open task, in grey, so
    the click needs no explaining. Same trick as the done state: the path is
    dashed and only drawn by the animation, so the offset has to be cleared. */
@@ -4360,6 +4341,14 @@ done-toggle .done-check {
   font-weight: 500;
   letter-spacing: 0.01em;
   gap: 8px;
+  --mat-filled-button-hover-state-layer-opacity: 0;
+  --mat-outlined-button-hover-state-layer-opacity: 0;
+  --mat-filled-button-focus-state-layer-opacity: 0;
+  --mat-outlined-button-focus-state-layer-opacity: 0;
+  transition:
+    background-color 140ms var(--ani-standard-timing, ease),
+    border-color 140ms var(--ani-standard-timing, ease),
+    color 140ms var(--ani-standard-timing, ease);
 }
 
 .finish-day-button-wrapper .e2e-finish-day .mat-icon ,
@@ -4586,19 +4575,6 @@ body.hasBgImage:not(:has(.bg-image[style*='"https://")'], .bg-image[style*='"loc
    three properties ease over the same 140ms the header row uses. The
    stroked variant — the one shown before anything is done — takes the same
    treatment through the same class. */
-.finish-day-button-wrapper .e2e-finish-day,
-.finish-day-button-wrapper .e2e-move-done-to-archive,
-.finish-day-button-wrapper .mat-mdc-unelevated-button.e2e-finish-day {
-  --mat-filled-button-hover-state-layer-opacity: 0;
-  --mat-outlined-button-hover-state-layer-opacity: 0;
-  --mat-filled-button-focus-state-layer-opacity: 0;
-  --mat-outlined-button-focus-state-layer-opacity: 0;
-  transition:
-    background-color 140ms var(--ani-standard-timing, ease),
-    border-color 140ms var(--ani-standard-timing, ease),
-    color 140ms var(--ani-standard-timing, ease);
-}
-
 .finish-day-button-wrapper .e2e-finish-day:hover,
 .finish-day-button-wrapper .e2e-move-done-to-archive:hover,
 .finish-day-button-wrapper .e2e-finish-day:focus-visible,
