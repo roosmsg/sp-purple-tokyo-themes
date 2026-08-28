@@ -1316,6 +1316,86 @@ html[data-lucide-icons] mat-icon[data-lucide-icon]::after {
   mask-size: calc(1em * var(--icon-scale)) calc(1em * var(--icon-scale));
 }
 
+/* The play triangle gets a fill. Lucide's play is an outline —
+   the plugin draws it as a mask on the icon's `::after` — so the inside of
+   the triangle is whatever the button is. The icon's `::before` is free: a
+   triangle cut with `clip-path` to reach just under the outline's stroke
+   (the outline runs 6,3 → 20,12 → 6,21 in a 24-unit box, stroke 2; the
+   stroke is drawn above the fill, so the overlap never shows), at the same
+   1em the mask is, in `--play-icon-fill` — the ink, white in dark mode, seven tenths transparent —
+   in the header and in the vertical rail alike. Play
+   only; the pause glyph, shown while a task runs, has no inside. The plugin
+   hides the icon element itself and shows only its own `::after`; a
+   pseudo-element inherits that hiding, so this one says it is visible. */
+html[data-lucide-icons] body.isDarkTheme {
+  --play-icon-fill: color-mix(in srgb, var(--ink) 30%, transparent);
+}
+
+/* Light mode: the same fill as dark — white, seven tenths transparent; the
+   page surface is the white here, as the ink is dark. */
+html[data-lucide-icons] body:not(.isDarkTheme) {
+  --play-icon-fill: color-mix(in srgb, var(--surface-1) 30%, transparent);
+}
+
+html[data-lucide-icons] nav.action-nav-right button.play-btn mat-icon[data-lucide-icon='play_arrow'] {
+  position: relative;
+}
+
+html[data-lucide-icons] nav.action-nav-right button.play-btn mat-icon[data-lucide-icon='play_arrow']::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 1em;
+  height: 1em;
+  margin: auto;
+  clip-path: polygon(28.1% 18.2%, 77.6% 50%, 28.1% 81.8%);
+  background: var(--play-icon-fill);
+  visibility: visible;
+  pointer-events: none;
+}
+
+/* The pause glyph, shown while a task is tracked, gets the same fill: two
+   bars, drawn as two background images in `--play-icon-fill` inside the same
+   1em box (the outline's bars run x 5–10 and 14–19, y 3–21 in the 24-unit
+   box, stroke 2; the fill stops a quarter unit short of the stroke's inner edge, as the play fill does). A background rather
+   than a clipped polygon, since one polygon cannot hold two shapes without a
+   bridge between them. */
+html[data-lucide-icons] nav.action-nav-right button.play-btn mat-icon[data-lucide-icon='pause'] {
+  position: relative;
+}
+
+html[data-lucide-icons] nav.action-nav-right button.play-btn mat-icon[data-lucide-icon='pause']::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 1em;
+  height: 1em;
+  margin: auto;
+  background-image: linear-gradient(var(--play-icon-fill), var(--play-icon-fill)),
+    linear-gradient(var(--play-icon-fill), var(--play-icon-fill));
+  background-repeat: no-repeat;
+  background-size: 10.4% 64.6%;
+  background-position: 29.1% 50%, 70.9% 50%;
+  visibility: visible;
+  pointer-events: none;
+}
+
+/* No fill while the button is disabled — nothing to start, no task in the list
+   — so the greyed outline stands alone, as the app draws it. */
+html[data-lucide-icons] nav.action-nav-right button.play-btn:is(:disabled, .mat-mdc-button-disabled) mat-icon[data-lucide-icon='play_arrow']::before {
+  display: none;
+}
+
+/* In light mode the fill reaches a pixel and a half further out on every side:
+   the left edge, the tip, the top and the bottom corner. */
+html[data-lucide-icons] body:not(.isDarkTheme) nav.action-nav-right button.play-btn mat-icon[data-lucide-icon='play_arrow']::before {
+  clip-path: polygon(
+    calc(28.1% - 1.5px) calc(18.2% - 1.5px),
+    calc(77.6% + 1.5px) 50%,
+    calc(28.1% - 1.5px) calc(81.8% + 1.5px)
+  );
+}
+
 /* ============================================================
  * WORK VIEW STATUS BAR
  * ============================================================
@@ -2349,6 +2429,20 @@ body:not(.isDarkTheme) work-view .backlog backlog::before {
   display: none !important;
 }
 
+/* The backlog toggle — the round button on the split between the list and the
+   project backlog, with the count on it — carries its glyph, its count and
+   its label in white, whatever colour the app fills the button with, in both
+   modes. */
+split .handle button,
+split .handle button .mat-icon,
+split .handle button .counter,
+split .handle button .mdc-button__label {
+  color: #fff !important;
+  --mdc-fab-icon-color: #fff;
+  --mat-fab-foreground-color: #fff;
+  --mdc-extended-fab-label-text-color: #fff;
+}
+
 /* ============================================================
  * CONTENT VIEW SCALE
  * ============================================================
@@ -2709,6 +2803,22 @@ nav.action-nav-right button.play-btn .mat-icon {
   color: var(--play-icon-ink, inherit);
 }
 
+/* Dark mode: the play button ready but idle — a task there to start, none
+   being tracked — sits at `--play-button-idle-opacity`, like the row's other
+   controls at rest; full under the pointer, on focus, and the whole time a
+   task is tracked (the app puts its pulse ring in the wrapper then). A
+   running timer is never dimmed. Forced, and weighed to beat the header's
+   rule that keeps play in full view while the rest of the row hides. */
+body.isDarkTheme nav.action-nav-right play-button .play-btn-wrapper:not(:has(.pulse-circle)) button.play-btn:not(:disabled):not(.mat-mdc-button-disabled) {
+  --play-button-idle-opacity: 0.65;
+  opacity: var(--play-button-idle-opacity) !important;
+  transition: opacity 140ms var(--ani-standard-timing, ease) !important;
+}
+
+body.isDarkTheme nav.action-nav-right play-button .play-btn-wrapper:not(:has(.pulse-circle)) button.play-btn:not(:disabled):not(.mat-mdc-button-disabled):is(:hover, :focus-visible) {
+  opacity: 1 !important;
+}
+
 /* Play straddles the rail's edge. The column was narrowed by `--rail-inset`,
    and the button is wider than what is left, so rather than let it sit clipped
    in a column it no longer fits, it is pulled out over the joint on purpose:
@@ -2735,6 +2845,20 @@ body > nav.action-nav-right .play-btn-wrapper .pulse-circle {
   width: calc(var(--play-button-size) - 4px);
   height: calc(var(--play-button-size) - 4px);
   left: 0;
+}
+
+/* The progress pie — the share of the running task's estimate already spent,
+   drawn while a task with an estimate is tracked — sits behind the button in
+   the app (the button is one stack level higher), where a solid disc hides it
+   whole. It is lifted above the disc here, at the app's own faint opacity,
+   and sized to the button so the pie fills the disc to a small margin; its
+   drawing is a 20-unit stroke on a 10-unit radius about the centre, so a
+   larger canvas gives a larger pie, not a scaled one. */
+body > nav.action-nav-right .play-btn-wrapper .circle-svg,
+nav.action-nav-right play-button .play-btn-wrapper .circle-svg {
+  width: var(--play-button-size);
+  height: var(--play-button-size);
+  z-index: 7; /* the button is 6 */
 }
 
 /* The play button is the one control in this strip that never dims, and the
@@ -3128,6 +3252,59 @@ main-header .wrapper.wrapper {
   min-height: 52px !important;
 }
 
+/* The pill naming the tracked task, left of the play button, is hidden by the
+   app as soon as the header's spare room — `.pill-slot`, the space between
+   the title and the action row, a named container — is 120px or less. That
+   is early: a name of a few words is gone while there is still room for it
+   to read, ellipsized. Here it stays in view down to 16px of room and cuts
+   its name to fit; the app's own fade still takes it below that. The
+   project chip beside the name goes at 300px as before. The query is on the
+   same container the app uses, and the three properties the app sets are
+   forced back; the pill is out of flow, so nothing else moves. */
+@container header-pill-slot (min-width: 16px) {
+  tracked-task-pill .current-task-title {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+  }
+}
+
+/* Add task rests fainter than the row's idle figure — `--add-task-idle-opacity`
+   — and comes to full strength under the pointer or on focus, as the rest of
+   the row does. Horizontal header, from 600px, both modes. */
+body {
+  --add-task-idle-opacity: 0.18;
+}
+
+@media screen and (min-width: 600px) {
+  body:not(.isVerticalActionBar):not(:has(.page-settings))
+    nav.action-nav-right
+    button.tour-addBtn.tour-addBtn.tour-addBtn:not(:hover):not(:focus-visible) {
+    opacity: var(--add-task-idle-opacity) !important;
+  }
+}
+
+/* The Add task glyph steps a little off the ink at rest — toward the page in
+   light mode, toward the menu's surface in dark — and comes back to the full
+   ink under the pointer or on focus. Stated in the theme's own tokens only. */
+body:not(.isDarkTheme) nav.action-nav-right button.tour-addBtn.tour-addBtn {
+  color: color-mix(in srgb, var(--text-color) 78%, var(--surface-1));
+  --mat-icon-button-icon-color: color-mix(in srgb, var(--text-color) 78%, var(--surface-1));
+  --mdc-icon-button-icon-color: color-mix(in srgb, var(--text-color) 78%, var(--surface-1));
+}
+
+body.isDarkTheme nav.action-nav-right button.tour-addBtn.tour-addBtn {
+  color: color-mix(in srgb, var(--text-color) 68%, var(--sidenav-bg));
+  --mat-icon-button-icon-color: color-mix(in srgb, var(--text-color) 68%, var(--sidenav-bg));
+  --mdc-icon-button-icon-color: color-mix(in srgb, var(--text-color) 68%, var(--sidenav-bg));
+}
+
+body nav.action-nav-right button.tour-addBtn.tour-addBtn:is(:hover, :focus-visible) {
+  color: var(--text-color);
+  --mat-icon-button-icon-color: var(--text-color);
+  --mdc-icon-button-icon-color: var(--text-color);
+}
+
 /* ============================================================
  * PLAY AT THE END OF THE ROW - the horizontal header only
  * ============================================================
@@ -3181,11 +3358,39 @@ main-header .wrapper.wrapper {
      on them. Only the play button proper keeps the name in view. Both
      the logical and the physical inset are stated, because which pair the
      build uses is not something a theme can see. */
+  /* The build hides the name below a window width of its own choosing. It is
+     shown here from 780px of window up — the row it sits over is collapsed
+     while untouched, so there is room for it — and hidden below that, where
+     the header is too short for a name beside the title. */
+  @media screen and (min-width: 780px) {
+    body:not(.isVerticalActionBar) nav.action-nav-right play-button .current-task-title {
+      display: flex !important;
+    }
+  }
+
+  @media screen and (max-width: 779.98px) {
+    body:not(.isVerticalActionBar) nav.action-nav-right play-button .current-task-title {
+      display: none !important;
+    }
+  }
+
+  /* With the play button on the vertical rail the name hangs off it there,
+     left of the rail, and the header has no row for it to share — so it is
+     shown from 600px up, the same breakpoint at which the left menu bar
+     gives way to the bottom bar (the block this sits in starts there), and
+     stays hidden by the build below. */
+  body.isVerticalActionBar nav.action-nav-right play-button .current-task-title {
+    display: flex !important;
+  }
+
   body:not(.isVerticalActionBar) nav.action-nav-right play-button .current-task-title {
+    /* Clear of Add task, which stands directly left of play: the row's gap,
+       Add task's own margin toward play, and its 40px width. */
+    --tracked-pill-clearance: calc(var(--header-nav-button-gap, 4px) + 4px + 40px);
     inset-inline-start: auto;
-    inset-inline-end: 100%;
+    inset-inline-end: calc(100% + var(--tracked-pill-clearance));
     left: auto;
-    right: 100%;
+    right: calc(100% + var(--tracked-pill-clearance));
     margin-inline-end: var(--s, 8px);
     /* Quick to go, slow to come back: the name fades out the moment the row
        is reached for, and waits `--pill-return-delay` before fading back in
