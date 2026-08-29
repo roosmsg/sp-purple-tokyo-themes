@@ -3065,6 +3065,22 @@ nav.action-nav-right
   opacity: 1 !important;
 }
 
+/* And the disc carries no drop shadow in any state. The app hangs
+   `--whiteframe-shadow-2dp` under it and adds Material's own
+   `mat-elevation-z3` on top; measured on the light page that comes out as
+   `0 3px 10px` at 12% black over `0 3px 6px -3px` at 16% — a smudge beneath
+   what is meant to read as a flat mark. It shows plainest while a timer runs:
+   the disc is opaque then, so the shadow is no longer softened by the glass
+   behind it. The button's weight here comes from its colour, not from a lift
+   off the page.
+
+   Written without the `:not(:disabled)` guard the rules above carry, so no
+   state can bring the shadow back, and without a mode, so the two halves
+   agree. Forced, because the app states it from a component sheet. */
+nav.action-nav-right button.play-btn {
+  box-shadow: none !important;
+}
+
 /* Play straddles the rail's edge. The column was narrowed by `--rail-inset`,
    and the button is wider than what is left, so rather than let it sit clipped
    in a column it no longer fits, it is pulled out over the joint on purpose:

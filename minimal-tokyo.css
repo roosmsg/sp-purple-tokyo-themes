@@ -3179,12 +3179,6 @@ nav.action-nav-right button.play-btn:not(:disabled):not(.mat-mdc-button-disabled
   transition: background-color 140ms var(--ani-standard-timing);
 }
 
-/* On the light page the app's 3dp shadow under the disc reads as a smudge
-   through the glass; a hairline of shadow instead. */
-body:not(.isDarkTheme) nav.action-nav-right button.play-btn:not(:disabled):not(.mat-mdc-button-disabled) {
-  box-shadow: 0 1px 2px rgba(38, 43, 58, 0.16) !important;
-}
-
 /* Under the pointer the glyph's line comes back to the full label colour;
    Add task beside it is set the same way — a little lighter at rest, full
    under the pointer. Light mode only; in dark both keep their own colour. */
@@ -3261,6 +3255,22 @@ nav.action-nav-right
   .play-btn-wrapper.play-btn-wrapper
   button.play-btn:not(:disabled):not(.mat-mdc-button-disabled):is(:hover, :focus-visible) {
   opacity: 1 !important;
+}
+
+/* And the disc carries no drop shadow in any state. The app hangs
+   `--whiteframe-shadow-2dp` under it and adds Material's own
+   `mat-elevation-z3` on top; measured on the light page that comes out as
+   `0 3px 10px` at 12% black over `0 3px 6px -3px` at 16% — a smudge beneath
+   what is meant to read as a flat mark. It shows plainest while a timer runs:
+   the disc is opaque then, so the shadow is no longer softened by the glass
+   behind it. The button's weight here comes from its colour, not from a lift
+   off the page.
+
+   Written without the `:not(:disabled)` guard the rules above carry, so no
+   state can bring the shadow back, and without a mode, so the two halves
+   agree. Forced, because the app states it from a component sheet. */
+nav.action-nav-right button.play-btn {
+  box-shadow: none !important;
 }
 
 /* Play straddles the rail's edge. The column was narrowed by `--rail-inset`,
