@@ -43,4 +43,8 @@ Wallpapers are set through the app's own wallpaper dialog. Ones that suit these 
 - `minimal-tokyo.css`, dark mode — [a night street in Tokyo](https://images.unsplash.com/photo-1493515322954-4fa727e97985?ixid=M3w3NzgxMTF8MHwxfHNlYXJjaHwxN3x8bmlnaHR8ZW58MHwwfHx8MTc4Nzc3NDU5MHww&ixlib=rb-4.1.0&w=2560&q=85&auto=format): neon on wet asphalt in the same blues the palette is built from.
 - The purple pair, dark mode — [a night sky over a mountain lake](https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?ixid=M3w3NzgxMTF8MHwxfHNlYXJjaHw2fHxuaWdodHxlbnwwfDB8fHwxNzg3Nzc0NTkwfDA&ixlib=rb-4.1.0&w=2560&q=85&auto=format) or [a ship wreck at night](https://images.unsplash.com/photo-1513436539083-9d2127e742f1?ixid=M3w3NzgxMTF8MHwxfHNlYXJjaHwxNXx8bmlnaHR8ZW58MHwwfHx8MTc4Nzc3NDU5MHww&ixlib=rb-4.1.0&w=2560&q=85&auto=format): deep blues and violets the veil settles into.
 
-Super Productivity paints the global wallpaper on every project and tag without a picture of its own, and offers no way to switch it off for a single one. To leave one context on the flat page colour, type `none` or `null` in its background image field (project or tag → theme, per light/dark slot): the theme reads either word as a placeholder for "no wallpaper" and hides the image, its veil and the floor beneath it.
+### No wallpaper in one project or tag
+
+Super Productivity has one global wallpaper, and every project and tag that does not set its own falls back to it. There is no setting for "no wallpaper here".
+
+These themes add one: type `none` or `null` in that project or tag's background image field, in both the light and the dark slot. The wallpaper and its shading disappear, leaving the flat page colour.
