@@ -4265,7 +4265,14 @@ task .attachment-btn .mat-icon,
   font-size: 24px;
   width: 24px;
   height: 24px;
-  line-height: 24px;
+  /* The line box tracks the glyph, rather than a fixed 24px. The app draws the
+     sub-task toggle at 18px from its component stylesheet, whose scoped
+     selectors outrank the ones here, so a hard 24px put a 24px line box in an
+     18px-tall element: three pixels of half-leading pushed the minus below the
+     centre of its circle and `mat-icon`'s own `overflow: hidden` clipped its
+     underside. `1` is the value Material's own icon class carries, and at the
+     24px icons above it resolves to the same 24px as before. */
+  line-height: 1;
   /* No weight adjustment here: the icon font the app bundles is a static
      instance of Material Symbols — 466 KB with the axes pinned, keeping only
      a STAT table that names them — so 'wght' and 'GRAD' have nothing to act
