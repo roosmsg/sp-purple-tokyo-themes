@@ -849,12 +849,15 @@ config-page plugin-management .warning-content li {
    buttons. The strip is named alongside the heading so that moving from one to
    the other keeps everything up rather than pulling it out from under the
    pointer, and the block around them is deliberately not named — a pointer in
-   its padding, or on a project or folder row beneath it, should reach nothing. */
+   its padding, or on a project or folder row beneath it, should reach nothing.
+
+   The switch is instant: no opacity transition on either state, so the strip
+   appears and goes without a fade. That is also how the app's own hide
+   behaves — it uses visibility alone, which cannot animate. */
 magic-side-nav .g-multi-btn-wrapper .additional-btns {
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
-  transition: opacity var(--transition-duration-s) var(--ani-standard-timing);
 }
 
 magic-side-nav:has(
@@ -873,10 +876,14 @@ magic-side-nav:has(
    in them: out of sight until the row is hovered or holds keyboard focus. The
    row keeps its height, so the list below never jumps. Opacity rather than
    visibility on purpose — a row hidden with visibility drops out of the tab
-   order, which would put the collapse toggle out of reach for the keyboard. */
+   order, which would put the collapse toggle out of reach for the keyboard.
+
+   Instant here as well, for the same reason as the buttons: the heading and
+   the strip beside it are one group and must not change in two different
+   ways. Nothing in the app transitions opacity on this element, so leaving
+   the declaration out is enough — the row simply is there or is not. */
 magic-side-nav nav-list-tree .g-multi-btn-wrapper > nav-item {
   opacity: 0;
-  transition: opacity var(--transition-duration-s) var(--ani-standard-timing);
 }
 
 /* Both headings come up together, from either one. The `:has()` reads the
