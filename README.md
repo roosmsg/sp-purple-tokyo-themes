@@ -14,10 +14,11 @@ The palettes are remapped onto Super Productivity's [theming contract](https://g
 
 | | Light slot | Dark slot |
 | --- | --- | --- |
+| `shades-of-purple.css` | ![Shades of Purple in light mode: My day](src/assets/shades_of_purple_light.png) | ![Shades of Purple in dark mode: My day](src/assets/paper_purple_dark.png) |
 | `paper-purple.css` | ![Paper Purple in light mode: My day](src/assets/paper_purple_light2.png) | ![Shades of Purple in dark mode: My day](src/assets/paper_purple_dark.png) |
 | `minimal-tokyo.css` | ![Tokyo Light: My day](src/assets/minimal_tokyo_light2.png) | ![Tokyo Night: My day over a wallpaper](src/assets/minimal_tokyo_dark.png) |
 
-`shades-of-purple.css` carries the dark palette shown above in the Paper Purple slot.
+Shades of Purple sits in the dark slot of both purple files, so that one screenshot stands for the pair.
 
 The task detail panel, as a column of cards, in each light palette:
 
