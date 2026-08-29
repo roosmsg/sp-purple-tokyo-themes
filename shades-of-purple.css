@@ -3570,7 +3570,9 @@ body {
        Sticky pins the button to that edge instead. The row keeps its full
        scrollable width and slides behind the disc, and the one control that
        has to stay reachable never leaves the header. Both insets are stated,
-       because which pair a build uses is not something a theme can see. */
+       because which pair a build uses is not something a theme can see. A
+       build without that scroller has no scrollport to pin against, so there
+       this rule is inert and the pair below does the work. */
     position: sticky;
     inset-inline-end: 0;
     right: 0;
@@ -3587,6 +3589,33 @@ body {
     nav.action-nav-right.action-nav-right
     > .action-nav-scroll {
     --header-fade-inline-end: 0px;
+  }
+
+  /* And the row keeps its end in the builds that have no scroller — the
+     released app at the time of writing. There the header is one flex line:
+     the title's own parts, made items of it because the title element is
+     `display: contents`, and the action row beside them as a single block the
+     app marks `flex: 0 0 auto`. Nothing in that line can give, so once it
+     stops fitting the line simply runs on past the header's right edge and is
+     cut by its `overflow-x: clip`. Measured at a 668px window: 100px of title
+     and a 376px row against 437.6px of room, and the row's last 38px stood
+     outside. That edge is exactly where the reserved strip for the window
+     controls begins, which is why it read as the buttons lying over play.
+
+     Two rules, in the order the room should be given up. The title's box may
+     shrink to nothing, so a long name goes before any control does. And the
+     row may shrink as well, packing its buttons against its own end — so what
+     is left over leaves at the START, taking the secondary buttons on the
+     left first and never play, which stands last. */
+  body:not(.isVerticalActionBar) main-header .wrapper .page-title {
+    min-width: 0;
+    flex-shrink: 999;
+  }
+
+  body:not(.isVerticalActionBar) main-header .wrapper nav.action-nav-right {
+    flex: 0 1 auto;
+    min-width: 0;
+    justify-content: flex-end;
   }
 
   /* Add task goes to the end as well, directly left of play: the two
