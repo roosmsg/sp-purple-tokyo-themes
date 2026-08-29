@@ -537,12 +537,22 @@ right-panel .side.side {
   mix-blend-mode: normal !important;
   backdrop-filter: none !important;
   isolation: isolate;
-  /* And above the veil. Measured: the app's wallpaper veil (`.bg-overlay`,
-     `--z-bg-overlay`) painted over the panel, whose own z-index was auto — so the
-     darken/lighten slider dimmed the panel with the picture. One step above
-     the veil, well under the header (12) and the rail (70). */
+  /* And above the veil, and above the page beside it. Measured twice. First
+     the app's wallpaper veil (`.bg-overlay`, `--z-bg-overlay`) painted over
+     the panel, whose own z-index was auto, so the darken/lighten slider
+     dimmed the panel along with the picture. A z-index of its own answered
+     that. But the panel is a stacking context too — `isolation: isolate`
+     above makes it one on its own — and that caps every number inside it:
+     the app gives the close handle 66 so it can sit over the page it
+     overlaps, and inside an isolated panel that 66 counts only against the
+     panel's own children. `right-panel .content` — the page, at
+     `--z-right-panel` — then covered the eight pixels the handle hangs past
+     the panel's left edge. Only the project backlog showed it, that being
+     the one surface over there painted opaque. One step above the page
+     settles both. The header is no competitor: it rides inside `.content`
+     and spans only its width. Still under the rail (70). */
   position: relative;
-  z-index: calc(var(--z-bg-overlay) + 1) !important;
+  z-index: calc(var(--z-right-panel) + 1) !important;
   /* The seam down the panel's left edge, in `--separator` — the hairline the
      left menu draws its own edge in and the one the rail carries down its
      own, so the three columns are joined to the content alike. Stated in
@@ -3548,6 +3558,35 @@ body {
   body:not(.isVerticalActionBar) nav.action-nav-right play-button .play-btn-wrapper {
     order: 100;
     margin-inline-start: 0;
+    /* And it stays in view once the row runs out of room. The app does not
+       drop actions at narrow widths: it turns the row into a horizontal
+       scroller anchored at its start, so what leaves first is whatever stands
+       last — which, after the move above, is play. Measured at an 872px
+       window: the button's box sat 16.8px past the scrollport's right edge,
+       so half the disc was clipped and what remained stood under the trailing
+       fade. That fade is the grey the disc seemed to carry on its right; it
+       was never a shadow.
+
+       Sticky pins the button to that edge instead. The row keeps its full
+       scrollable width and slides behind the disc, and the one control that
+       has to stay reachable never leaves the header. Both insets are stated,
+       because which pair a build uses is not something a theme can see. */
+    position: sticky;
+    inset-inline-end: 0;
+    right: 0;
+    z-index: 2;
+  }
+
+  /* And no fade over it. The trailing fade means "there is more row past this
+     edge", and with play pinned there that is no longer what the edge says —
+     it only washed the disc out. The leading fade still marks the actions
+     that have scrolled off the other side and is left alone. The app sets the
+     figure on `.action-nav-scroll` itself, so the class is doubled here to
+     outweigh its `.action-nav-right--can-scroll > .action-nav-scroll`. */
+  body:not(.isVerticalActionBar)
+    nav.action-nav-right.action-nav-right
+    > .action-nav-scroll {
+    --header-fade-inline-end: 0px;
   }
 
   /* Add task goes to the end as well, directly left of play: the two
