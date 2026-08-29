@@ -360,22 +360,16 @@ body.isDarkTheme {
 /* ============================================================
  * PAGE BACKDROP
  * ============================================================
- * In light mode the app paints two primary-tinted glows behind the page
- * (`body.isLightTheme::before`: radial gradients in --palette-primary-200 and
- * --palette-primary-400). Against these flat surfaces they read as a smudge
- * rather than as depth, so the light slot keeps its own page colour. Dark mode
- * is left alone: its single corner glow sits well on the deep surfaces.
+ * The app paints tinted glows behind the page (`body::before`): in light mode
+ * two radial gradients in --palette-primary-200 and --palette-primary-400, in
+ * dark mode a single corner glow. Both are left in place.
  *
- * `!important` because the rule being overridden has the same specificity and
- * the order an installed theme is loaded in is not something to rely on; the
- * built-in themes that do without the backdrop (dark-base, arc, nord-snow-storm,
- * dracula, velvet) hide the same pseudo-element the same way. */
-body:not(.isDarkTheme)::before {
-  display: none !important;
-}
+ * `!important` below because the rules being overridden have the same
+ * specificity and the order an installed theme is loaded in is not something
+ * to rely on. */
 
-/* And on the Settings, Search and Upcoming pages in every mode. The glow
-   is a page backdrop for the task views; behind a page of forms or a plain
+/* The glow is hidden on the Settings, Search and Upcoming pages in every mode.
+   It is a page backdrop for the task views; behind a page of forms or a plain
    list it reads as a stain in the corner. `.page-settings` is the wrapper the
    config page renders; the other two are the page components themselves. */
 body:has(.page-settings, search-page, scheduled-list-page)::before {
