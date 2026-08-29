@@ -522,9 +522,9 @@ body.isDarkTheme {
    picture, showed straight through the panel and its text sat on the task
    list behind it. Now the two side columns are one colour with the content
    between them, in both modes and with or without a background image. The
-   hairline the app draws down the panel's edge goes with it: the change of
-   surface already says where the panel starts. Both sides are named because
-   a narrow window moves the edge to the other side. */
+   hairline down the panel's edge stays: the change of surface says where the
+   panel starts, and the line says it again at the join, the way the left menu
+   and the rail both mark theirs. */
 right-panel .side.side {
   background: var(--detail-panel-bg);
   /* Opaque and on its own, whatever the wallpaper does: the app's veil and
@@ -543,7 +543,15 @@ right-panel .side.side {
      the veil, well under the header (12) and the rail (70). */
   position: relative;
   z-index: calc(var(--z-bg-overlay) + 1) !important;
-  border-left-width: 0 !important;
+  /* The seam down the panel's left edge, in `--separator` — the hairline the
+     left menu draws its own edge in and the one the rail carries down its
+     own, so the three columns are joined to the content alike. Stated in
+     full rather than left to the app: the width, the style and the colour
+     travel together, and the line holds whatever a build names its own
+     token. Forced for the reason the panel's colour is: which component
+     sheet loads last is not something a theme can rely on. The right side
+     stays at nothing — only the left edge ever faces the content. */
+  border-left: 1px solid var(--separator) !important;
   border-right-width: 0 !important;
 }
 
@@ -2840,6 +2848,13 @@ body.isVerticalActionBar > nav.action-nav-right.action-nav-right--teleported {
      weighs six classes and sets `background` as a shorthand, which would
      otherwise wipe this image out. */
   border-left-width: 0 !important;
+  /* And the rail stands on the left menu's own surface, `--sidenav-bg`,
+     stated here rather than left to the app: builds differ on what they paint
+     this column, and the two side columns reading as one surface is the whole
+     point of it. Forced for the same reason the image below is — the rule
+     that colours the rail, further up, weighs six classes and sets
+     `background` as a shorthand. */
+  background-color: var(--sidenav-bg) !important;
   background-image: linear-gradient(
       to top,
       var(--rail-seam-color) calc(100% - var(--rail-seam-length)),

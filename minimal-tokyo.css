@@ -3015,6 +3015,13 @@ body.isVerticalActionBar > nav.action-nav-right.action-nav-right--teleported {
      weighs six classes and sets `background` as a shorthand, which would
      otherwise wipe this image out. */
   border-left-width: 0 !important;
+  /* And the rail stands on the left menu's own surface, `--sidenav-bg`,
+     stated here rather than left to the app: builds differ on what they paint
+     this column, and the two side columns reading as one surface is the whole
+     point of it. Forced for the same reason the image below is — the rule
+     that colours the rail, further up, weighs six classes and sets
+     `background` as a shorthand. */
+  background-color: var(--sidenav-bg) !important;
   background-image: linear-gradient(
       to top,
       var(--rail-seam-color) calc(100% - var(--rail-seam-length)),
