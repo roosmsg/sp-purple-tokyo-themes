@@ -23,11 +23,11 @@ The task detail panel, as a column of cards, in each light palette:
 
 | Light (`paper-purple.css`) | Tokyo Light (`minimal-tokyo.css`) |
 | --- | --- |
-| ![Task detail panel, Licht](src/assets/paper_purple_light.png) | ![Task detail panel, Tokyo Light](src/assets/minimal_tokyo_light.png) |
+| ![Task detail panel, Light](src/assets/paper_purple_light.png) | ![Task detail panel, Tokyo Light](src/assets/minimal_tokyo_light.png) |
 
 And the Dashboard in Paper Purple, with the sidebar collapsed to its icon rail:
 
-![Dashboard in Shades of Purple](src/assets/paper_purple_dark2.png)
+![Dashboard in Paper Purple](src/assets/paper_purple_dark2.png)
 
 ## Install
 
