@@ -49,3 +49,9 @@ Wallpapers are set through the app's own wallpaper dialog. Ones that suit these 
 Super Productivity has one global wallpaper, and every project and tag that does not set its own falls back to it. There is no setting for "no wallpaper here".
 
 These themes add one: type `none` or `null` in that project or tag's background image field, in both the light and the dark slot. The wallpaper and its shading disappear, leaving the flat page colour.
+
+## Support
+
+If you love this open source project, consider buying me a coffee on Ko-fi!
+
+<a href="https://ko-fi.com/roosmsg" target="_blank"><img width="200" src="https://storage.ko-fi.com/cdn/brandasset/kofi_button_stroke.png" /></a>
