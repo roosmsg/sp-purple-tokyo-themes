@@ -1,5 +1,5 @@
 # Purple Tokyo Themes
-## Themes for Super Productivity
+### Themes for Super Productivity
 
 Three light/dark theme pairs for [Super Productivity](https://github.com/super-productivity/super-productivity), each a self-contained CSS file installed from the app's own theme picker. All three carry the same set of interface changes and differ in the palette they put in the light and the dark slot.
 
