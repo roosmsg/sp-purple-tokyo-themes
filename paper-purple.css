@@ -212,11 +212,13 @@ body.isDarkTheme {
   --surface-3: #232144; /* elevated: current task, drag-drop targets */
   --surface-4: #2f2c5c; /* highest: banner, mobile bottom panel */
 
-  /* Ink — white body text, violet for supporting text, as in the editor theme */
-  --ink-strong: #ffffff;
-  --ink: #ffffff;
+  /* Ink — the editor theme's white taken to a soft grey-lavender, since pure
+     white on indigo is harsh at length; violet for supporting text, as in the
+     editor theme */
+  --ink-strong: #e8e8f0;
+  --ink: #dedee8;
   --ink-muted: #a599e9;
-  --ink-on-channel: 255, 255, 255;
+  --ink-on-channel: 222, 222, 232;
 
   /* Separators, scrim, overlays */
   --separator: #2c2a52;
@@ -256,7 +258,7 @@ body.isDarkTheme {
   /* ===============================
    * TEXT COLORS
    * ===============================*/
-  --text-color-less-intense: rgba(255, 255, 255, 0.82);
+  --text-color-less-intense: rgba(222, 222, 232, 0.82);
   --text-color-more-intense: var(--ink-strong);
   --standard-note-fg: var(--ink);
   --link-color: #e08e70;
@@ -2158,13 +2160,20 @@ task-title textarea.textarea:focus {
   background: transparent !important;
 }
 
+/* Every selector from here on that starts with `work-view task` has a twin
+   starting with `task.cdk-drag-preview`. The dragged row is a clone the CDK
+   appends to the body, outside work-view, so while a task is on the move it
+   would otherwise fall back to the app's own drawing — the disc on the
+   sub-task list, the full-height rows. The twin keeps the clone as it was. */
+
 /* The sub-task rows in the panel sit lower and closer to the edge. The app
    gives them the full row height of the main list (40px first line, 36px
    title row) and steps their title in by 16px; here the rows are 30px, the
    title 4px from the toggle, the list padded 4px, so a handful of steps
    reads as a short list under the name rather than as a second task list. */
 task-detail-panel .sub-tasks task,
-work-view task task {
+work-view task task,
+task.cdk-drag-preview task {
   --task-first-line-min-height: 22px;
   /* The toggle is what sets the row's height once the box is gone: the
      app draws it at 40px. */
@@ -2173,18 +2182,21 @@ work-view task task {
 }
 
 task-detail-panel .sub-tasks task .title-and-left-btns-wrapper,
-work-view task task .title-and-left-btns-wrapper {
+work-view task task .title-and-left-btns-wrapper,
+task.cdk-drag-preview task .title-and-left-btns-wrapper {
   min-height: 20px;
 }
 
 task-detail-panel .sub-tasks task done-toggle,
-work-view task task done-toggle {
+work-view task task done-toggle,
+task.cdk-drag-preview task done-toggle {
   margin-right: 6px;
 }
 
 /* The name's own padding and line box, trimmed to match. */
 task-detail-panel .sub-tasks task task-title,
-work-view task task task-title {
+work-view task task task-title,
+task.cdk-drag-preview task task-title {
   padding-top: 1px !important;
   padding-bottom: 1px !important;
   min-height: 18px;
@@ -2233,7 +2245,11 @@ work-view task task .title-and-left-btns-wrapper.title-and-left-btns-wrapper,
 task-detail-panel .sub-tasks task .title-and-tags-wrapper,
 work-view task task .title-and-tags-wrapper,
 task-detail-panel .sub-tasks task task-title,
-work-view task task task-title {
+work-view task task task-title,
+task.cdk-drag-preview task .first-line.first-line,
+task.cdk-drag-preview task .title-and-left-btns-wrapper.title-and-left-btns-wrapper,
+task.cdk-drag-preview task .title-and-tags-wrapper,
+task.cdk-drag-preview task task-title {
   cursor: default !important;
 }
 
@@ -2242,20 +2258,24 @@ work-view task task task-title {
    weight, and the controls on the right are a 40px strip. All three come
    down; the hover buttons in that strip shrink with it. */
 task-detail-panel .sub-tasks task .inner-wrapper > .inner-wrapper,
-work-view task task .inner-wrapper > .inner-wrapper {
+work-view task task .inner-wrapper > .inner-wrapper,
+task.cdk-drag-preview task .inner-wrapper > .inner-wrapper {
   padding-top: 2px !important;
   padding-bottom: 2px !important;
 }
 
 task-detail-panel .sub-tasks task .title-and-left-btns-wrapper.title-and-left-btns-wrapper,
-work-view task task .title-and-left-btns-wrapper.title-and-left-btns-wrapper {
+work-view task task .title-and-left-btns-wrapper.title-and-left-btns-wrapper,
+task.cdk-drag-preview task .title-and-left-btns-wrapper.title-and-left-btns-wrapper {
   min-height: 20px !important;
 }
 
 task-detail-panel .sub-tasks task .all-controls-wrapper.all-controls-wrapper,
 work-view task task .all-controls-wrapper.all-controls-wrapper,
 task-detail-panel .sub-tasks task .all-controls-wrapper .time-wrapper,
-work-view task task .all-controls-wrapper .time-wrapper {
+work-view task task .all-controls-wrapper .time-wrapper,
+task.cdk-drag-preview task .all-controls-wrapper.all-controls-wrapper,
+task.cdk-drag-preview task .all-controls-wrapper .time-wrapper {
   min-height: 0 !important;
   height: auto !important;
 }
@@ -2263,7 +2283,8 @@ work-view task task .all-controls-wrapper .time-wrapper {
 /* And the strip itself keeps a little air from the row's right edge and from
    the name, in both places. */
 task-detail-panel .sub-tasks task .all-controls-wrapper,
-work-view task task .all-controls-wrapper {
+work-view task task .all-controls-wrapper,
+task.cdk-drag-preview task .all-controls-wrapper {
   gap: 2px;
   padding-inline: 2px;
 }
@@ -2274,7 +2295,8 @@ work-view task task .all-controls-wrapper {
    at 24px they spilled over their buttons' edges and the strip read as
    crowded whatever the margins said. */
 task-detail-panel .sub-tasks task task-hover-controls,
-work-view task task task-hover-controls {
+work-view task task task-hover-controls,
+task.cdk-drag-preview task task-hover-controls {
   gap: 0;
   padding-inline: 0;
   /* The strip hangs off the left edge of the row's own controls — the time
@@ -2294,14 +2316,17 @@ work-view task task task-hover-controls {
    width, which pushed the strip a figure's width to the left of the toggle.
    Out of the flow instead, so the strip closes up against the toggle. */
 task-detail-panel .sub-tasks task .first-line:has(task-hover-controls) .time-wrapper,
-work-view task task .first-line:has(task-hover-controls) .time-wrapper {
+work-view task task .first-line:has(task-hover-controls) .time-wrapper,
+task.cdk-drag-preview task .first-line:has(task-hover-controls) .time-wrapper {
   display: none !important;
 }
 
 task-detail-panel .sub-tasks task task-hover-controls .ico-btn .mat-icon,
 work-view task task task-hover-controls .ico-btn .mat-icon,
 task-detail-panel .sub-tasks task .all-controls-wrapper .ico-btn .mat-icon,
-work-view task task .all-controls-wrapper .ico-btn .mat-icon {
+work-view task task .all-controls-wrapper .ico-btn .mat-icon,
+task.cdk-drag-preview task task-hover-controls .ico-btn .mat-icon,
+task.cdk-drag-preview task .all-controls-wrapper .ico-btn .mat-icon {
   font-size: 18px !important;
   width: 18px !important;
   height: 18px !important;
@@ -2311,7 +2336,9 @@ work-view task task .all-controls-wrapper .ico-btn .mat-icon {
 task-detail-panel .sub-tasks task .all-controls-wrapper .mat-mdc-icon-button,
 work-view task task .all-controls-wrapper .mat-mdc-icon-button,
 task-detail-panel .sub-tasks task .all-controls-wrapper .ico-btn,
-work-view task task .all-controls-wrapper .ico-btn {
+work-view task task .all-controls-wrapper .ico-btn,
+task.cdk-drag-preview task .all-controls-wrapper .mat-mdc-icon-button,
+task.cdk-drag-preview task .all-controls-wrapper .ico-btn {
   --mdc-icon-button-state-layer-size: 22px;
   width: 22px !important;
   height: 22px !important;
@@ -2323,7 +2350,8 @@ work-view task task .all-controls-wrapper .ico-btn {
 /* Inside the hover strip the room goes on both sides, 20px between the
    buttons and 10px at either end of the strip. */
 task-detail-panel .sub-tasks task task-hover-controls .ico-btn,
-work-view task task task-hover-controls .ico-btn {
+work-view task task task-hover-controls .ico-btn,
+task.cdk-drag-preview task task-hover-controls .ico-btn {
   margin-inline: 10px !important;
 }
 
@@ -2333,7 +2361,9 @@ work-view task task task-hover-controls .ico-btn {
 task-detail-panel .sub-tasks task task-hover-controls .mat-mdc-button-persistent-ripple,
 work-view task task task-hover-controls .mat-mdc-button-persistent-ripple,
 task-detail-panel .sub-tasks task task-hover-controls .mat-mdc-button-ripple,
-work-view task task task-hover-controls .mat-mdc-button-ripple {
+work-view task task task-hover-controls .mat-mdc-button-ripple,
+task.cdk-drag-preview task task-hover-controls .mat-mdc-button-persistent-ripple,
+task.cdk-drag-preview task task-hover-controls .mat-mdc-button-ripple {
   inset: 2px !important;
   border-radius: 4px !important;
 }
@@ -2404,17 +2434,581 @@ task-detail-panel .sub-tasks task + task {
    short hairline between them. The parent keeps its card. Weighted past the
    nested-row hover rule further down, which pins the edge to the hairline. */
 work-view task task .box.box.box.box.box.box,
-work-view task task .inner-wrapper > .box.box.box.box.box {
+work-view task task .inner-wrapper > .box.box.box.box.box,
+task.cdk-drag-preview task .box.box.box.box.box.box,
+task.cdk-drag-preview task .inner-wrapper > .box.box.box.box.box {
   background: transparent !important;
   border-color: transparent !important;
   box-shadow: none !important;
 }
 
-work-view task task + task {
+work-view task task + task,
+task.cdk-drag-preview task + task {
   background-image: linear-gradient(var(--detail-card-join), var(--detail-card-join));
   background-repeat: no-repeat;
   background-position: var(--detail-card-join-inset) 0;
   background-size: calc(100% - var(--detail-card-join-inset) - var(--detail-card-pad)) 1px;
+}
+
+/* ---------------------------------------------------------------------------
+ * A parent task and its sub-tasks, set as To Do sets a task and its steps
+ * ---------------------------------------------------------------------------
+ * The app marks a task with sub-tasks by a small filled disc hanging off the
+ * left edge of the sub-task list, halfway down it, with a plus or a minus in
+ * it. To Do puts a chevron at the head of the row instead, in a gutter before
+ * the checkbox, and writes the steps' progress — "0/4" — on a line under the
+ * name. The same is drawn here from the elements the app already renders:
+ *
+ * - the toggle button is lifted out of the sub-task list and set on the
+ *   parent's line, just outside the card's left edge, so the checkbox and
+ *   the name keep the place they have on a row without sub-tasks; its disc
+ *   and shadow are dropped and its glyph becomes a chevron, pointing right
+ *   while the list is closed and down while it is open. The room outside
+ *   the card is the list's own inset; a window under 600px has too little
+ *   of it, and there the row is padded open on the left and the chevron
+ *   stands in that gutter instead;
+ * - the count is written by CSS counters: every sub-task row steps one, a
+ *   finished row steps a second, and the list's pseudo-elements print them.
+ *   A pseudo-element cannot stand before the rows in the source, so the list
+ *   is a grid and the two pseudo-elements are placed on its first row.
+ *
+ * The count reads what is in the document. With done sub-tasks hidden, or the
+ * list closed, the app renders none of those rows and a "show hidden" line
+ * instead, so the count stands aside in those states rather than read short.
+ *
+ * Scoped to `work-view`: the detail panel's sub-task card is styled above.
+ * The chain passes two `.inner-wrapper`s: the swipe block wraps its content
+ * in one of its own before the task's, which is the positioned one.
+ * Two figures to tune: how far the chevron's disc laps the card's edge, and
+ * where the row's name starts, from the card's edge — the toggle's 8px
+ * margin, its 40px box, and the 7px of margin, border and padding the
+ * title component keeps before its text.
+ * The count line, the tag row and the sub-tasks' checkboxes are aligned to
+ * it.
+ * The gutter is 0 and only the narrow-window fallback sets it. */
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper {
+  --subtask-gutter: 0px;
+  --subtask-chevron-overlap: 9px;
+  --subtask-name-inset: 55px;
+  /* The name's line box: a 1px border, 3px of padding and a 20px line, the
+     border and padding twice over. */
+  --subtask-name-line: 28px;
+}
+
+/* The chevron's disc, per mode. In the dark slot it is the highest surface
+   pulled two fifths of the way to the deepest, a shade darker than the plain
+   surface, which read too light against the card. In the light slot the
+   same mix comes out darker than the page; there the disc is the card's
+   surface taken well towards white instead, so it lifts off the page. */
+body.isDarkTheme {
+  --subtask-chevron-disc: color-mix(in srgb, var(--surface-4) 60%, var(--surface-0) 40%);
+}
+
+body:not(.isDarkTheme) {
+  --subtask-chevron-disc: color-mix(in srgb, var(--surface-2) 55%, #ffffff 45%);
+}
+
+/* The row is padded open on the left by the gutter — nothing where the
+   chevron stands outside the card, 24px in the narrow-window fallback
+   below. Only rows that carry the toggle: a row with the add-a-sub-task
+   field open and no sub-task yet has the list element but no button. */
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line {
+  padding-left: var(--subtask-gutter);
+}
+
+/* The list gives up its own positioning, so the toggle positions against the
+   row, and steps in so a sub-task's checkbox starts where the parent's name
+   does. Inside the list, 27px come before the checkbox: the nested list's
+   5px margin, the row's 2px, the toggle's own 8px margin, and the 12px from
+   its box to its shape. The list starts 22px before the name, not 27: the
+   checkbox's shape is drawn off-centre in its box, and 5px in is what puts
+   it on the ink of the name's first letter, read off the screen. 3px above:
+   the row is the name's line alone (see below), so the count line follows
+   it as the tag row of a tagged task follows the name — that row sits 2px
+   deeper than its 1px margin says, so the count line is given 3px to land
+   on the same line; the 8px the app
+   keeps under the list is closed, since the card's own padding is what
+   should stand under the last row. */
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks {
+  position: static;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 4px;
+  margin-top: 3px;
+  margin-left: calc(var(--subtask-gutter) + var(--subtask-name-inset) - 22px);
+  margin-bottom: 0;
+  counter-reset: subtasks subtasks-done;
+}
+
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > task-list,
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > add-subtask-input,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > task-list,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > add-subtask-input {
+  grid-column: 1 / -1;
+}
+
+/* The hairline between two sub-tasks starts 14px into the row, like every
+   join in this file; here it starts 10px in, a little before the name's first letter
+   with the checkboxes. The rows read the figure from this variable in
+   their resting, selected and running states alike. */
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .sub-tasks > task-list .task-list-inner > task,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .sub-tasks > task-list .task-list-inner > task {
+  --detail-card-join-inset: 10px;
+}
+
+/* Every sub-task row steps the counter; a finished one steps the second. */
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > task-list .task-list-inner > task,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > task-list .task-list-inner > task {
+  counter-increment: subtasks;
+}
+
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > task-list .task-list-inner > task.isDone,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > task-list .task-list-inner > task.isDone {
+  counter-increment: subtasks subtasks-done;
+}
+
+/* The count line: a small list glyph and "done/total", in the muted ink, on
+   the grid's first row. The glyph is a Material Symbols ligature, drawn from
+   the font the app ships, at the size the row's 12px figures ask for. */
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks:has(> task-list):not(:has(> task-list .done-task-box))::before,
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks:has(> task-list):not(:has(> task-list .done-task-box))::after,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks:has(> task-list):not(:has(> task-list .done-task-box))::before,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks:has(> task-list):not(:has(> task-list .done-task-box))::after {
+  grid-row: 1;
+  /* The card's face is an absolutely positioned box inside the same wrapper,
+     and a positioned box paints over everything in the flow beside it — the
+     name's line and the rows are positioned themselves and so stand on top,
+     but a plain pseudo-element sat under the card and was not to be seen.
+     (The drag preview blanks the box, which is why the count showed there.)
+     Positioned, the line paints in the same layer as the name. */
+  position: relative;
+  /* Drawn 2px up: the chips' 13px text on the same line sits a touch higher
+     than 12px text centred in the same 16px, and it is the chips that keep
+     their place — the room under them is what a tagged row shows. The box
+     stays where it is, so nothing else moves. */
+  top: -2px;
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--ink-muted);
+}
+
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks:has(> task-list):not(:has(> task-list .done-task-box))::before,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks:has(> task-list):not(:has(> task-list .done-task-box))::before {
+  grid-column: 1;
+  content: 'checklist';
+  font-family: 'Material Symbols Outlined', sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
+  width: 14px;
+  height: 16px;
+  /* The list starts 22px before the name; the glyph goes under the name's
+     first letter, level with the sub-tasks' checkboxes. */
+  margin-left: 22px;
+}
+
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks:has(> task-list):not(:has(> task-list .done-task-box))::after,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks:has(> task-list):not(:has(> task-list .done-task-box))::after {
+  grid-column: 2;
+  /* A fixed run, so the tags that follow on the line have a place to start:
+     room for two digits either side of the slash. */
+  min-width: 34px;
+  content: counter(subtasks-done) '/' counter(subtasks);
+  font-family: var(--font-body-stack);
+  font-variant-numeric: tabular-nums;
+}
+
+/* The tag row of a top-level task starts before the name: a chip has no
+   left padding, while the title component keeps 7px before its text — 1px
+   of margin, a 1px border and 5px of padding. The row is stepped in by the
+   same 7px, to the name's first letter, where the count line stands too,
+   and given 1px more under the name than the app leaves. */
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .first-line .title-and-tags-wrapper > tag-list .tags-container,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .first-line .title-and-tags-wrapper > tag-list .tags-container {
+  margin-left: 7px;
+  margin-top: 1px;
+}
+
+/* A row that carries tags is given 4px more under it. With the name and the
+   checkbox on the top line, the tags came close to the card's lower edge;
+   the app's own padding, from its variable, is kept and the 4px added. */
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper:has(> .first-line tag-list .tags-container),
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper:has(> .first-line tag-list .tags-container) {
+  padding-bottom: calc(var(--task-inner-padding-top-bottom) + 4px);
+}
+
+/* On a task with sub-tasks the tags go down to the count line, after the
+   count, as To Do sets them. The tag list is taken out of the row and set at
+   the line's height. The row is the positioned ancestor here — the app
+   gives `.first-line` position: relative — so the offsets count from the
+   row's own top and left, not from the card's: the row is the name's line
+   alone, 28px, and the count line follows 3px under it. The tags start 6px
+   after the count's fixed run; closed, the app's "+ n sub-tasks" line is
+   longer and they start further along, which the container's state tells
+   apart. They stay on one line and are cut at the card's right edge rather
+   than run into the rows below. */
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line .title-and-tags-wrapper > tag-list,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line .title-and-tags-wrapper > tag-list {
+  position: absolute;
+  top: calc(var(--subtask-name-line) + 3px);
+  left: calc(var(--subtask-gutter) + var(--subtask-name-inset) + 14px + 4px + 34px + 6px);
+  right: var(--s);
+  height: 16px;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > task-list .done-task-box) > .first-line .title-and-tags-wrapper > tag-list,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > task-list .done-task-box) > .first-line .title-and-tags-wrapper > tag-list {
+  left: calc(var(--subtask-gutter) + var(--subtask-name-inset) + 96px + 6px);
+}
+
+/* With only the done rows hidden the app's line reads "+ n done sub-tasks",
+   longer still. The toggle's glyph carries that state, and the run and the
+   tags' start follow it. */
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn .isHideDoneTasks) > .sub-tasks > task-list .done-task-box .expand-tasks-btn,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn .isHideDoneTasks) > .sub-tasks > task-list .done-task-box .expand-tasks-btn {
+  width: 156px;
+}
+
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn .isHideDoneTasks) > .first-line .title-and-tags-wrapper > tag-list,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn .isHideDoneTasks) > .first-line .title-and-tags-wrapper > tag-list {
+  left: calc(var(--subtask-gutter) + var(--subtask-name-inset) + 156px + 6px);
+}
+
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line .title-and-tags-wrapper > tag-list .tags-container,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line .title-and-tags-wrapper > tag-list .tags-container {
+  margin-left: 0;
+  margin-top: 0;
+}
+
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line .title-and-tags-wrapper > tag-list .tags,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line .title-and-tags-wrapper > tag-list .tags {
+  flex-wrap: nowrap;
+}
+
+/* Closed, the line under the name is the count line alone, 16px, where a
+   tagged task's tag row runs some 5px deeper; the same 5px under the empty
+   list make the room under the two lines the same. */
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .sub-tasks > task-list .task-list-inner[data-list-id='SUB']:not(:has(> task)),
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .sub-tasks > task-list .task-list-inner[data-list-id='SUB']:not(:has(> task)) {
+  padding-bottom: 5px;
+}
+
+/* While the list is closed or its done rows are hidden, the app renders none
+   of those rows, so the counters have nothing to count; what it renders is
+   its own "+ n sub-tasks" line, a button with a chevron. That line is drawn
+   as the count line instead: the same glyph before it, the same size, colour
+   and place, the chevron dropped, the button's own padding, tracking and
+   hover fill removed. The wording stays the app's — a stylesheet cannot
+   rewrite "+ 4 sub-tasks" into "1/4", and the done figure is not in the
+   document while the rows are hidden; that would take a template change. */
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > task-list .done-task-box,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > task-list .done-task-box {
+  justify-content: flex-start;
+  margin-left: 22px;
+}
+
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > task-list .done-task-box .expand-tasks-btn,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > task-list .done-task-box .expand-tasks-btn {
+  --mdc-text-button-container-height: 16px;
+  --mdc-text-button-label-text-size: 12px;
+  --mdc-text-button-label-text-weight: 400;
+  --mdc-text-button-label-text-tracking: normal;
+  --mdc-text-button-label-text-color: var(--ink-muted);
+  --mat-text-button-horizontal-padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  white-space: nowrap;
+  position: relative;
+  top: -2px;
+  gap: 4px;
+  /* A fixed run as well, for the tags that follow: the glyph, its gap and
+     "+ 12 sub-tasks" fit in it. */
+  width: 96px;
+  min-width: 0;
+  min-height: 0;
+  height: 16px;
+  padding: 0;
+  margin: 0;
+  border-radius: 2px;
+  font-family: var(--font-body-stack);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: normal;
+  line-height: 16px;
+  color: var(--ink-muted);
+  opacity: 1;
+}
+
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > task-list .done-task-box .expand-tasks-btn:hover,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > task-list .done-task-box .expand-tasks-btn:hover {
+  color: var(--ink);
+}
+
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > task-list .done-task-box .expand-tasks-btn::before,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > task-list .done-task-box .expand-tasks-btn::before {
+  content: 'checklist';
+  font-family: 'Material Symbols Outlined', sans-serif;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
+  width: 14px;
+  height: 16px;
+  line-height: 16px;
+}
+
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > task-list .done-task-box .expand-tasks-btn .mat-icon,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > task-list .done-task-box .expand-tasks-btn .mat-icon,
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > task-list .done-task-box .expand-tasks-btn .mat-mdc-button-persistent-ripple,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > task-list .done-task-box .expand-tasks-btn .mat-mdc-button-persistent-ripple {
+  display: none;
+}
+
+/* A row that carries tags is taller than its name's line, and the app
+   centres the checkbox on the whole of it, so the checkbox — and with it the
+   chevron — sat between the name and the tags. To Do keeps both on the
+   name's line: the row's left group is aligned to its top, and the checkbox
+   is drawn up by 6px, the difference between half its 40px box and the
+   centre of the name's line box (a 1px border, 3px of padding and a 20px
+   line). The chevron follows in its own rule further down. Rows without
+   tags are as they were: there the line is the whole row and centring is
+   right. The test looks for the rendered chip container, not for the
+   tag-list element: the app puts that element on every task that sits in a
+   project, chips or none, and on it the checkbox would have gone up while
+   the name stayed centred. A task with sub-tasks is left out as well: its
+   tags are taken down to the count line (below), the row is the name alone
+   again, and centring is right. */
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper:not(:has(> .sub-tasks > .toggle-sub-tasks-btn)) > .first-line:has(tag-list .tags-container) > .title-and-left-btns-wrapper,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper:not(:has(> .sub-tasks > .toggle-sub-tasks-btn)) > .first-line:has(tag-list .tags-container) > .title-and-left-btns-wrapper {
+  align-items: flex-start;
+}
+
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper:not(:has(> .sub-tasks > .toggle-sub-tasks-btn)) > .first-line:has(tag-list .tags-container) > .title-and-left-btns-wrapper > done-toggle,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper:not(:has(> .sub-tasks > .toggle-sub-tasks-btn)) > .first-line:has(tag-list .tags-container) > .title-and-left-btns-wrapper > done-toggle {
+  margin-top: -6px;
+}
+
+/* A task with sub-tasks has its second line — the count, with the tags —
+   under the name the way a tagged task has its tag row: the row is the
+   name's line alone, 28px, instead of the 44px minimum the app gives every
+   row, and the checkbox, a 40px box, is drawn in by 6px above and below so
+   it does not hold the row open — it stays centred on the name's line. The
+   controls on the right keep the line's height, so the hover strip does
+   not push the row open either. Closed, such a task is then as tall as a
+   tagged task without sub-tasks. */
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line {
+  min-height: var(--subtask-name-line);
+}
+
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line > .title-and-left-btns-wrapper,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line > .title-and-left-btns-wrapper {
+  min-height: 0;
+  align-items: flex-start;
+}
+
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line > .title-and-left-btns-wrapper > done-toggle,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line > .title-and-left-btns-wrapper > done-toggle {
+  margin-top: -6px;
+  margin-bottom: -6px;
+}
+
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line > .all-controls-wrapper,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line > .all-controls-wrapper {
+  height: var(--subtask-name-line);
+  /* And they stand where a tagged row's do: centred on the name and the
+     line under it together — 12px below the name's centre: half the count
+     line, its gap and the room under it — not on the name alone, which put the hover strip
+     against the card's top edge. */
+  position: relative;
+  top: 12px;
+}
+
+/* The hover strip and the buttons beside it, on one centre. The strip is
+   pinned by the app to the top and bottom of the control group, and its
+   buttons fill that height; the buttons outside it are 40px at least and
+   centred by their margins. With the group held to the name's 28px line
+   the two no longer agreed — the sun in the strip stood higher than the
+   panel button beside it. So on these rows the strip is let run 6px past
+   the line above and below, 40px in all, centred on it, and every button,
+   in the strip or beside it, is 40px, centred by its margins, and lays its
+   icon out in its middle rather than under Material's 12px padding. */
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line > .all-controls-wrapper > .controls > task-hover-controls,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line > .all-controls-wrapper > .controls > task-hover-controls {
+  top: -6px;
+  bottom: -6px;
+  align-items: center;
+}
+
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line > .all-controls-wrapper > .controls button,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line > .all-controls-wrapper > .controls button {
+  box-sizing: border-box;
+  height: 40px !important;
+  min-height: 40px;
+  margin-top: auto;
+  margin-bottom: auto;
+  padding: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* The panel button is the one that was out: the app wraps it in a plain
+   div, and in a plain div the auto margins that centre every other button
+   do nothing — the 40px button stood at the top of a 28px line, 6px below
+   the strip's centre. The div is made a flex box that centres what it
+   holds, which is what the strip and the group already do for theirs. */
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line > .all-controls-wrapper > .controls > div,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line > .all-controls-wrapper > .controls > div {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+/* Measured in the app: the div did become a flex box, and the button still
+   stood at its top. A 40px item in a 28px line leaves negative free space,
+   and with negative free space auto margins count as zero and the item
+   sits at the start edge — that is the flexbox rule, and it is why auto
+   margins centre the strip's buttons (a 40px strip, no free space) and
+   not this one. The buttons beside the strip get 6px of negative margin
+   above and below instead, an explicit figure that does centre. */
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line > .all-controls-wrapper > .controls > button,
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line > .all-controls-wrapper > .controls > div > button,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line > .all-controls-wrapper > .controls > button,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper:has(> .sub-tasks > .toggle-sub-tasks-btn) > .first-line > .all-controls-wrapper > .controls > div > button {
+  margin-top: -6px;
+  margin-bottom: -6px;
+}
+
+/* The toggle, moved onto the parent's line. The app positions it absolutely
+   against the list with !important, sets its size the same way and paints a
+   filled disc with a shadow; the classes are stacked so the figures here win.
+   `top` is the row's inner padding plus half the room the name's 28px
+   line leaves around a 24px button — the padding is the app's own variable,
+   so it follows it.
+   `left` sets the button outside the card with its disc lapping the
+   card's edge by the overlap, a tab on the card's side; the row itself is
+   not moved. The button lays its glyph out as a flex item, so the chevron
+   sits in its middle whatever the fab's own padding says. The disc takes
+   the per-mode colour set above, ringed by a firmer hairline than the
+   card's, at full opacity at rest, since a translucent disc would show the
+   card's edge through it; only the glyph is muted. Under the pointer the
+   disc takes a touch of ink, and the glyph the full ink. */
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > .toggle-sub-tasks-btn.toggle-sub-tasks-btn.toggle-sub-tasks-btn,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > .toggle-sub-tasks-btn.toggle-sub-tasks-btn.toggle-sub-tasks-btn {
+  position: absolute !important;
+  top: calc(var(--task-inner-padding-top-bottom) - 1px + (var(--subtask-name-line) - 24px) / 2);
+  left: calc(-24px + var(--subtask-chevron-overlap));
+  transform: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin: 0 !important;
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 0;
+  min-height: 0;
+  box-sizing: border-box;
+  border: 1px solid color-mix(in srgb, var(--ink-muted) 35%, transparent);
+  border-radius: 50%;
+  background: var(--subtask-chevron-disc) !important;
+  box-shadow: none !important;
+  color: var(--ink-muted);
+  --mat-fab-small-container-color: var(--subtask-chevron-disc);
+  --mat-fab-small-state-layer-color: transparent;
+  --mat-fab-small-foreground-color: var(--ink-muted);
+  opacity: 1;
+}
+
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > .toggle-sub-tasks-btn.toggle-sub-tasks-btn.toggle-sub-tasks-btn:hover,
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > .toggle-sub-tasks-btn.toggle-sub-tasks-btn.toggle-sub-tasks-btn:focus-visible,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > .toggle-sub-tasks-btn.toggle-sub-tasks-btn.toggle-sub-tasks-btn:hover,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > .toggle-sub-tasks-btn.toggle-sub-tasks-btn.toggle-sub-tasks-btn:focus-visible {
+  background: color-mix(in srgb, var(--subtask-chevron-disc) 85%, var(--ink) 15%) !important;
+  --mat-fab-small-container-color: color-mix(in srgb, var(--subtask-chevron-disc) 85%, var(--ink) 15%);
+  color: var(--ink);
+  --mat-fab-small-foreground-color: var(--ink);
+}
+
+/* Under 600px the list's inset leaves no room outside the card, so the row
+   is padded open by a gutter and the chevron stands in it, centred between
+   the card's edge and the checkbox: gutter, the toggle's 8px margin and the
+   12px to its shape make 44px, and a 24px button at 10px has its centre at
+   22. Raise the width here if the chevron is cut off at the window's edge. */
+@media (max-width: 599px) {
+  work-view task > swipe-block > .inner-wrapper > .inner-wrapper,
+  task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper {
+    --subtask-gutter: 24px;
+  }
+
+  work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > .toggle-sub-tasks-btn.toggle-sub-tasks-btn.toggle-sub-tasks-btn,
+  task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > .toggle-sub-tasks-btn.toggle-sub-tasks-btn.toggle-sub-tasks-btn {
+    left: 10px;
+  }
+}
+
+/* Its glyph: the app writes `add` or `remove` and rotates the minus for the
+   hide-done state. The ligature is hidden and a chevron drawn in its place,
+   the way the navigation icons above are swapped — so the Lucide plugin, when
+   it is on, reads the chevron and draws its own. Open, it points down; closed,
+   it turns to point at the name; with only the done rows hidden it is the
+   fold-in glyph, since the list is neither open nor closed. */
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > .toggle-sub-tasks-btn .mat-icon,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > .toggle-sub-tasks-btn .mat-icon {
+  visibility: hidden !important;
+  position: relative;
+  transform: none !important;
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+  line-height: 1;
+  overflow: visible;
+}
+
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > .toggle-sub-tasks-btn .mat-icon::after,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > .toggle-sub-tasks-btn .mat-icon::after {
+  content: 'expand_more';
+  visibility: visible;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: transform var(--transition-standard);
+}
+
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > .toggle-sub-tasks-btn:has(+ task-list .done-task-box) .mat-icon:not(.isHideDoneTasks)::after,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > .toggle-sub-tasks-btn:has(+ task-list .done-task-box) .mat-icon:not(.isHideDoneTasks)::after {
+  transform: rotate(-90deg);
+}
+
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > .toggle-sub-tasks-btn .mat-icon.isHideDoneTasks::after,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > .toggle-sub-tasks-btn .mat-icon.isHideDoneTasks::after {
+  content: 'unfold_less';
+}
+
+/* The list keeps 8px above its first row and 8px under its last, from the
+   app. Both are closed. The count line already stands between the name and
+   the rows; under the last row, the row's own padding and the card's make
+   the same room the name has above it. Closed, the same rule leaves nothing
+   under the "+ n sub-tasks" line but the card's padding. */
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > task-list .task-list-inner[data-list-id='SUB'],
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > task-list .task-list-inner[data-list-id='SUB'] {
+  padding-top: 0;
+  padding-bottom: 0;
 }
 
 /* The add-a-step line under the last step takes the same hairline above it. */
@@ -4421,9 +5015,12 @@ task .title-and-tags-wrapper .tags > tag .tag-title {
   font-size: 1.3em;
 }
 
-/* The project reads as a heading for the line rather than as another chip on
-   it, so it is set larger than the tags that follow it — text and icon
-   together, or the icon is left looking like a leftover beside the name.
+/* The project chip is set at the same size as the tags that follow it, text
+   and icon alike: the text at the 1.3em the tags have, the icon at the 13px
+   the tag component draws its icons at. It read larger before, as a heading
+   for the line — 1.45em and 1.35em — until the user asked for one size on
+   2026-09-03; the two figures stay variables, so that treatment is one edit
+   away.
 
    The icon hands `--icon-scale` back to 1. That scale exists to correct sizes
    the app chose and the theme did not; here the theme states the size, and a
@@ -4431,8 +5028,8 @@ task .title-and-tags-wrapper .tags > tag .tag-title {
    build and with the Lucide plugin alike. */
 body,
 body.isDarkTheme {
-  --task-project-size: 1.45em;
-  --task-project-icon-size: 1.35em;
+  --task-project-size: 1.3em;
+  --task-project-icon-size: 13px;
 }
 
 task .title-and-tags-wrapper .tags > tag:first-child .tag-title {
@@ -4454,6 +5051,24 @@ task .title-and-tags-wrapper .tags > tag:first-child mat-icon {
    row". */
 task .title-and-tags-wrapper .tags > tag:not(:first-child) mat-icon {
   --icon-scale: 1;
+}
+
+/* A chip without an icon carries a plain colour dot, which the app draws at
+   9px with 3px to the label — a dot that size, hard against the text, reads
+   as heavy beside the icons on the chips around it. It is taken to 7px and
+   given 5px of room. The app's margin is stated with !important, so this one
+   is too. */
+task .title-and-tags-wrapper .tags > tag .circle {
+  font-size: 7px;
+  width: 7px;
+  height: 7px;
+  margin-right: 5px !important;
+  /* Centred on the letters rather than on the line box: the chip centres the
+     dot on the full height of its 13px text, whose lowercase sits lower
+     than that centre, so the dot read a pixel high. */
+  align-self: center;
+  position: relative;
+  top: 1px;
 }
 
 /* The done toggle, matched to the reference: a Tailwind-forms checkbox at
@@ -5096,7 +5711,9 @@ task.isSelected .first-line {
 work-view task task + task.isSelected,
 work-view task task + task.isCurrent,
 task-detail-panel .sub-tasks task + task.isSelected,
-task-detail-panel .sub-tasks task + task.isCurrent {
+task-detail-panel .sub-tasks task + task.isCurrent,
+task.cdk-drag-preview task + task.isSelected,
+task.cdk-drag-preview task + task.isCurrent {
   background-image: linear-gradient(var(--detail-card-join), var(--detail-card-join)) !important;
   background-repeat: no-repeat !important;
   background-position: var(--detail-card-join-inset) 0 !important;
@@ -5249,4 +5866,81 @@ task-detail-item .mat-mdc-icon-button .mat-mdc-button-ripple,
 task-detail-item .mat-mdc-icon-button .mat-mdc-focus-indicator,
 task-detail-item .mat-mdc-icon-button .mat-ripple {
   border-radius: 50% !important;
+}
+
+/* ---------------------------------------------------------------------------
+ * Drop lists while a task is dragged
+ * ---------------------------------------------------------------------------
+ * The app rings every list a dragged task could land in with a 1px dashed
+ * outline in the primary colour — the colour of the project or tag you are
+ * in, so a cyan dashed box around the whole list in a cyan project. The
+ * ring is dropped altogether, and no wash is laid over the list either:
+ * the rows moving apart under the pointer say where the drop lands, and
+ * the row in flight is the only thing that needs marking. Tried with a
+ * hairline ring and a faint wash first (2026-09-03); this is the plainer
+ * of the two. The grabbing cursor is the app's and stays. */
+.cdk-drop-list-dragging,
+.cdk-drop-list-receiving {
+  outline: none;
+  background: transparent;
+  border-color: transparent;
+  cursor: grabbing;
+}
+
+/* One case keeps the ring and the wash: a task carried out of the project
+   backlog. Then the list it is heading for is not the one it came from, and
+   the today list shows it is open to it — the hairline ring, 4px out and
+   rounded like the cards, and the faint wash. The backlog list is known by
+   the id the app gives its drop list; the ring goes on the today list's own
+   rows, not on a sub-task list inside a card. */
+work-view:has(.task-list-inner[data-id='BACKLOG'].cdk-drop-list-dragging) .today .task-list-inner.cdk-drop-list-receiving:not([data-list-id='SUB']) {
+  outline: 1px solid color-mix(in srgb, var(--ink-muted) 50%, transparent);
+  outline-offset: 4px;
+  border-radius: var(--task-border-radius);
+  background: rgba(var(--ink-on-channel), 0.03);
+}
+
+/* The Backlog Sections plugin marks the section header under the pointer
+   with a 2px dashed outline in the muted text colour, from its own
+   stylesheet. It is drawn here as the same hairline as the ring above, just
+   inside the header's edge; the header's background and text are the
+   plugin's and stay. The class names are the plugin's own. */
+.backlog-sections-header.bs-target.bs-target,
+.backlog-sections-header.bs-target.bs-target:hover {
+  outline: 1px solid color-mix(in srgb, var(--ink-muted) 50%, transparent);
+  outline-offset: -1px;
+}
+
+/* ---------------------------------------------------------------------------
+ * The drag preview of a sub-task
+ * ---------------------------------------------------------------------------
+ * The CDK draws the row under the pointer as a clone in an overlay at the
+ * end of the page, sized to the row it came from. A sub-task row in the
+ * list is 47px — the 22px line and the trimmed toggle the sub-task rules
+ * above give it — but the clone stands outside the list, so those rules do
+ * not reach it and it lays itself out as a top-level row, 69px of content
+ * in a 47px box that clips the overflow: the name sat in the lower half.
+ * The clone cannot be told apart from a top-level row's, so every preview
+ * centres its content in the height the CDK gives it instead: a top-level
+ * row's content is that height already and does not move, and a sub-task's
+ * name comes to the middle, with the surplus padding clipped equally above
+ * and below. */
+task.cdk-drag-preview > swipe-block,
+task.cdk-drag-preview > swipe-block > .inner-wrapper {
+  height: 100%;
+}
+
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper {
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* The chevron is left off the preview of a task with sub-tasks. The clone
+   clips at its own edge, so the disc that laps the card's side showed as a
+   sliver there; and a row in flight is not one to open or close. */
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > .sub-tasks > .toggle-sub-tasks-btn.toggle-sub-tasks-btn.toggle-sub-tasks-btn {
+  display: none !important;
 }
