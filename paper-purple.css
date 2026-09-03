@@ -3716,18 +3716,27 @@ body > nav.action-nav-right .play-btn-wrapper .pulse-circle {
   left: 0;
 }
 
-/* The progress pie — the share of the running task's estimate already spent,
-   drawn while a task with an estimate is tracked — sits behind the button in
-   the app (the button is one stack level higher), where a solid disc hides it
-   whole. It is lifted above the disc here, at the app's own faint opacity,
-   and sized to the button so the pie fills the disc to a small margin; its
-   drawing is a 20-unit stroke on a 10-unit radius about the centre, so a
-   larger canvas gives a larger pie, not a scaled one. */
-body > nav.action-nav-right .play-btn-wrapper .circle-svg,
-nav.action-nav-right play-button .play-btn-wrapper .circle-svg {
+/* The progress pie — the share of the selected task's estimate already
+   spent, drawn whenever the selected task has an estimate — sits behind the
+   button in the app (the button is one stack level higher), where the solid
+   disc hides it whole. It was lifted above the disc here for a while, at the
+   app's own faint opacity in the header's text colour; on a half-spent
+   estimate that read as a grey fade over half the salmon disc, not as
+   progress, and it was taken back down on 2026-09-03. The size is kept, so
+   that lifting it again (z-index above the button's 6) gives a pie that
+   fills the disc to a small margin: its drawing is a 20-unit stroke on a
+   10-unit radius about the centre, so a larger canvas gives a larger pie,
+   not a scaled one.
+
+   On the vertical rail only. In the horizontal header the button is the
+   app's 40px, and a 46px pie behind it stood 3px out on either side — which
+   made the row 6px wider than its scrollport, and a row that can scroll is
+   a row the app fades at its trailing edge: that fade lay over the play
+   disc and read as a grey wash on it (measured on v18.21, 2026-09-03).
+   There the pie keeps the app's 36px and sits inside the disc. */
+body > nav.action-nav-right .play-btn-wrapper .circle-svg {
   width: var(--play-button-size);
   height: var(--play-button-size);
-  z-index: 7; /* the button is 6 */
 }
 
 /* The play button is the one control in this strip that never dims, and the
@@ -3763,6 +3772,16 @@ nav.action-nav-right button.play-btn:focus-visible:not(:disabled):not(.mat-mdc-b
   transform: scale(var(--play-button-hover-scale));
   --mat-fab-hover-state-layer-opacity: var(--play-button-hover-layer-opacity);
   --mat-fab-focus-state-layer-opacity: var(--play-button-hover-layer-opacity);
+}
+
+/* In the horizontal header the button stands at the very end of the row's
+   scroll box, pinned there, and the box clips: grown about its centre, the
+   disc's right edge went 1px past the box and came back flat (seen on
+   v18.21, 2026-09-03). It grows about its right edge instead — the edge
+   that cannot move — so the growth goes left, up and down, and the disc
+   stays round. The vertical rail keeps the centre. */
+body:not(.isVerticalActionBar) nav.action-nav-right button.play-btn {
+  transform-origin: right center;
 }
 
 /* Someone who has asked the system for less movement gets the deeper hover
@@ -4227,12 +4246,22 @@ body nav.action-nav-right button.tour-addBtn.tour-addBtn:is(:hover, :focus-visib
      edge", and with play pinned there that is no longer what the edge says —
      it only washed the disc out. The leading fade still marks the actions
      that have scrolled off the other side and is left alone. The app sets the
-     figure on `.action-nav-scroll` itself, so the class is doubled here to
-     outweigh its `.action-nav-right--can-scroll > .action-nav-scroll`. */
+     figure on `.action-nav-scroll` itself, from a compiled component sheet
+     whose two `[_ngcontent]` attributes lift it to (0,5,0); the doubled class
+     alone came to (0,4,2) and lost, so the fade was back over the disc the
+     moment the row overflowed by a pixel (measured on v18.21, 2026-09-03).
+     The scroll class was named as well, which should have taken this to
+     (0,5,2) — and measured in the app the fade was still on, at its full
+     min(48px, 30%), so whatever weight the compiled sheet carries, it is
+     more. Forced, then: a custom property takes !important like any other
+     declaration, and that ends the contest. */
   body:not(.isVerticalActionBar)
     nav.action-nav-right.action-nav-right
+    > .action-nav-scroll,
+  body:not(.isVerticalActionBar)
+    nav.action-nav-right.action-nav-right.action-nav-right--can-scroll
     > .action-nav-scroll {
-    --header-fade-inline-end: 0px;
+    --header-fade-inline-end: 0px !important;
   }
 
   /* And the row keeps its end in the builds that have no scroller — the
@@ -4356,6 +4385,114 @@ body nav.action-nav-right button.tour-addBtn.tour-addBtn:is(:hover, :focus-visib
   }
 
 
+}
+
+/* ---------------------------------------------------------------------------
+ * The header's scroller build: the pill stands beside Add task again
+ * ---------------------------------------------------------------------------
+ * Measured on v18.21 (2026-09-03). The app renders every action in the row
+ * at every width and scrolls the row when they stop fitting; the pill that
+ * names the tracked task lives in a slot between the title and the row,
+ * pinned to the slot's end. The rules above hide the row's secondary
+ * buttons at rest — opacity 0 — but they keep their width: five invisible
+ * buttons, 216px of them, standing between the pill and Add task. So the
+ * pill sat in the middle of the header, left of a row nobody could see, and
+ * the pill rules further up, written for the build where the pill hung off
+ * the play button, reached nothing.
+ *
+ * A first take collapsed the hidden buttons to no width, which put the pill
+ * right but opened the row with a sliding expansion on hover, and the user
+ * did not want that. So the row is left as the app lays it out, and the pill
+ * is taken out of the slot's coordinate space instead: the slot gives up its
+ * containment — `container-type` implies `contain: layout`, which is what
+ * made it the pill's containing block — and the header's wrapper, made
+ * positioned, becomes that block. The pill is then set a fixed distance in
+ * from the wrapper's end: the wrapper's 16px padding, play's 40px, the 8px
+ * to Add task, Add task's 40px, and 4px clear — 108px — so its end stands
+ * 4px short of Add task, over the hidden buttons, as it did in the old build.
+ *
+ * Two things the slot's container did are done here instead. The app's
+ * container queries hid the pill when the slot ran short; with no container
+ * they no longer match, so the pill is shown from a 780px window up and
+ * hidden below, the figure the old build's rules used, and capped in width
+ * so a long name cannot reach the title. And since the pill lies over the
+ * hidden buttons, it steps aside when the row is reached for — the pointer
+ * on the row, but not on play alone — and comes back after a short delay
+ * once the pointer has left; a pointer on the pill itself is not on the
+ * row, so the pill stays and can be clicked. Horizontal header, from 600px.
+ *
+ * Not on Settings. There the rules above leave the row in full view, so a
+ * pill over its buttons would cover them; the slot keeps its containment and
+ * the app places the pill at the slot's end, left of the whole row, with its
+ * own queries hiding it when the slot runs short. The app tucks the pill
+ * 12px under the row's first button, meant for the play disc; before a plain
+ * icon button that tuck is taken away. */
+@media screen and (min-width: 600px) {
+  body:not(.isVerticalActionBar):not(:has(.page-settings)) main-header .wrapper.wrapper {
+    position: relative;
+  }
+
+  body:not(.isVerticalActionBar):not(:has(.page-settings)) main-header .pill-slot {
+    container-type: normal;
+    contain: none;
+    position: static;
+  }
+
+  body:not(.isVerticalActionBar):not(:has(.page-settings)) main-header .pill-slot tracked-task-pill .current-task-title {
+    --tracked-pill-end: calc(var(--s2, 16px) + 40px + 8px + 40px + 4px);
+    inset-inline-end: var(--tracked-pill-end);
+    right: var(--tracked-pill-end);
+    left: auto;
+    inset-inline-start: auto;
+    max-width: min(45%, 360px);
+    z-index: 3;
+    padding-inline-end: var(--s, 8px);
+    --pill-fade: 140ms;
+    --pill-return-delay: 350ms;
+    transition: opacity var(--pill-fade) var(--ani-standard-timing) var(--pill-return-delay) !important;
+  }
+
+  body:not(.isVerticalActionBar):not(:has(.page-settings))
+    main-header:has(nav.action-nav-right:hover):not(:has(button.play-btn:hover))
+    .pill-slot
+    tracked-task-pill
+    .current-task-title {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition-delay: 0s !important;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    body:not(.isVerticalActionBar):not(:has(.page-settings)) main-header .pill-slot tracked-task-pill .current-task-title {
+      transition: none !important;
+    }
+  }
+}
+
+@media screen and (min-width: 600px) {
+  body:has(.page-settings) tracked-task-pill {
+    --tracked-pill-tuck: 0px;
+  }
+}
+
+@media screen and (min-width: 600px) and (max-width: 779.98px) {
+  body:not(.isVerticalActionBar):not(:has(.page-settings)) main-header .pill-slot tracked-task-pill .current-task-title {
+    display: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * The running task's progress line
+ * ---------------------------------------------------------------------------
+ * The app draws the share of the running task's estimate as a 3px line
+ * under the row, from a zero-height element placed after the row's first
+ * line: the line itself is set 5px up from that element, which puts it
+ * over the bottom of the tag row, a hair under the chips. It is let down
+ * 6px, to 1px below the element, into the card's own bottom padding, so
+ * the chips and the line have room between them. */
+work-view task > swipe-block > .inner-wrapper > .inner-wrapper > progress-bar::after,
+task.cdk-drag-preview > swipe-block > .inner-wrapper > .inner-wrapper > progress-bar::after {
+  top: 1px;
 }
 
 /* ---------------------------------------------------------------------------
